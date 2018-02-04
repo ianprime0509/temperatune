@@ -1,0 +1,27 @@
+.PitchGenerator {
+  background: red;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.PitchGenerator-controls {
+  background: green;
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.PitchGenerator-control {
+  background: blue;
+  flex-grow: 1;
+  margin: 0.5rem;
+}
+
+.PlaybackControl {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}

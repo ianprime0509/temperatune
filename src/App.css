@@ -1,0 +1,14 @@
+.App {
+  border-radius: 5px;
+  display: block;
+  height: 100%;
+  max-height: 500px;
+  max-width: 400px;
+  overflow: hidden;
+  width: 100%;
+}
+
+@media (min-width: 500px) {
+  .App {
+  }
+}

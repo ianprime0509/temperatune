@@ -1,0 +1,4 @@
+.SettingsBar {
+  display: flex;
+  justify-content: space-between;
+}
