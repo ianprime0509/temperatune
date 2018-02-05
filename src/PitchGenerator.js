@@ -52,10 +52,19 @@ class PitchGenerator extends Component {
           isPlaying={this.state.isPlaying}
           onClick={this.handlePlaybackClick.bind(this)}
         />
-        <SettingsBar switchIcon={faMicrophone} />
+        <SettingsBar
+          switchIcon={faMicrophone}
+          onFlipView={this.props.onFlipView}
+          onOpenSettings={this.props.onOpenSettings}
+        />
       </div>
     );
   }
 }
+
+PitchGenerator.propTypes = {
+  onFlipView: PropTypes.func,
+  onOpenSettings: PropTypes.func,
+};
 
 export default PitchGenerator;
