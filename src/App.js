@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/fontawesome-free-solid';
 
+import AppModal from './AppModal';
 import PitchAnalyzer from './PitchAnalyzer';
 import PitchGenerator from './PitchGenerator';
 
@@ -58,20 +59,13 @@ class App extends Component {
             />
           </div>
         </div>
-        <Modal
-          className="Settings-content"
-          overlayClassName="Modal-overlay"
+        <AppModal
           isOpen={this.state.settingsAreOpen}
           onRequestClose={this.handleCloseSettings.bind(this)}
         >
-          <FontAwesomeIcon
-            icon={faTimes}
-            size="2x"
-            className="Settings-close"
-            onClick={this.handleCloseSettings.bind(this)}
-          />
           <h1>lol no settings</h1>
-        </Modal>
+          <h2>lol subtitle</h2>
+        </AppModal>
       </div>
     );
   }
