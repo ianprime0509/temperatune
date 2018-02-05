@@ -8,20 +8,18 @@
 }
 
 .PitchGenerator-controls {
-  background: green;
+  align-items: center;
   display: flex;
-  flex-grow: 1;
   justify-content: space-between;
-}
-
-.PitchGenerator-control {
-  background: blue;
-  flex-grow: 1;
-  margin: 0.5rem;
 }
 
 .PlaybackControl {
   align-items: center;
   display: flex;
+  flex-grow: 1;
   justify-content: center;
+}
+
+.PlaybackControl-icon {
+  cursor: pointer;
 }

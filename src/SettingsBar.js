@@ -12,8 +12,12 @@ class SettingsBar extends Component {
   render() {
     return (
       <div className="SettingsBar">
-        <FontAwesomeIcon icon={faCog} size="3x" />
-        <FontAwesomeIcon icon={this.props.switchIcon} size="3x" />
+        <FontAwesomeIcon className="SettingsBar-icon" icon={faCog} size="3x" />
+        <FontAwesomeIcon
+          className="SettingsBar-icon"
+          icon={this.props.switchIcon}
+          size="3x"
+        />
       </div>
     );
   }
