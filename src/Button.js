@@ -6,7 +6,7 @@ import './Button.css';
 /** A reusable button component with a consistent style. */
 function Button(props) {
   return (
-    <div className="Button">
+    <div className="Button" onClick={props.onClick}>
       {props.children}
     </div>
   );
@@ -14,6 +14,7 @@ function Button(props) {
 
 Button.propTypes = {
   children: PropTypes.element,
+  onClick: PropTypes.func,
 };
 
 export default Button;

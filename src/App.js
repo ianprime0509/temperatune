@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/fontawesome-free-solid';
 
 import AppModal from './AppModal';
 import PitchAnalyzer from './PitchAnalyzer';
@@ -15,6 +13,8 @@ class App extends Component {
     this.state = {
       /** Whether the front panel is being shown. */
       isFrontPanel: true,
+      notesModalIsOpen: false,
+      octavesModalIsOpen: false,
       settingsAreOpen: false,
     };
     // TODO: is this correct?  Documentation is a bit sparse on this feature,
@@ -23,12 +23,28 @@ class App extends Component {
     Modal.setAppElement(document.getElementById('root'));
   }
 
+  handleCloseNotesModal() {
+    this.setState({ notesModalIsOpen: false });
+  }
+
+  handleCloseOctavesModal() {
+    this.setState({ octavesModalIsOpen: false });
+  }
+
   handleCloseSettings() {
     this.setState({ settingsAreOpen: false });
   }
 
   handleFlipView() {
     this.setState({ isFrontPanel: !this.state.isFrontPanel });
+  }
+
+  handleOpenNotesModal() {
+    this.setState({ notesModalIsOpen: true });
+  }
+
+  handleOpenOctavesModal() {
+    this.setState({ octavesModalIsOpen: true });
   }
 
   handleOpenSettings() {
@@ -49,6 +65,8 @@ class App extends Component {
           <div className="App-front">
             <PitchGenerator
               onFlipView={this.handleFlipView.bind(this)}
+              onOpenNotesModal={this.handleOpenNotesModal.bind(this)}
+              onOpenOctavesModal={this.handleOpenOctavesModal.bind(this)}
               onOpenSettings={this.handleOpenSettings.bind(this)}
             />
           </div>
@@ -59,6 +77,18 @@ class App extends Component {
             />
           </div>
         </div>
+        <AppModal
+          isOpen={this.state.notesModalIsOpen}
+          onRequestClose={this.handleCloseNotesModal.bind(this)}
+        >
+          <h1>Notes go here</h1>
+        </AppModal>
+        <AppModal
+          isOpen={this.state.octavesModalIsOpen}
+          onRequestClose={this.handleCloseOctavesModal.bind(this)}
+        >
+          <h1>Octaves go here</h1>
+        </AppModal>
         <AppModal
           isOpen={this.state.settingsAreOpen}
           onRequestClose={this.handleCloseSettings.bind(this)}

@@ -33,7 +33,7 @@ class PitchGenerator extends Component {
   constructor() {
     super();
     this.state = {
-      isPlaying: false
+      isPlaying: false,
     };
   }
 
@@ -45,8 +45,12 @@ class PitchGenerator extends Component {
     return (
       <div className="PitchGenerator">
         <div className="PitchGenerator-controls">
-          <Button><span>A</span></Button>
-          <Button><span>4</span></Button>
+          <Button onClick={this.props.onOpenNotesModal}>
+            <span>A</span>
+          </Button>
+          <Button onClick={this.props.onOpenOctavesModal}>
+            <span>4</span>
+          </Button>
         </div>
         <PlaybackControl
           isPlaying={this.state.isPlaying}
@@ -64,6 +68,8 @@ class PitchGenerator extends Component {
 
 PitchGenerator.propTypes = {
   onFlipView: PropTypes.func,
+  onOpenNotesModal: PropTypes.func,
+  onOpenOctavesModal: PropTypes.func,
   onOpenSettings: PropTypes.func,
 };
 
