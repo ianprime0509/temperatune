@@ -36,3 +36,8 @@
   top: 0;
   width: 100%;
 }
+
+.App-notes, .App-octaves {
+  display: flex;
+  flex-wrap: wrap;
+}

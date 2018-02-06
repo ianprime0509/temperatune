@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Modal from 'react-modal';
 
 import AppModal from './AppModal';
+import Button from './Button';
 import PitchAnalyzer from './PitchAnalyzer';
 import PitchGenerator from './PitchGenerator';
 
@@ -21,6 +22,16 @@ class App extends Component {
     // and this probably isn't what I want; I'm pretty sure this hides the
     // *entire app* from screen readers, including the modal.
     Modal.setAppElement(document.getElementById('root'));
+  }
+
+  /** Return an array of the note names in the current temperament. */
+  getNoteNames() {
+    return ['C', 'D', 'E'];
+  }
+
+  /** Return an array of the accessible octaves in the current temperament. */
+  getOctaves() {
+    return [...Array(200).keys()];
   }
 
   handleCloseNotesModal() {
@@ -80,18 +91,33 @@ class App extends Component {
         <AppModal
           isOpen={this.state.notesModalIsOpen}
           onRequestClose={this.handleCloseNotesModal.bind(this)}
+          title="Select note"
         >
-          <h1>Notes go here</h1>
+          <div className="App-notes">
+            {this.getNoteNames().map(note => (
+              <Button key={note}>
+                <span>{note}</span>
+              </Button>
+            ))}
+          </div>
         </AppModal>
         <AppModal
           isOpen={this.state.octavesModalIsOpen}
           onRequestClose={this.handleCloseOctavesModal.bind(this)}
+          title="Select octave"
         >
-          <h1>Octaves go here</h1>
+          <div className="App-octaves">
+            {this.getOctaves().map(octave => (
+              <Button key={octave}>
+                <span>{octave}</span>
+              </Button>
+            ))}
+          </div>
         </AppModal>
         <AppModal
           isOpen={this.state.settingsAreOpen}
           onRequestClose={this.handleCloseSettings.bind(this)}
+          title="Settings"
         >
           <h1>lol no settings</h1>
           <h2>lol subtitle</h2>

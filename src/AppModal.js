@@ -15,13 +15,18 @@ function AppModal(props) {
       isOpen={props.isOpen}
       onRequestClose={props.onRequestClose}
     >
-      <FontAwesomeIcon
-        icon={faTimes}
-        size="2x"
-        className="AppModal-close"
-        onClick={props.onRequestClose}
-      />
-      {props.children}
+      <div className="AppModal-titlebar">
+        <span className="AppModal-title">{props.title}</span>
+        <FontAwesomeIcon
+          icon={faTimes}
+          size="2x"
+          className="AppModal-close"
+          onClick={props.onRequestClose}
+        />
+      </div>
+      <div className="AppModal-children">
+        {props.children}
+      </div>
     </Modal>
   );
 }
@@ -33,6 +38,7 @@ AppModal.propTypes = {
   ]),
   isOpen: PropTypes.bool,
   onRequestClose: PropTypes.func,
+  title: PropTypes.string,
 };
 
 export default AppModal;
