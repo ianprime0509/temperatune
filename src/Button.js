@@ -7,13 +7,13 @@ import './Button.css';
 function Button(props) {
   return (
     <div className="Button" onClick={props.onClick}>
-      {props.children}
+      {props.label}
     </div>
   );
 }
 
 Button.propTypes = {
-  children: PropTypes.element,
+  label: PropTypes.string,
   onClick: PropTypes.func,
 };
 

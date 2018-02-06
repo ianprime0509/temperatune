@@ -47,7 +47,7 @@ class PitchGenerator extends Component {
 
   /** Return an array of the accessible octaves in the current temperament. */
   getOctaves() {
-    return [...Array(200).keys()];
+    return [...Array(10).keys()];
   }
 
   handleCloseOctavesModal() {
@@ -74,12 +74,14 @@ class PitchGenerator extends Component {
     return (
       <div className="PitchGenerator">
         <div className="PitchGenerator-controls">
-          <Button onClick={this.handleOpenNotesModal.bind(this)}>
-            <span>A</span>
-          </Button>
-          <Button onClick={this.handleOpenOctavesModal.bind(this)}>
-            <span>4</span>
-          </Button>
+          <Button
+            label="A"
+            onClick={this.handleOpenNotesModal.bind(this)}
+          />
+          <Button
+            label="4"
+            onClick={this.handleOpenOctavesModal.bind(this)}
+          />
         </div >
         <PlaybackControl
           isPlaying={this.state.isPlaying}
@@ -96,11 +98,9 @@ class PitchGenerator extends Component {
           title="Select note"
         >
           <div className="App-notes">
-            {this.getNoteNames().map(note => (
-              <Button key={note}>
-                <span>{note}</span>
-              </Button>
-            ))}
+            {this.getNoteNames().map(note =>
+              <Button key={note} label={note} />
+            )}
           </div>
         </AppModal>
         <AppModal
@@ -109,11 +109,9 @@ class PitchGenerator extends Component {
           title="Select octave"
         >
           <div className="App-octaves">
-            {this.getOctaves().map(octave => (
-              <Button key={octave}>
-                <span>{octave}</span>
-              </Button>
-            ))}
+            {this.getOctaves().map(octave =>
+              <Button key={octave} label={octave} />
+            )}
           </div>
         </AppModal>
       </div >
