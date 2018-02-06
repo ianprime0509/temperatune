@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Modal from 'react-modal';
 
 import AppModal from './AppModal';
-import Button from './Button';
 import PitchAnalyzer from './PitchAnalyzer';
 import PitchGenerator from './PitchGenerator';
 
@@ -14,8 +13,6 @@ class App extends Component {
     this.state = {
       /** Whether the front panel is being shown. */
       isFrontPanel: true,
-      notesModalIsOpen: false,
-      octavesModalIsOpen: false,
       settingsAreOpen: false,
     };
     // TODO: is this correct?  Documentation is a bit sparse on this feature,
@@ -24,38 +21,12 @@ class App extends Component {
     Modal.setAppElement(document.getElementById('root'));
   }
 
-  /** Return an array of the note names in the current temperament. */
-  getNoteNames() {
-    return ['C', 'D', 'E'];
-  }
-
-  /** Return an array of the accessible octaves in the current temperament. */
-  getOctaves() {
-    return [...Array(200).keys()];
-  }
-
-  handleCloseNotesModal() {
-    this.setState({ notesModalIsOpen: false });
-  }
-
-  handleCloseOctavesModal() {
-    this.setState({ octavesModalIsOpen: false });
-  }
-
   handleCloseSettings() {
     this.setState({ settingsAreOpen: false });
   }
 
   handleFlipView() {
     this.setState({ isFrontPanel: !this.state.isFrontPanel });
-  }
-
-  handleOpenNotesModal() {
-    this.setState({ notesModalIsOpen: true });
-  }
-
-  handleOpenOctavesModal() {
-    this.setState({ octavesModalIsOpen: true });
   }
 
   handleOpenSettings() {
@@ -76,8 +47,6 @@ class App extends Component {
           <div className="App-front">
             <PitchGenerator
               onFlipView={this.handleFlipView.bind(this)}
-              onOpenNotesModal={this.handleOpenNotesModal.bind(this)}
-              onOpenOctavesModal={this.handleOpenOctavesModal.bind(this)}
               onOpenSettings={this.handleOpenSettings.bind(this)}
             />
           </div>
@@ -88,32 +57,6 @@ class App extends Component {
             />
           </div>
         </div>
-        <AppModal
-          isOpen={this.state.notesModalIsOpen}
-          onRequestClose={this.handleCloseNotesModal.bind(this)}
-          title="Select note"
-        >
-          <div className="App-notes">
-            {this.getNoteNames().map(note => (
-              <Button key={note}>
-                <span>{note}</span>
-              </Button>
-            ))}
-          </div>
-        </AppModal>
-        <AppModal
-          isOpen={this.state.octavesModalIsOpen}
-          onRequestClose={this.handleCloseOctavesModal.bind(this)}
-          title="Select octave"
-        >
-          <div className="App-octaves">
-            {this.getOctaves().map(octave => (
-              <Button key={octave}>
-                <span>{octave}</span>
-              </Button>
-            ))}
-          </div>
-        </AppModal>
         <AppModal
           isOpen={this.state.settingsAreOpen}
           onRequestClose={this.handleCloseSettings.bind(this)}

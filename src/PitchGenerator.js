@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faMicrophone, faPause, faPlay } from '@fortawesome/fontawesome-free-solid';
 
+import AppModal from './AppModal';
 import Button from './Button';
 import SettingsBar from './SettingsBar';
 
@@ -34,7 +35,35 @@ class PitchGenerator extends Component {
     super();
     this.state = {
       isPlaying: false,
+      notesModalIsOpen: false,
+      octavesModalIsOpen: false,
     };
+  }
+
+  /** Return an array of the note names in the current temperament. */
+  getNoteNames() {
+    return ['C', 'D', 'E'];
+  }
+
+  /** Return an array of the accessible octaves in the current temperament. */
+  getOctaves() {
+    return [...Array(200).keys()];
+  }
+
+  handleCloseOctavesModal() {
+    this.setState({ octavesModalIsOpen: false });
+  }
+
+  handleCloseNotesModal() {
+    this.setState({ notesModalIsOpen: false });
+  }
+
+  handleOpenNotesModal() {
+    this.setState({ notesModalIsOpen: true });
+  }
+
+  handleOpenOctavesModal() {
+    this.setState({ octavesModalIsOpen: true });
   }
 
   handlePlaybackClick() {
@@ -45,13 +74,13 @@ class PitchGenerator extends Component {
     return (
       <div className="PitchGenerator">
         <div className="PitchGenerator-controls">
-          <Button onClick={this.props.onOpenNotesModal}>
+          <Button onClick={this.handleOpenNotesModal.bind(this)}>
             <span>A</span>
           </Button>
-          <Button onClick={this.props.onOpenOctavesModal}>
+          <Button onClick={this.handleOpenOctavesModal.bind(this)}>
             <span>4</span>
           </Button>
-        </div>
+        </div >
         <PlaybackControl
           isPlaying={this.state.isPlaying}
           onClick={this.handlePlaybackClick.bind(this)}
@@ -61,15 +90,39 @@ class PitchGenerator extends Component {
           onFlipView={this.props.onFlipView}
           onOpenSettings={this.props.onOpenSettings}
         />
-      </div>
+        <AppModal
+          isOpen={this.state.notesModalIsOpen}
+          onRequestClose={this.handleCloseNotesModal.bind(this)}
+          title="Select note"
+        >
+          <div className="App-notes">
+            {this.getNoteNames().map(note => (
+              <Button key={note}>
+                <span>{note}</span>
+              </Button>
+            ))}
+          </div>
+        </AppModal>
+        <AppModal
+          isOpen={this.state.octavesModalIsOpen}
+          onRequestClose={this.handleCloseOctavesModal.bind(this)}
+          title="Select octave"
+        >
+          <div className="App-octaves">
+            {this.getOctaves().map(octave => (
+              <Button key={octave}>
+                <span>{octave}</span>
+              </Button>
+            ))}
+          </div>
+        </AppModal>
+      </div >
     );
   }
 }
 
 PitchGenerator.propTypes = {
   onFlipView: PropTypes.func,
-  onOpenNotesModal: PropTypes.func,
-  onOpenOctavesModal: PropTypes.func,
   onOpenSettings: PropTypes.func,
 };
 
