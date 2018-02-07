@@ -110,7 +110,7 @@ class PitchGenerator extends Component {
         >
           <div className="App-octaves">
             {this.getOctaves().map(octave =>
-              <Button key={octave} label={octave} />
+              <Button key={octave} label={String(octave)} />
             )}
           </div>
         </AppModal>

@@ -4,7 +4,6 @@ import Modal from 'react-modal';
 import AppModal from './AppModal';
 import PitchAnalyzer from './PitchAnalyzer';
 import PitchGenerator from './PitchGenerator';
-import Temperament from './Temperament';
 
 import './App.css';
 
@@ -16,9 +15,7 @@ class App extends Component {
       isFrontPanel: true,
       settingsAreOpen: false,
     };
-    // TODO: is this correct?  Documentation is a bit sparse on this feature,
-    // and this probably isn't what I want; I'm pretty sure this hides the
-    // *entire app* from screen readers, including the modal.
+
     Modal.setAppElement(document.getElementById('root'));
   }
 
