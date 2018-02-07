@@ -13,8 +13,8 @@ class PitchAnalyzer extends Component {
         <span className="PitchAnalyzer-note">A</span>
         <SettingsBar
           switchIcon={faMusic}
-          onFlipView={this.props.onFlipView}
-          onOpenSettings={this.props.onOpenSettings}
+          onSettingsOpen={this.props.onSettingsOpen}
+          onViewFlip={this.props.onViewFlip}
         />
       </div>
     );
@@ -22,8 +22,8 @@ class PitchAnalyzer extends Component {
 }
 
 PitchAnalyzer.propTypes = {
-  onFlipView: PropTypes.func,
-  onOpenSettings: PropTypes.func,
+  onSettingsOpen: PropTypes.func,
+  onViewFlip: PropTypes.func,
 };
 
 export default PitchAnalyzer;

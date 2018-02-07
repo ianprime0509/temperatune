@@ -24,24 +24,24 @@ class App extends Component {
     Modal.setAppElement(document.getElementById('root'));
   }
 
-  handleCloseSettings() {
-    this.setState({ settingsAreOpen: false });
-  }
-
-  handleFlipView() {
-    this.setState({ isFrontPanel: !this.state.isFrontPanel });
-  }
-
-  handleOpenSettings() {
-    this.setState({ settingsAreOpen: true });
-  }
-
-  handleSelectNote(note) {
+  handleNoteSelect(note) {
     this.setState({ selectedNote: note });
   }
 
-  handleSelectOctave(octave) {
+  handleOctaveSelect(octave) {
     this.setState({ selectedOctave: octave });
+  }
+
+  handleSettingsClose() {
+    this.setState({ settingsAreOpen: false });
+  }
+
+  handleSettingsOpen() {
+    this.setState({ settingsAreOpen: true });
+  }
+
+  handleViewFlip() {
+    this.setState({ isFrontPanel: !this.state.isFrontPanel });
   }
 
   render() {
@@ -57,10 +57,10 @@ class App extends Component {
         <div className={flipperClasses} id="App-flipper">
           <div className="App-front">
             <PitchGenerator
-              onFlipView={this.handleFlipView.bind(this)}
-              onOpenSettings={this.handleOpenSettings.bind(this)}
-              onSelectNote={this.handleSelectNote.bind(this)}
-              onSelectOctave={this.handleSelectOctave.bind(this)}
+              onNoteSelect={this.handleNoteSelect.bind(this)}
+              onOctaveSelect={this.handleOctaveSelect.bind(this)}
+              onSettingsOpen={this.handleSettingsOpen.bind(this)}
+              onViewFlip={this.handleViewFlip.bind(this)}
               selectedNote={this.state.selectedNote}
               selectedOctave={this.state.selectedOctave}
               temperament={this.state.temperament}
@@ -68,14 +68,14 @@ class App extends Component {
           </div>
           <div className="App-back">
             <PitchAnalyzer
-              onFlipView={this.handleFlipView.bind(this)}
-              onOpenSettings={this.handleOpenSettings.bind(this)}
+              onSettingsOpen={this.handleSettingsOpen.bind(this)}
+              onViewFlip={this.handleViewFlip.bind(this)}
             />
           </div>
         </div>
         <AppModal
           isOpen={this.state.settingsAreOpen}
-          onRequestClose={this.handleCloseSettings.bind(this)}
+          onRequestClose={this.handleSettingsClose.bind(this)}
           title="Settings"
         >
           <h1>lol no settings</h1>

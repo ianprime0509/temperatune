@@ -16,21 +16,21 @@ function SettingsBar(props) {
         className="SettingsBar-icon"
         icon={faCog}
         size="3x"
-        onClick={props.onOpenSettings}
+        onClick={props.onSettingsOpen}
       />
       <FontAwesomeIcon
         className="SettingsBar-icon"
         icon={props.switchIcon}
         size="3x"
-        onClick={props.onFlipView}
+        onClick={props.onViewFlip}
       />
     </div>
   );
 }
 
 SettingsBar.propTypes = {
-  onFlipView: PropTypes.func,
-  onOpenSettings: PropTypes.func,
+  onSettingsOpen: PropTypes.func,
+  onViewFlip: PropTypes.func,
   /** The icon to show for the switch button. */
   switchIcon: PropTypes.object.isRequired,
 };

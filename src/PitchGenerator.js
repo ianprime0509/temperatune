@@ -55,34 +55,34 @@ class PitchGenerator extends Component {
     return [...Array(10).keys()];
   }
 
-  handleCloseOctavesModal() {
-    this.setState({ octavesModalIsOpen: false });
+  handleNoteSelect(note) {
+    this.props.onNoteSelect(note);
+    this.handleNotesModalClose();
   }
 
-  handleCloseNotesModal() {
+  handleNotesModalClose() {
     this.setState({ notesModalIsOpen: false });
   }
 
-  handleOpenNotesModal() {
+  handleNotesModalOpen() {
     this.setState({ notesModalIsOpen: true });
   }
 
-  handleOpenOctavesModal() {
+  handleOctaveSelect(octave) {
+    this.props.onOctaveSelect(octave);
+    this.handleOctavesModalClose();
+  }
+
+  handleOctavesModalClose() {
+    this.setState({ octavesModalIsOpen: false });
+  }
+
+  handleOctavesModalOpen() {
     this.setState({ octavesModalIsOpen: true });
   }
 
   handlePlaybackClick() {
     this.setState({ isPlaying: !this.state.isPlaying });
-  }
-
-  handleSelectNote(note) {
-    this.props.onSelectNote(note);
-    this.handleCloseNotesModal();
-  }
-
-  handleSelectOctave(octave) {
-    this.props.onSelectOctave(octave);
-    this.handleCloseOctavesModal();
   }
 
   render() {
@@ -91,11 +91,11 @@ class PitchGenerator extends Component {
         <div className="PitchGenerator-controls">
           <Button
             label={prettifyNoteName(this.props.selectedNote)}
-            onClick={this.handleOpenNotesModal.bind(this)}
+            onClick={this.handleNotesModalOpen.bind(this)}
           />
           <Button
-            label={this.props.selectedOctave}
-            onClick={this.handleOpenOctavesModal.bind(this)}
+            label={String(this.props.selectedOctave)}
+            onClick={this.handleOctavesModalOpen.bind(this)}
           />
         </div >
         <PlaybackControl
@@ -104,12 +104,12 @@ class PitchGenerator extends Component {
         />
         <SettingsBar
           switchIcon={faMicrophone}
-          onFlipView={this.props.onFlipView}
-          onOpenSettings={this.props.onOpenSettings}
+          onViewFlip={this.props.onViewFlip}
+          onSettingsOpen={this.props.onSettingsOpen}
         />
         <AppModal
           isOpen={this.state.notesModalIsOpen}
-          onRequestClose={this.handleCloseNotesModal.bind(this)}
+          onRequestClose={this.handleNotesModalClose.bind(this)}
           title="Select note"
         >
           <div className="App-notes">
@@ -117,14 +117,14 @@ class PitchGenerator extends Component {
               <Button
                 key={note}
                 label={prettifyNoteName(note)}
-                onClick={() => this.handleSelectNote(note)}
+                onClick={() => this.handleNoteSelect(note)}
               />
             )}
           </div>
         </AppModal>
         <AppModal
           isOpen={this.state.octavesModalIsOpen}
-          onRequestClose={this.handleCloseOctavesModal.bind(this)}
+          onRequestClose={this.handleOctavesModalClose.bind(this)}
           title="Select octave"
         >
           <div className="App-octaves">
@@ -132,7 +132,7 @@ class PitchGenerator extends Component {
               <Button
                 key={octave}
                 label={String(octave)}
-                onClick={() => this.handleSelectOctave(octave)}
+                onClick={() => this.handleOctaveSelect(octave)}
               />
             )}
           </div>
@@ -143,10 +143,10 @@ class PitchGenerator extends Component {
 }
 
 PitchGenerator.propTypes = {
-  onFlipView: PropTypes.func,
-  onOpenSettings: PropTypes.func,
-  onSelectNote: PropTypes.func,
-  onSelectOctave: PropTypes.func,
+  onNoteSelect: PropTypes.func,
+  onOctaveSelect: PropTypes.func,
+  onSettingsOpen: PropTypes.func,
+  onViewFlip: PropTypes.func,
   selectedNote: PropTypes.string,
   selectedOctave: PropTypes.number,
   temperament: PropTypes.instanceOf(Temperament),
