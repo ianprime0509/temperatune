@@ -86,7 +86,7 @@ export function prettifyNoteName(name) {
 
   for (let c of name) {
     if (inElement) {
-      if (c == '}') {
+      if (c === '}') {
         pretty += replacements.has(element) ?
           replacements.get(element) :
           element;
@@ -96,13 +96,15 @@ export function prettifyNoteName(name) {
         element += c;
       }
     } else {
-      if (c == '{') {
+      if (c === '{') {
         inElement = true;
       } else {
         pretty += c;
       }
     }
   }
+
+  pretty += element;
 
   return pretty;
 }

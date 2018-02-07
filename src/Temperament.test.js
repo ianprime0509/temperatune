@@ -131,10 +131,18 @@ describe('prettifyNoteName()', () => {
     expect(prettifyNoteName('C{sharp}{flat}')).toBe('C♯♭');
   });
 
-  test('reprints unknown element sequences in output, without curly braces',
+  test('reprints unknown element sequences in output without curly braces',
     () => {
       expect(prettifyNoteName('{unknown}')).toBe('unknown');
       expect(prettifyNoteName('hi {there}, user')).toBe('hi there, user');
+    }
+  );
+
+  test('reprints unclosed element sequences in output without curly braces',
+    () => {
+      expect(prettifyNoteName('{unclosed')).toBe('unclosed');
+      expect(prettifyNoteName('what is {this thing'))
+        .toBe('what is this thing');
     }
   );
 });
