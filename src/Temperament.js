@@ -63,6 +63,51 @@ export default class Temperament {
 }
 
 /**
+ * Return the "pretty" version of the given note name.
+ *
+ * "Pretty" means replacing elements enclosed in curly braces ({}) by
+ * corresponding Unicode symbols, provided that the element is recognized.  For
+ * example, '{sharp}' will be replaced by '♯'.
+ *
+ * Note that this function is supposed to be simple.  Curly braces do not nest,
+ * and an unclosed or unrecognized element sequence will be kept verbatim in
+ * the output, but without the curly braces.  Currently, there is no way to
+ * escape a curly brace, but this may change later.
+ */
+export function prettifyNoteName(name) {
+  const replacements = new Map([
+    ['sharp', '♯'],
+    ['flat', '♭']
+  ]);
+
+  let pretty = '';
+  let element = '';
+  let inElement = false;
+
+  for (let c of name) {
+    if (inElement) {
+      if (c == '}') {
+        pretty += replacements.has(element) ?
+          replacements.get(element) :
+          element;
+        inElement = false;
+        element = '';
+      } else {
+        element += c;
+      }
+    } else {
+      if (c == '{') {
+        inElement = true;
+      } else {
+        pretty += c;
+      }
+    }
+  }
+
+  return pretty;
+}
+
+/**
  * Compute the offsets list for the given temperament, using the given note
  * definitions.
  *

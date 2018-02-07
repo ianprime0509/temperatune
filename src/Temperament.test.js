@@ -1,4 +1,4 @@
-import Temperament from './Temperament';
+import Temperament, { prettifyNoteName } from './Temperament';
 
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
@@ -70,7 +70,8 @@ describe('Temperament', () => {
         expect(qcm.getNoteNames()).toEqual(['C', 'C{sharp}', 'D', 'E{flat}',
           'E', 'F', 'F{sharp}', 'G', 'G{sharp}', 'A{flat}', 'A', 'B{flat}',
           'B']);
-      });
+      }
+    );
   });
 
   describe('getOffset()', () => {
@@ -120,4 +121,20 @@ describe('Temperament', () => {
       expect(equal.getPitch('C{sharp}', 0)).toBeCloseTo(17.3239);
     });
   });
+});
+
+describe('prettifyNoteName()', () => {
+  test('returns a string with element sequences replaced', () => {
+    expect(prettifyNoteName('A{sharp}')).toBe('A♯');
+    expect(prettifyNoteName('D{flat}')).toBe('D♭');
+    // Yes, I know this isn't a real note :)
+    expect(prettifyNoteName('C{sharp}{flat}')).toBe('C♯♭');
+  });
+
+  test('reprints unknown element sequences in output, without curly braces',
+    () => {
+      expect(prettifyNoteName('{unknown}')).toBe('unknown');
+      expect(prettifyNoteName('hi {there}, user')).toBe('hi there, user');
+    }
+  );
 });
