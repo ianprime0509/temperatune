@@ -1,0 +1,22 @@
+{
+  "name": "Quarter-comma meantone",
+  "referenceName": "A",
+  "referencePitch": 415,
+  "referenceOctave": 4,
+  "octaveBaseName": "C",
+  "notes": {
+    "A{flat}": ["D", 620.5],
+    "E{flat}": ["D", 117.1],
+    "B{flat}": ["D", 813.7],
+    "F": ["D", 310.3],
+    "C": ["D", 1006.8],
+    "G": ["D", 503.4],
+    "D": ["D", 0],
+    "A": ["D", 696.6],
+    "E": ["D", 193.2],
+    "B": ["D", 889.7],
+    "F{sharp}": ["D", 386.3],
+    "C{sharp}": ["D", 1082.9],
+    "G{sharp}": ["D", 579.5]
+  }
+}

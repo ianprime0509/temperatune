@@ -1,0 +1,21 @@
+{
+  "name": "Equal temperament",
+  "referenceName": "A",
+  "referencePitch": 440,
+  "referenceOctave": 4,
+  "octaveBaseName": "C",
+  "notes": {
+    "C": ["C", 0],
+    "C{sharp}": ["C", 100],
+    "D": ["C{sharp}", 100],
+    "E{flat}": ["D", 100],
+    "E": ["E{flat}", 100],
+    "F": ["E", 100],
+    "F{sharp}": ["F", 100],
+    "G": ["F{sharp}", 100],
+    "G{sharp}": ["G", 100],
+    "A": ["G{sharp}", 100],
+    "B{flat}": ["A", 100],
+    "B": ["B{flat}", 100]
+  }
+}

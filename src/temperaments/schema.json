@@ -1,0 +1,53 @@
+{
+  "title": "Temperament",
+  "description": "A complete description of a musical temperament with additional metadata.",
+  "type": "object",
+  "required": [
+    "name", "octaveBaseName", "referencePitch", "referenceName",
+    "referenceOctave", "notes"
+  ],
+  "properties": {
+    "name": {
+      "description": "The name of the temperament.",
+      "type": "string"
+    },
+    "description": {
+      "description": "A description of the temperament.",
+      "type": "string"
+    },
+    "octaveBaseName": {
+      "description": "The name of the base note of the octave.",
+      "type": "string"
+    },
+    "referencePitch": {
+      "description": "The frequency (in Hz) of the reference pitch.",
+      "type": "number"
+    },
+    "referenceName": {
+      "description": "The note name of the reference pitch.",
+      "type": "string"
+    },
+    "referenceOctave": {
+      "description": "The octave number of the reference pitch.",
+      "type": "integer"
+    },
+    "notes": {
+      "description": "A mapping of note names to a description of each note.",
+      "type": "object",
+      "additionalProperties": {
+        "description": "A description of the note, as an offset from another note.",
+        "type": "array",
+        "items": [
+          {
+            "description": "The base note from which to offset.",
+            "type": "string"
+          },
+          {
+            "description": "The offset (in cents) from the base note.",
+            "type": "number"
+          }
+        ]
+      }
+    }
+  }
+}

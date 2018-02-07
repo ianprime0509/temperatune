@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import AppModal from './AppModal';
 import PitchAnalyzer from './PitchAnalyzer';
 import PitchGenerator from './PitchGenerator';
+import Temperament from './Temperament';
 
 import './App.css';
 
