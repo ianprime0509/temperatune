@@ -4,8 +4,10 @@ import Modal from 'react-modal';
 import AppModal from './AppModal';
 import PitchAnalyzer from './PitchAnalyzer';
 import PitchGenerator from './PitchGenerator';
+import Temperament from './Temperament';
 
 import './App.css';
+import equalTemperament from './temperaments/equal.json';
 
 class App extends Component {
   constructor() {
@@ -14,7 +16,10 @@ class App extends Component {
       /** Whether the front panel is being shown. */
       isFrontPanel: true,
       settingsAreOpen: false,
+      temperament: new Temperament(equalTemperament),
     };
+    this.state.selectedNote = this.state.temperament.referenceName;
+    this.state.selectedOctave = this.state.temperament.referenceOctave;
 
     Modal.setAppElement(document.getElementById('root'));
   }
@@ -29,6 +34,14 @@ class App extends Component {
 
   handleOpenSettings() {
     this.setState({ settingsAreOpen: true });
+  }
+
+  handleSelectNote(note) {
+    this.setState({ selectedNote: note });
+  }
+
+  handleSelectOctave(octave) {
+    this.setState({ selectedOctave: octave });
   }
 
   render() {
@@ -46,6 +59,11 @@ class App extends Component {
             <PitchGenerator
               onFlipView={this.handleFlipView.bind(this)}
               onOpenSettings={this.handleOpenSettings.bind(this)}
+              onSelectNote={this.handleSelectNote.bind(this)}
+              onSelectOctave={this.handleSelectOctave.bind(this)}
+              selectedNote={this.state.selectedNote}
+              selectedOctave={this.state.selectedOctave}
+              temperament={this.state.temperament}
             />
           </div>
           <div className="App-back">

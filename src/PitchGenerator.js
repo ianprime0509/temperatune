@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faMicrophone, faPause, faPlay } from '@fortawesome/fontawesome-free-solid';
+import {
+  faMicrophone,
+  faPause,
+  faPlay,
+} from '@fortawesome/fontawesome-free-solid';
 
 import AppModal from './AppModal';
 import Button from './Button';
 import SettingsBar from './SettingsBar';
+import Temperament, { prettifyNoteName } from './Temperament';
 
 import './PitchGenerator.css';
 
@@ -70,16 +75,26 @@ class PitchGenerator extends Component {
     this.setState({ isPlaying: !this.state.isPlaying });
   }
 
+  handleSelectNote(note) {
+    this.props.onSelectNote(note);
+    this.handleCloseNotesModal();
+  }
+
+  handleSelectOctave(octave) {
+    this.props.onSelectOctave(octave);
+    this.handleCloseOctavesModal();
+  }
+
   render() {
     return (
       <div className="PitchGenerator">
         <div className="PitchGenerator-controls">
           <Button
-            label="A"
+            label={prettifyNoteName(this.props.selectedNote)}
             onClick={this.handleOpenNotesModal.bind(this)}
           />
           <Button
-            label="4"
+            label={this.props.selectedOctave}
             onClick={this.handleOpenOctavesModal.bind(this)}
           />
         </div >
@@ -98,8 +113,12 @@ class PitchGenerator extends Component {
           title="Select note"
         >
           <div className="App-notes">
-            {this.getNoteNames().map(note =>
-              <Button key={note} label={note} />
+            {this.props.temperament.getNoteNames().map(note =>
+              <Button
+                key={note}
+                label={prettifyNoteName(note)}
+                onClick={() => this.handleSelectNote(note)}
+              />
             )}
           </div>
         </AppModal>
@@ -110,7 +129,11 @@ class PitchGenerator extends Component {
         >
           <div className="App-octaves">
             {this.getOctaves().map(octave =>
-              <Button key={octave} label={String(octave)} />
+              <Button
+                key={octave}
+                label={String(octave)}
+                onClick={() => this.handleSelectOctave(octave)}
+              />
             )}
           </div>
         </AppModal>
@@ -122,6 +145,11 @@ class PitchGenerator extends Component {
 PitchGenerator.propTypes = {
   onFlipView: PropTypes.func,
   onOpenSettings: PropTypes.func,
+  onSelectNote: PropTypes.func,
+  onSelectOctave: PropTypes.func,
+  selectedNote: PropTypes.string,
+  selectedOctave: PropTypes.number,
+  temperament: PropTypes.instanceOf(Temperament),
 };
 
 export default PitchGenerator;
