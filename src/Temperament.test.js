@@ -74,6 +74,14 @@ describe('Temperament', () => {
     );
   });
 
+  describe('getOctaveRange()', () => {
+    test('returns a range of octaves around the reference octave', () => {
+      const equal = new Temperament(equalTemperament);
+      expect(equal.getOctaveRange(2)).toEqual([2, 3, 4, 5, 6]);
+      expect(equal.getOctaveRange(0)).toEqual([4]);
+    });
+  });
+
   describe('getOffset()', () => {
     test('returns the correct offsets in equal temperament', () => {
       const equal = new Temperament(equalTemperament);

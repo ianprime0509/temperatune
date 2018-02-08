@@ -39,20 +39,21 @@ class PitchGenerator extends Component {
   constructor() {
     super();
     this.state = {
+      audioContext: new (window.AudioContext || window.webkitAudioContext)(),
       isPlaying: false,
       notesModalIsOpen: false,
       octavesModalIsOpen: false,
+      oscillator: null,
     };
   }
 
-  /** Return an array of the note names in the current temperament. */
-  getNoteNames() {
-    return ['C', 'D', 'E'];
-  }
-
-  /** Return an array of the accessible octaves in the current temperament. */
-  getOctaves() {
-    return [...Array(10).keys()];
+  componentWillReceiveProps(newProps) {
+    if (this.props.selectedNote !== newProps.selectedNote ||
+      this.props.selectedOctave !== newProps.octave) {
+      const note = newProps.selectedNote;
+      const octave = newProps.selectedOctave;
+      this.soundUpdate(newProps.temperament.getPitch(note, octave));
+    }
   }
 
   handleNoteSelect(note) {
@@ -82,7 +83,41 @@ class PitchGenerator extends Component {
   }
 
   handlePlaybackClick() {
-    this.setState({ isPlaying: !this.state.isPlaying });
+    if (this.state.isPlaying) {
+      this.soundStop();
+      this.setState({ isPlaying: false });
+    } else {
+      const note = this.props.selectedNote;
+      const octave = this.props.selectedOctave;
+      this.soundPlay(this.props.temperament.getPitch(note, octave));
+      this.setState({ isPlaying: true });
+    }
+  }
+
+  soundPlay(pitch) {
+    if (this.state.oscillator) {
+      this.state.oscillator.stop();
+    }
+    let ctx = this.state.audioContext;
+    let oscillator = ctx.createOscillator();
+    oscillator.frequency.setValueAtTime(pitch, ctx.currentTime);
+    oscillator.connect(ctx.destination);
+    oscillator.start();
+
+    this.setState({ oscillator });
+  }
+
+  soundStop() {
+    if (this.state.oscillator) {
+      this.state.oscillator.stop();
+      this.setState({ oscillator: null });
+    }
+  }
+
+  soundUpdate(pitch) {
+    if (this.state.oscillator) {
+      this.soundPlay(pitch);
+    }
   }
 
   render() {
@@ -128,7 +163,7 @@ class PitchGenerator extends Component {
           title="Select octave"
         >
           <div className="App-octaves">
-            {this.getOctaves().map(octave =>
+            {this.props.temperament.getOctaveRange(2).map(octave =>
               <Button
                 key={octave}
                 label={String(octave)}

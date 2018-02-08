@@ -47,6 +47,22 @@ export default class Temperament {
     return [...this.noteNames];
   }
 
+  /**
+   * Return an array with octave numbers in order, forming a range with the
+   * given radius around the reference octave.
+   */
+  getOctaveRange(radius) {
+    const start = this.referenceOctave - radius;
+    const end = this.referenceOctave + radius;
+    let octaves = [];
+
+    for (let i = start; i <= end; i++) {
+      octaves.push(i);
+    }
+
+    return octaves;
+  }
+
   /** Return the offset of the given note (relative to the reference pitch). */
   getOffset(note, octave) {
     const offset = this.offsets.get(note);
