@@ -57,6 +57,34 @@ describe('Temperament', () => {
     });
   });
 
+  describe('getNoteNameFromPitch()', () => {
+    test('identifies the closest note to a pitch', () => {
+      const equal = new Temperament(equalTemperament);
+
+      expect(equal.getNoteNameFromPitch(440)[0]).toBe('A');
+      expect(equal.getNoteNameFromPitch(880)[0]).toBe('A');
+      expect(equal.getNoteNameFromPitch(261.626)[0]).toBe('C');
+      expect(equal.getNoteNameFromPitch(261.626 * 2 ** (1 / 1200))[0])
+        .toBe('C');
+      expect(equal.getNoteNameFromPitch(311.127 * 2 ** (-4 / 1200))[0])
+        .toBe('E{flat}');
+    });
+
+    test('identifies the offset (in cents) from the closest note to a pitch',
+      () => {
+        const equal = new Temperament(equalTemperament);
+
+        expect(equal.getNoteNameFromPitch(440)[1]).toBeCloseTo(0);
+        expect(equal.getNoteNameFromPitch(880)[1]).toBeCloseTo(0);
+        expect(equal.getNoteNameFromPitch(261.626)[1]).toBeCloseTo(0);
+        expect(equal.getNoteNameFromPitch(261.626 * 2 ** (1 / 1200))[1])
+          .toBeCloseTo(1);
+        expect(equal.getNoteNameFromPitch(311.127 * 2 ** (-4 / 1200))[1])
+          .toBeCloseTo(-4);
+      }
+    );
+  });
+
   describe('getNoteNames()', () => {
     test('returns an ordered array of equal temperament note names', () => {
       const equal = new Temperament(equalTemperament);

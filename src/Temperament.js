@@ -36,6 +36,49 @@ export default class Temperament {
   }
 
   /**
+   * Return the closest note to the given pitch (in Hz), along with the pitch
+   * difference (in cents).
+   *
+   * The returned value will be an array with the note name as its first
+   * element and the pitch difference as the second.
+   */
+  getNoteNameFromPitch(pitch) {
+    // We need to get the offset in cents from the reference pitch so we can
+    // compare it.  The offset needs to be normalized so that it's within an
+    // octave of the octave base note.
+    let offset = Math.log2(pitch / this.referencePitch) * OCTAVE_SIZE;
+    if (offset - this.offsets.get(this.octaveBaseName) >= OCTAVE_SIZE) {
+      offset -= OCTAVE_SIZE;
+    }
+
+    // Now we need to figure out the closest note using a (slightly modified)
+    // binary search.
+    let start = 0;
+    let end = this.noteNames.length - 1;
+    while (end - start > 1) {
+      let mid = Math.trunc((end + start) / 2);
+      let midOffset = this.offsets.get(this.noteNames[mid]);
+      if (offset > midOffset) {
+        start = mid;
+      } else if (offset < midOffset) {
+        end = mid;
+      } else {
+        return [this.noteNames[mid], 0];
+      }
+    }
+
+    let startNote = this.noteNames[start];
+    let startDifference = offset - this.offsets.get(startNote);
+    let endNote = this.noteNames[end];
+    let endDifference = offset - this.offsets.get(endNote);
+    if (Math.abs(startDifference) < Math.abs(endDifference)) {
+      return [startNote, startDifference];
+    } else {
+      return [endNote, endDifference];
+    }
+  }
+
+  /**
    * Return an array of the note names defined in the temperament.
    *
    * The returned array will be sorted in increasing order of pitch, starting
