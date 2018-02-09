@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/fontawesome-free-solid';
 
 import SettingsBar from './SettingsBar';
+import Temperament, { prettifyNoteName } from './Temperament';
 
 import './PitchAnalyzer.css';
 
@@ -19,19 +20,24 @@ class PitchAnalyzer extends Component {
     this.state = {
       analyserNode: null,
       audioContext: new window.AudioContext(),
-      pitch: '-',
+      /** The current detected note. */
+      note: '-',
+      /** The offset of the current pitch from the detected note. */
+      offset: 0,
     };
     this._getMicrophoneInput();
   }
 
   componentDidMount() {
-    this._updatePitch();
+    this._updateNote();
   }
 
   render() {
     return (
       <div className="PitchAnalyzer">
-        <span className="PitchAnalyzer-note">{this.state.pitch}</span>
+        <span className="PitchAnalyzer-note">
+          {prettifyNoteName(this.state.note)}
+        </span>
         <SettingsBar
           switchIcon={faMusic}
           onSettingsOpen={this.props.onSettingsOpen}
@@ -60,22 +66,27 @@ class PitchAnalyzer extends Component {
     });
   }
 
-  _updatePitch() {
-    this.setState((state) => {
+  _updateNote() {
+    this.setState((state, props) => {
       let ctx = state.audioContext;
       let analyserNode = state.analyserNode;
+      // We might as well request the next animation frame here, so that we
+      // don't have to remember to do it in every single exit path.
+      window.requestAnimationFrame(this._updateNote.bind(this));
 
       if (!analyserNode) {
         // Nothing to get updates from.
-        window.requestAnimationFrame(this._updatePitch.bind(this));
         return {};
       }
       let data = new Float32Array(analyserNode.fftSize);
       analyserNode.getFloatTimeDomainData(data);
       let pitch = findFundamentalFrequency(data, ctx.sampleRate);
+      if (pitch === -1) {
+        return { note: '-', offset: 0 };
+      }
+      let [note, offset] = props.temperament.getNoteNameFromPitch(pitch);
 
-      window.requestAnimationFrame(this._updatePitch.bind(this));
-      return { pitch };
+      return { note, offset };
     });
   }
 }
@@ -83,6 +94,7 @@ class PitchAnalyzer extends Component {
 PitchAnalyzer.propTypes = {
   onSettingsOpen: PropTypes.func,
   onViewFlip: PropTypes.func,
+  temperament: PropTypes.instanceOf(Temperament),
 };
 
 export default PitchAnalyzer;

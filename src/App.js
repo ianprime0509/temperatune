@@ -70,6 +70,7 @@ class App extends Component {
             <PitchAnalyzer
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
               onViewFlip={this.handleViewFlip.bind(this)}
+              temperament={this.state.temperament}
             />
           </div>
         </div>
