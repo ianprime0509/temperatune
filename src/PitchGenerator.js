@@ -39,7 +39,7 @@ class PitchGenerator extends Component {
   constructor() {
     super();
     this.state = {
-      audioContext: new (window.AudioContext || window.webkitAudioContext)(),
+      audioContext: new window.AudioContext(),
       isPlaying: false,
       notesModalIsOpen: false,
       octavesModalIsOpen: false,
