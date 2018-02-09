@@ -1,4 +1,4 @@
-import Temperament, { prettifyNoteName } from './Temperament';
+import Temperament, { OCTAVE_SIZE, prettifyNoteName } from './Temperament';
 
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
@@ -64,9 +64,9 @@ describe('Temperament', () => {
       expect(equal.getNoteNameFromPitch(440)[0]).toBe('A');
       expect(equal.getNoteNameFromPitch(880)[0]).toBe('A');
       expect(equal.getNoteNameFromPitch(261.626)[0]).toBe('C');
-      expect(equal.getNoteNameFromPitch(261.626 * 2 ** (1 / 1200))[0])
+      expect(equal.getNoteNameFromPitch(addCents(261.626, 1))[0])
         .toBe('C');
-      expect(equal.getNoteNameFromPitch(311.127 * 2 ** (-4 / 1200))[0])
+      expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[0])
         .toBe('E{flat}');
     });
 
@@ -77,9 +77,9 @@ describe('Temperament', () => {
         expect(equal.getNoteNameFromPitch(440)[1]).toBeCloseTo(0);
         expect(equal.getNoteNameFromPitch(880)[1]).toBeCloseTo(0);
         expect(equal.getNoteNameFromPitch(261.626)[1]).toBeCloseTo(0);
-        expect(equal.getNoteNameFromPitch(261.626 * 2 ** (1 / 1200))[1])
+        expect(equal.getNoteNameFromPitch(addCents(261.626, 1))[1])
           .toBeCloseTo(1);
-        expect(equal.getNoteNameFromPitch(311.127 * 2 ** (-4 / 1200))[1])
+        expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[1])
           .toBeCloseTo(-4);
       }
     );
@@ -182,3 +182,12 @@ describe('prettifyNoteName()', () => {
     }
   );
 });
+
+/**
+ * A helper function to add the given number of cents to the given pitch.
+ *
+ * @return The resulting pitch, in Hz.
+ */
+function addCents(pitch, cents) {
+  return pitch * 2 ** (cents / OCTAVE_SIZE);
+}

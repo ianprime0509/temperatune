@@ -48,6 +48,7 @@ class PitchGenerator extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    // We should update the sound when the selected note or octave is changed.
     if (this.props.selectedNote !== newProps.selectedNote ||
       this.props.selectedOctave !== newProps.octave) {
       const note = newProps.selectedNote;
@@ -95,23 +96,29 @@ class PitchGenerator extends Component {
   }
 
   soundPlay(pitch) {
-    if (this.state.oscillator) {
-      this.state.oscillator.stop();
-    }
-    let ctx = this.state.audioContext;
-    let oscillator = ctx.createOscillator();
-    oscillator.frequency.setValueAtTime(pitch, ctx.currentTime);
-    oscillator.connect(ctx.destination);
-    oscillator.start();
+    this.setState((state) => {
+      if (state.oscillator) {
+        state.oscillator.stop();
+      }
+      let ctx = state.audioContext;
+      let oscillator = ctx.createOscillator();
+      oscillator.frequency.setValueAtTime(pitch, ctx.currentTime);
+      oscillator.connect(ctx.destination);
+      oscillator.start();
 
-    this.setState({ oscillator });
+      return { oscillator };
+    });
   }
 
   soundStop() {
-    if (this.state.oscillator) {
-      this.state.oscillator.stop();
-      this.setState({ oscillator: null });
-    }
+    this.setState((state) => {
+      if (state.oscillator) {
+        state.oscillator.stop();
+        return { oscillator: null };
+      } else {
+        return {};
+      }
+    });
   }
 
   soundUpdate(pitch) {
