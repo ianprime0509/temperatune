@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/fontawesome-free-solid';
+import { mpm } from 'pitchy';
 
 import SettingsBar from './SettingsBar';
 import Temperament, { prettifyNoteName } from './Temperament';
@@ -80,13 +81,13 @@ class PitchAnalyzer extends Component {
       }
       let data = new Float32Array(analyserNode.fftSize);
       analyserNode.getFloatTimeDomainData(data);
-      let pitch = findFundamentalFrequency(data, ctx.sampleRate);
-      if (pitch === -1) {
+      let [pitch, clarity] = mpm(data, ctx.sampleRate);
+      if (clarity < 0.8) {
         return { note: '-', offset: 0 };
       }
       let [note, offset] = props.temperament.getNoteNameFromPitch(pitch);
 
-      return { note, offset };
+      return { note: note, offset };
     });
   }
 }
@@ -98,51 +99,3 @@ PitchAnalyzer.propTypes = {
 };
 
 export default PitchAnalyzer;
-
-/**
- * Attempts to determine the fundamental frequency from the given audio (time
- * domain) data.
- *
- * Currently, I've tried to keep this simple by using a basic autocorrelation
- * (https://en.wikipedia.org/wiki/Autocorrelation) method, but other
- * possibilities are available (such as the ones mentioned on
- * https://en.wikipedia.org/wiki/Pitch_detection_algorithm).  The sample rate
- * must be provided along with the time-domain data in order to calculate the
- * pitch in Hz from the data period.
- *
- * The time-domain input data should be a Float32Array.
- *
- * @return The fundamental frequency, or -1 if it wasn't clear from the data.
- */
-function findFundamentalFrequency(timeData, sampleRate) {
-  // The minimum correlation to accept.
-  const MIN_CORRELATION = 0.1;
-  // The minimum frequency we care to detect (in Hz).
-  const MIN_FREQ = 60;
-  // The maximum frequency we care to detect (in Hz).
-  const MAX_FREQ = 4000;
-  // The starting value of k (the time domain period).
-  const kStart = Math.round(sampleRate / MAX_FREQ);
-  // The ending value of k.
-  const kEnd = Math.round(sampleRate / MIN_FREQ);
-  // The best correlation found so far, with the corresponding k.
-  let correlation = 0;
-  let kBest = -1;
-
-  for (let k = kStart; k <= kEnd; k++) {
-    // Find the autocorrelation using this period.
-    const nSamples = timeData.length - k;
-    let autocorrelation = 0;
-    for (let i = 0; i < nSamples; i++) {
-      autocorrelation += timeData[i] * timeData[i + k];
-    }
-    autocorrelation /= nSamples;
-
-    if (autocorrelation > correlation) {
-      correlation = autocorrelation;
-      kBest = k;
-    }
-  }
-
-  return correlation < MIN_CORRELATION ? -1 : sampleRate / kBest;
-}
