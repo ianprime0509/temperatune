@@ -1,10 +1,16 @@
 .PitchGenerator {
-  background: red;
-  border-radius: 10px;
+  background: #f7f7f7;
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 0.5rem;
+}
+
+@media (min-width: 500px) {
+  .PitchGenerator {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
 }
 
 .PitchGenerator-controls {
@@ -22,4 +28,18 @@
 
 .PlaybackControl-icon {
   cursor: pointer;
+}
+
+.PitchGenerator-notes, .PitchGenerator-octaves {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.PitchGenerator-notes > .Button {
+  flex: 1 1 20%;
+}
+
+.PitchGenerator-octaves > .Button {
+  flex: 1 1 100%;
 }

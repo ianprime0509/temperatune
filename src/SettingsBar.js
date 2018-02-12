@@ -9,7 +9,7 @@ import './SettingsBar.css';
  * The bottom part of the interface, showing the settings button and a button hi
  * to change between the pitch generator and analyzer.
  */
-function SettingsBar(props) {
+export default function SettingsBar(props) {
   return (
     <div className="SettingsBar">
       <FontAwesomeIcon
@@ -34,5 +34,3 @@ SettingsBar.propTypes = {
   /** The icon to show for the switch button. */
   switchIcon: PropTypes.object.isRequired,
 };
-
-export default SettingsBar;

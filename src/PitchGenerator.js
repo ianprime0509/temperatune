@@ -35,7 +35,7 @@ PlaybackControl.propTypes = {
 };
 
 /** The "panel" containing the pitch generator interface. */
-class PitchGenerator extends Component {
+export default class PitchGenerator extends Component {
   constructor() {
     super();
     this.state = {
@@ -154,7 +154,7 @@ class PitchGenerator extends Component {
           onRequestClose={this.handleNotesModalClose.bind(this)}
           title="Select note"
         >
-          <div className="App-notes">
+          <div className="PitchGenerator-notes">
             {this.props.temperament.getNoteNames().map(note =>
               <Button
                 key={note}
@@ -169,7 +169,7 @@ class PitchGenerator extends Component {
           onRequestClose={this.handleOctavesModalClose.bind(this)}
           title="Select octave"
         >
-          <div className="App-octaves">
+          <div className="PitchGenerator-octaves">
             {this.props.temperament.getOctaveRange(2).map(octave =>
               <Button
                 key={octave}
@@ -193,5 +193,3 @@ PitchGenerator.propTypes = {
   selectedOctave: PropTypes.number,
   temperament: PropTypes.instanceOf(Temperament),
 };
-
-export default PitchGenerator;

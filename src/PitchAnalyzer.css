@@ -1,10 +1,16 @@
 .PitchAnalyzer {
-  background: green;
-  border-radius: 10px;
+  background: #f7f7f7;
+  border: 1px solid #ddd;
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 0.5rem;
+}
+
+@media (min-width: 500px) {
+  .PitchAnalyzer {
+    border-radius: 5px;
+  }
 }
 
 .PitchAnalyzer-note {
@@ -14,4 +20,11 @@
   text-align: center;
   user-select: none;
   vertical-align: middle;
+}
+
+.PitchAnalyzer-offset {
+  font-size: 2rem;
+  margin: 1rem;
+  text-align: center;
+  user-select: none;
 }

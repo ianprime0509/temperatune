@@ -1,6 +1,6 @@
 .Button {
-  background: pink;
-  border-radius: 10px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 5rem;
   line-height: 6rem;

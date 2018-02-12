@@ -11,8 +11,9 @@
 }
 
 .AppModal-content {
-  background: white;
-  border-radius: 10px;
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 5px;
   max-height: 100vh;
   max-width: 100vw;
   padding: 0.5rem;

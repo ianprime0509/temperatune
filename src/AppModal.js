@@ -7,7 +7,7 @@ import { faTimes } from '@fortawesome/fontawesome-free-solid';
 import './AppModal.css';
 
 /** A modal dialog with a consistent style. */
-function AppModal(props) {
+export default function AppModal(props) {
   return (
     <Modal
       className="AppModal-content"
@@ -40,5 +40,3 @@ AppModal.propTypes = {
   onRequestClose: PropTypes.func,
   title: PropTypes.string,
 };
-
-export default AppModal;

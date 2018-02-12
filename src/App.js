@@ -9,7 +9,7 @@ import Temperament from './Temperament';
 import './App.css';
 import equalTemperament from './temperaments/equal.json';
 
-class App extends Component {
+export default class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -86,5 +86,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

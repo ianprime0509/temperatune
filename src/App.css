@@ -1,9 +1,14 @@
 .App {
   height: 100%;
-  max-height: 25rem;
-  max-width: 20rem;
   perspective: 1000px;
   width: 100%;
+}
+
+@media (min-width: 500px) {
+  .App {
+    max-height: 25rem;
+    max-width: 20rem;
+  }
 }
 
 .App-back {
@@ -35,9 +40,4 @@
   position: absolute;
   top: 0;
   width: 100%;
-}
-
-.App-notes, .App-octaves {
-  display: flex;
-  flex-wrap: wrap;
 }

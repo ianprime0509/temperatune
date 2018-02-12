@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './Button.css';
 
 /** A reusable button component with a consistent style. */
-function Button(props) {
+export default function Button(props) {
   return (
     <div className="Button" onClick={props.onClick}>
       {props.label}
@@ -16,5 +16,3 @@ Button.propTypes = {
   label: PropTypes.string,
   onClick: PropTypes.func,
 };
-
-export default Button;
