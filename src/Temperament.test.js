@@ -59,6 +59,9 @@ describe('Temperament', () => {
 
   describe('getNoteNameFromPitch()', () => {
     test('identifies the closest note to a pitch', () => {
+      // For equal temperament, you can find the pre-calculated frequency of
+      // each note online, for example at
+      // https://en.wikipedia.org/wiki/Piano_key_frequencies
       const equal = new Temperament(equalTemperament);
 
       expect(equal.getNoteNameFromPitch(440)[0]).toBe('A');
@@ -68,6 +71,14 @@ describe('Temperament', () => {
         .toBe('C');
       expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[0])
         .toBe('E{flat}');
+      expect(equal.getNoteNameFromPitch(addCents(1479.98, 20))[0])
+        .toBe('F{sharp}');
+      expect(equal.getNoteNameFromPitch(addCents(2637.02, -15))[0])
+        .toBe('E');
+      expect(equal.getNoteNameFromPitch(addCents(34.6478, 7))[0])
+        .toBe('C{sharp}');
+      expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[0])
+        .toBe('B{flat}');
     });
 
     test('identifies the offset (in cents) from the closest note to a pitch',
@@ -81,6 +92,14 @@ describe('Temperament', () => {
           .toBeCloseTo(1);
         expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[1])
           .toBeCloseTo(-4);
+        expect(equal.getNoteNameFromPitch(addCents(1479.98, 20))[1])
+          .toBeCloseTo(20);
+        expect(equal.getNoteNameFromPitch(addCents(2637.02, -15))[1])
+          .toBeCloseTo(-15);
+        expect(equal.getNoteNameFromPitch(addCents(34.6478, 7))[1])
+          .toBeCloseTo(7);
+        expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[1])
+          .toBeCloseTo(-8);
       }
     );
   });

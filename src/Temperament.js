@@ -46,9 +46,11 @@ export default class Temperament {
     // We need to get the offset in cents from the reference pitch so we can
     // compare it.  The offset needs to be normalized so that it's within an
     // octave of the octave base note.
+    const baseOffset = this.offsets.get(this.octaveBaseName);
     let offset = Math.log2(pitch / this.referencePitch) * OCTAVE_SIZE;
-    if (offset - this.offsets.get(this.octaveBaseName) >= OCTAVE_SIZE) {
-      offset -= OCTAVE_SIZE;
+    offset = (offset - baseOffset) % OCTAVE_SIZE + baseOffset;
+    if (offset < baseOffset) {
+      offset += OCTAVE_SIZE;
     }
 
     // Now we need to figure out the closest note using a (slightly modified)
