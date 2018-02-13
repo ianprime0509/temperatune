@@ -10,8 +10,14 @@ import './AppModal.css';
 export default function AppModal(props) {
   return (
     <Modal
-      className="AppModal-content"
+      className={{
+        base: 'AppModal-content',
+        afterOpen: 'AppModal-content--after-open',
+        beforeClose: 'AppModal-content--before-close',
+      }}
       overlayClassName="AppModal-overlay"
+      closeTimeoutMS={200}
+      contentLabel={props.title}
       isOpen={props.isOpen}
       onRequestClose={props.onRequestClose}
     >
@@ -38,5 +44,5 @@ AppModal.propTypes = {
   ]),
   isOpen: PropTypes.bool,
   onRequestClose: PropTypes.func,
-  title: PropTypes.string,
+  title: PropTypes.string.required,
 };
