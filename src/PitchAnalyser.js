@@ -6,7 +6,7 @@ import { mpm } from 'pitchy';
 import SettingsBar from './SettingsBar';
 import Temperament, { prettifyNoteName } from './Temperament';
 
-import './PitchAnalyzer.css';
+import './PitchAnalyser.css';
 
 // The maximum offset that should still be considered perfect.
 const PERFECT_OFFSET = 5;
@@ -16,12 +16,8 @@ const BAD_OFFSET = 50;
 
 /**
  * The component handling the "pitch detection" panel of the tuner.
- *
- * For anyone wondering, "analyzer" is the American spelling and "analyser" is
- * the British spelling; the WebAudio spec uses the latter.  I might decide at
- * some point that having both spellings is useless and change mine to match.
  */
-export default class PitchAnalyzer extends Component {
+export default class PitchAnalyser extends Component {
   constructor() {
     super();
     this.state = {
@@ -49,11 +45,11 @@ export default class PitchAnalyzer extends Component {
       '';
 
     return (
-      <div className="PitchAnalyzer" style={{ background }}>
-        <span className="PitchAnalyzer-note">
+      <div className="PitchAnalyser" style={{ background }}>
+        <span className="PitchAnalyser-note">
           {noteName}
         </span>
-        <span className="PitchAnalyzer-offset">
+        <span className="PitchAnalyser-offset">
           {offsetString}
         </span>
         <SettingsBar
@@ -106,7 +102,7 @@ export default class PitchAnalyzer extends Component {
   }
 }
 
-PitchAnalyzer.propTypes = {
+PitchAnalyser.propTypes = {
   onSettingsOpen: PropTypes.func,
   onViewFlip: PropTypes.func,
   temperament: PropTypes.instanceOf(Temperament),

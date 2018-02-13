@@ -1,4 +1,4 @@
-.PitchAnalyzer {
+.PitchAnalyser {
   background: #f7f7f7;
   border: 1px solid #ddd;
   display: flex;
@@ -8,12 +8,12 @@
 }
 
 @media (min-width: 500px) {
-  .PitchAnalyzer {
+  .PitchAnalyser {
     border-radius: 5px;
   }
 }
 
-.PitchAnalyzer-note {
+.PitchAnalyser-note {
   flex-grow: 1;
   font-size: 15rem;
   line-height: 15rem;
@@ -22,7 +22,7 @@
   vertical-align: middle;
 }
 
-.PitchAnalyzer-offset {
+.PitchAnalyser-offset {
   font-size: 2rem;
   margin: 1rem;
   text-align: center;

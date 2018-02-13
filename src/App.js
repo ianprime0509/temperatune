@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Modal from 'react-modal';
 
 import AppModal from './AppModal';
-import PitchAnalyzer from './PitchAnalyzer';
+import PitchAnalyser from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 import Temperament from './Temperament';
 
@@ -67,7 +67,7 @@ export default class App extends Component {
             />
           </div>
           <div className="App-back">
-            <PitchAnalyzer
+            <PitchAnalyser
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
               onViewFlip={this.handleViewFlip.bind(this)}
               temperament={this.state.temperament}

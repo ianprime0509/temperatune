@@ -7,7 +7,7 @@ import './SettingsBar.css';
 
 /**
  * The bottom part of the interface, showing the settings button and a button hi
- * to change between the pitch generator and analyzer.
+ * to change between the pitch generator and analyser.
  */
 export default function SettingsBar(props) {
   return (
