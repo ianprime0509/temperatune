@@ -30,7 +30,8 @@
   cursor: pointer;
 }
 
-.PitchGenerator-notes, .PitchGenerator-octaves {
+.PitchGenerator-notes,
+.PitchGenerator-octaves {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;

@@ -49,8 +49,10 @@ export default class PitchGenerator extends Component {
 
   componentWillReceiveProps(newProps) {
     // We should update the sound when the selected note or octave is changed.
-    if (this.props.selectedNote !== newProps.selectedNote ||
-      this.props.selectedOctave !== newProps.octave) {
+    if (
+      this.props.selectedNote !== newProps.selectedNote ||
+      this.props.selectedOctave !== newProps.octave
+    ) {
       const note = newProps.selectedNote;
       const octave = newProps.selectedOctave;
       this.soundUpdate(newProps.temperament.getPitch(note, octave));
@@ -96,7 +98,7 @@ export default class PitchGenerator extends Component {
   }
 
   soundPlay(pitch) {
-    this.setState((state) => {
+    this.setState(state => {
       if (state.oscillator) {
         state.oscillator.stop();
       }
@@ -111,7 +113,7 @@ export default class PitchGenerator extends Component {
   }
 
   soundStop() {
-    this.setState((state) => {
+    this.setState(state => {
       if (state.oscillator) {
         state.oscillator.stop();
         return { oscillator: null };
@@ -139,7 +141,7 @@ export default class PitchGenerator extends Component {
             label={String(this.props.selectedOctave)}
             onClick={this.handleOctavesModalOpen.bind(this)}
           />
-        </div >
+        </div>
         <PlaybackControl
           isPlaying={this.state.isPlaying}
           onClick={this.handlePlaybackClick.bind(this)}
@@ -155,13 +157,15 @@ export default class PitchGenerator extends Component {
           title="Select note"
         >
           <div className="PitchGenerator-notes">
-            {this.props.temperament.getNoteNames().map(note =>
-              <Button
-                key={note}
-                label={prettifyNoteName(note)}
-                onClick={() => this.handleNoteSelect(note)}
-              />
-            )}
+            {this.props.temperament
+              .getNoteNames()
+              .map(note => (
+                <Button
+                  key={note}
+                  label={prettifyNoteName(note)}
+                  onClick={() => this.handleNoteSelect(note)}
+                />
+              ))}
           </div>
         </AppModal>
         <AppModal
@@ -170,16 +174,18 @@ export default class PitchGenerator extends Component {
           title="Select octave"
         >
           <div className="PitchGenerator-octaves">
-            {this.props.temperament.getOctaveRange(2).map(octave =>
-              <Button
-                key={octave}
-                label={String(octave)}
-                onClick={() => this.handleOctaveSelect(octave)}
-              />
-            )}
+            {this.props.temperament
+              .getOctaveRange(2)
+              .map(octave => (
+                <Button
+                  key={octave}
+                  label={String(octave)}
+                  onClick={() => this.handleOctaveSelect(octave)}
+                />
+              ))}
           </div>
         </AppModal>
-      </div >
+      </div>
     );
   }
 }

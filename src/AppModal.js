@@ -30,9 +30,7 @@ export default function AppModal(props) {
           onClick={props.onRequestClose}
         />
       </div>
-      <div className="AppModal-children">
-        {props.children}
-      </div>
+      <div className="AppModal-children">{props.children}</div>
     </Modal>
   );
 }

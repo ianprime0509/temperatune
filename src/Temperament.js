@@ -111,15 +111,16 @@ export default class Temperament {
   /** Return the offset of the given note (relative to the reference pitch). */
   getOffset(note, octave) {
     const offset = this.offsets.get(note);
-    return offset !== undefined ?
-      offset + (octave - this.referenceOctave) * OCTAVE_SIZE :
-      undefined;
+    return offset !== undefined
+      ? offset + (octave - this.referenceOctave) * OCTAVE_SIZE
+      : undefined;
   }
 
   /** Return the pitch (in Hz) of the given note. */
   getPitch(note, octave) {
-    return this.referencePitch *
-      2 ** (this.getOffset(note, octave) / OCTAVE_SIZE);
+    return (
+      this.referencePitch * 2 ** (this.getOffset(note, octave) / OCTAVE_SIZE)
+    );
   }
 }
 
@@ -136,10 +137,7 @@ export default class Temperament {
  * escape a curly brace, but this may change later.
  */
 export function prettifyNoteName(name) {
-  const replacements = new Map([
-    ['sharp', '♯'],
-    ['flat', '♭']
-  ]);
+  const replacements = new Map([['sharp', '♯'], ['flat', '♭']]);
 
   let pretty = '';
   let element = '';
@@ -148,9 +146,9 @@ export function prettifyNoteName(name) {
   for (let c of name) {
     if (inElement) {
       if (c === '}') {
-        pretty += replacements.has(element) ?
-          replacements.get(element) :
-          element;
+        pretty += replacements.has(element)
+          ? replacements.get(element)
+          : element;
         inElement = false;
         element = '';
       } else {

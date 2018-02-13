@@ -1,10 +1,15 @@
 {
   "title": "Temperament",
-  "description": "A complete description of a musical temperament with additional metadata.",
+  "description":
+    "A complete description of a musical temperament with additional metadata.",
   "type": "object",
   "required": [
-    "name", "octaveBaseName", "referencePitch", "referenceName",
-    "referenceOctave", "notes"
+    "name",
+    "octaveBaseName",
+    "referencePitch",
+    "referenceName",
+    "referenceOctave",
+    "notes"
   ],
   "properties": {
     "name": {
@@ -35,7 +40,8 @@
       "description": "A mapping of note names to a description of each note.",
       "type": "object",
       "additionalProperties": {
-        "description": "A description of the note, as an offset from another note.",
+        "description":
+          "A description of the note, as an offset from another note.",
         "type": "array",
         "items": [
           {

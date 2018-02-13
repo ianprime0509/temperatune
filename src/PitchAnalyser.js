@@ -13,7 +13,6 @@ const PERFECT_OFFSET = 5;
 // The minimum offset that should be considered completely off.
 const BAD_OFFSET = 50;
 
-
 /**
  * The component handling the "pitch detection" panel of the tuner.
  */
@@ -36,22 +35,18 @@ export default class PitchAnalyser extends Component {
   }
 
   render() {
-    let background = this.state.note ?
-      `hsl(${getHue(this.state.offset)}, 100%, 85%)` :
-      '#f7f7f7';
+    let background = this.state.note
+      ? `hsl(${getHue(this.state.offset)}, 100%, 85%)`
+      : '#f7f7f7';
     let noteName = this.state.note ? prettifyNoteName(this.state.note) : '-';
-    let offsetString = this.state.note ?
-      getOffsetString(this.state.offset) :
-      '';
+    let offsetString = this.state.note
+      ? getOffsetString(this.state.offset)
+      : '';
 
     return (
       <div className="PitchAnalyser" style={{ background }}>
-        <span className="PitchAnalyser-note">
-          {noteName}
-        </span>
-        <span className="PitchAnalyser-offset">
-          {offsetString}
-        </span>
+        <span className="PitchAnalyser-note">{noteName}</span>
+        <span className="PitchAnalyser-offset">{offsetString}</span>
         <SettingsBar
           switchIcon={faMusic}
           onSettingsOpen={this.props.onSettingsOpen}
@@ -63,14 +58,15 @@ export default class PitchAnalyser extends Component {
 
   /** Starts the process of getting microphone access. */
   _getMicrophoneInput() {
-    navigator.mediaDevices.getUserMedia({ audio: true })
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
       .then(this._handleGetInputStream.bind(this))
-      .catch((err) => console.error(`Could not get audio input: ${err}`));
+      .catch(err => console.error(`Could not get audio input: ${err}`));
   }
 
   /** Sets up the analyserNode with the provided input stream. */
   _handleGetInputStream(stream) {
-    this.setState((state) => {
+    this.setState(state => {
       let ctx = state.audioContext;
       let analyserNode = ctx.createAnalyser();
       let sourceNode = ctx.createMediaStreamSource(stream);

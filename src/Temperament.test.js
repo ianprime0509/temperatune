@@ -11,49 +11,59 @@ describe('Temperament', () => {
     });
 
     test('throws an error when the input format is invalid', () => {
-      expect(() => new Temperament({ name: 'No notes' }))
-        .toThrow('Incorrect temperament format');
+      expect(() => new Temperament({ name: 'No notes' })).toThrow(
+        'Incorrect temperament format'
+      );
 
-      expect(() => new Temperament({
-        name: 'Invalid notes',
-        referenceName: 'A',
-        referencePitch: 440,
-        referenceOctave: 4,
-        octaveBaseName: 'C',
-        notes: {
-          'A': 'A',
-          'C': 'C',
-        }
-      })).toThrow('Incorrect temperament format');
+      expect(
+        () =>
+          new Temperament({
+            name: 'Invalid notes',
+            referenceName: 'A',
+            referencePitch: 440,
+            referenceOctave: 4,
+            octaveBaseName: 'C',
+            notes: {
+              A: 'A',
+              C: 'C',
+            },
+          })
+      ).toThrow('Incorrect temperament format');
     });
 
     test('throws an error when given conflicting note definitions', () => {
-      expect(() => new Temperament({
-        name: 'Conflicting definitions',
-        referenceName: 'A',
-        referencePitch: 440,
-        referenceOctave: 4,
-        octaveBaseName: 'C',
-        notes: {
-          'A': ['C', 400],
-          'C': ['A', 500],
-        }
-      })).toThrow('conflicting definition');
+      expect(
+        () =>
+          new Temperament({
+            name: 'Conflicting definitions',
+            referenceName: 'A',
+            referencePitch: 440,
+            referenceOctave: 4,
+            octaveBaseName: 'C',
+            notes: {
+              A: ['C', 400],
+              C: ['A', 500],
+            },
+          })
+      ).toThrow('conflicting definition');
     });
 
     test('throws an error when not enough note information is given', () => {
-      expect(() => new Temperament({
-        name: 'Not enough information',
-        referenceName: 'A',
-        referencePitch: 440,
-        referenceOctave: 4,
-        octaveBaseName: 'C',
-        notes: {
-          'A': ['A', 0],
-          'F': ['F', 0],
-          'C': ['A', 500]
-        }
-      })).toThrow('not able to determine the pitch');
+      expect(
+        () =>
+          new Temperament({
+            name: 'Not enough information',
+            referenceName: 'A',
+            referencePitch: 440,
+            referenceOctave: 4,
+            octaveBaseName: 'C',
+            notes: {
+              A: ['A', 0],
+              F: ['F', 0],
+              C: ['A', 500],
+            },
+          })
+      ).toThrow('not able to determine the pitch');
     });
   });
 
@@ -67,58 +77,86 @@ describe('Temperament', () => {
       expect(equal.getNoteNameFromPitch(440)[0]).toBe('A');
       expect(equal.getNoteNameFromPitch(880)[0]).toBe('A');
       expect(equal.getNoteNameFromPitch(261.626)[0]).toBe('C');
-      expect(equal.getNoteNameFromPitch(addCents(261.626, 1))[0])
-        .toBe('C');
-      expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[0])
-        .toBe('E{flat}');
-      expect(equal.getNoteNameFromPitch(addCents(1479.98, 20))[0])
-        .toBe('F{sharp}');
-      expect(equal.getNoteNameFromPitch(addCents(2637.02, -15))[0])
-        .toBe('E');
-      expect(equal.getNoteNameFromPitch(addCents(34.6478, 7))[0])
-        .toBe('C{sharp}');
-      expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[0])
-        .toBe('B{flat}');
+      expect(equal.getNoteNameFromPitch(addCents(261.626, 1))[0]).toBe('C');
+      expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[0]).toBe(
+        'E{flat}'
+      );
+      expect(equal.getNoteNameFromPitch(addCents(1479.98, 20))[0]).toBe(
+        'F{sharp}'
+      );
+      expect(equal.getNoteNameFromPitch(addCents(2637.02, -15))[0]).toBe('E');
+      expect(equal.getNoteNameFromPitch(addCents(34.6478, 7))[0]).toBe(
+        'C{sharp}'
+      );
+      expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[0]).toBe(
+        'B{flat}'
+      );
     });
 
-    test('identifies the offset (in cents) from the closest note to a pitch',
-      () => {
-        const equal = new Temperament(equalTemperament);
+    test('identifies the offset (in cents) from the closest note to a pitch', () => {
+      const equal = new Temperament(equalTemperament);
 
-        expect(equal.getNoteNameFromPitch(440)[1]).toBeCloseTo(0);
-        expect(equal.getNoteNameFromPitch(880)[1]).toBeCloseTo(0);
-        expect(equal.getNoteNameFromPitch(261.626)[1]).toBeCloseTo(0);
-        expect(equal.getNoteNameFromPitch(addCents(261.626, 1))[1])
-          .toBeCloseTo(1);
-        expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[1])
-          .toBeCloseTo(-4);
-        expect(equal.getNoteNameFromPitch(addCents(1479.98, 20))[1])
-          .toBeCloseTo(20);
-        expect(equal.getNoteNameFromPitch(addCents(2637.02, -15))[1])
-          .toBeCloseTo(-15);
-        expect(equal.getNoteNameFromPitch(addCents(34.6478, 7))[1])
-          .toBeCloseTo(7);
-        expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[1])
-          .toBeCloseTo(-8);
-      }
-    );
+      expect(equal.getNoteNameFromPitch(440)[1]).toBeCloseTo(0);
+      expect(equal.getNoteNameFromPitch(880)[1]).toBeCloseTo(0);
+      expect(equal.getNoteNameFromPitch(261.626)[1]).toBeCloseTo(0);
+      expect(equal.getNoteNameFromPitch(addCents(261.626, 1))[1]).toBeCloseTo(
+        1
+      );
+      expect(equal.getNoteNameFromPitch(addCents(311.127, -4))[1]).toBeCloseTo(
+        -4
+      );
+      expect(equal.getNoteNameFromPitch(addCents(1479.98, 20))[1]).toBeCloseTo(
+        20
+      );
+      expect(equal.getNoteNameFromPitch(addCents(2637.02, -15))[1]).toBeCloseTo(
+        -15
+      );
+      expect(equal.getNoteNameFromPitch(addCents(34.6478, 7))[1]).toBeCloseTo(
+        7
+      );
+      expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[1]).toBeCloseTo(
+        -8
+      );
+    });
   });
 
   describe('getNoteNames()', () => {
     test('returns an ordered array of equal temperament note names', () => {
       const equal = new Temperament(equalTemperament);
-      expect(equal.getNoteNames()).toEqual(['C', 'C{sharp}', 'D', 'E{flat}',
-        'E', 'F', 'F{sharp}', 'G', 'G{sharp}', 'A', 'B{flat}', 'B']);
+      expect(equal.getNoteNames()).toEqual([
+        'C',
+        'C{sharp}',
+        'D',
+        'E{flat}',
+        'E',
+        'F',
+        'F{sharp}',
+        'G',
+        'G{sharp}',
+        'A',
+        'B{flat}',
+        'B',
+      ]);
     });
 
-    test('returns an ordered array of quarter-comma meantone note names',
-      () => {
-        const qcm = new Temperament(quarterCommaMeantone);
-        expect(qcm.getNoteNames()).toEqual(['C', 'C{sharp}', 'D', 'E{flat}',
-          'E', 'F', 'F{sharp}', 'G', 'G{sharp}', 'A{flat}', 'A', 'B{flat}',
-          'B']);
-      }
-    );
+    test('returns an ordered array of quarter-comma meantone note names', () => {
+      const qcm = new Temperament(quarterCommaMeantone);
+      expect(qcm.getNoteNames()).toEqual([
+        'C',
+        'C{sharp}',
+        'D',
+        'E{flat}',
+        'E',
+        'F',
+        'F{sharp}',
+        'G',
+        'G{sharp}',
+        'A{flat}',
+        'A',
+        'B{flat}',
+        'B',
+      ]);
+    });
   });
 
   describe('getOctaveRange()', () => {
@@ -186,20 +224,15 @@ describe('prettifyNoteName()', () => {
     expect(prettifyNoteName('C{sharp}{flat}')).toBe('C♯♭');
   });
 
-  test('reprints unknown element sequences in output without curly braces',
-    () => {
-      expect(prettifyNoteName('{unknown}')).toBe('unknown');
-      expect(prettifyNoteName('hi {there}, user')).toBe('hi there, user');
-    }
-  );
+  test('reprints unknown element sequences in output without curly braces', () => {
+    expect(prettifyNoteName('{unknown}')).toBe('unknown');
+    expect(prettifyNoteName('hi {there}, user')).toBe('hi there, user');
+  });
 
-  test('reprints unclosed element sequences in output without curly braces',
-    () => {
-      expect(prettifyNoteName('{unclosed')).toBe('unclosed');
-      expect(prettifyNoteName('what is {this thing'))
-        .toBe('what is this thing');
-    }
-  );
+  test('reprints unclosed element sequences in output without curly braces', () => {
+    expect(prettifyNoteName('{unclosed')).toBe('unclosed');
+    expect(prettifyNoteName('what is {this thing')).toBe('what is this thing');
+  });
 });
 
 /**
