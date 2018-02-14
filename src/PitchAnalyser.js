@@ -8,7 +8,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/fontawesome-free-solid';
-import { mpm } from 'pitchy';
+import { findPitch } from 'pitchy';
 
 import SettingsBar from './SettingsBar';
 import Temperament, { prettifyNoteName } from './Temperament';
@@ -94,7 +94,7 @@ export default class PitchAnalyser extends Component {
       }
       let data = new Float32Array(analyserNode.fftSize);
       analyserNode.getFloatTimeDomainData(data);
-      let [pitch, clarity] = mpm(data, ctx.sampleRate);
+      let [pitch, clarity] = findPitch(data, ctx.sampleRate);
       if (clarity < 0.8) {
         return { note: null, offset: 0 };
       }

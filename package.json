@@ -7,11 +7,11 @@
     "@fortawesome/fontawesome-free-solid": "^5.0.6",
     "@fortawesome/react-fontawesome": "0.0.17",
     "ajv": "^5.0.0",
-    "pitchy": "^0.1.1",
+    "pitchy": "^1.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-modal": "^3.1.13",
-    "react-scripts": "1.1.0"
+    "react-scripts": "1.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
