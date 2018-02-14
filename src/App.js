@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import Modal from 'react-modal';
 
 import AppModal from './AppModal';
+import { SettingsItem, SettingsExpanderGroup } from './AppSettings';
 import PitchAnalyser from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 import Temperament from './Temperament';
@@ -86,8 +87,29 @@ export default class App extends Component {
           onRequestClose={this.handleSettingsClose.bind(this)}
           title="Settings"
         >
-          <h1>lol no settings</h1>
-          <h2>lol subtitle</h2>
+          <div className="App-settings-container">
+            <SettingsItem>Item 0</SettingsItem>
+            <SettingsExpanderGroup label="Group">
+              <SettingsItem>Item 1</SettingsItem>
+              <SettingsExpanderGroup label="Subgroup">
+                <SettingsItem>Subitem</SettingsItem>
+              </SettingsExpanderGroup>
+              <SettingsItem>Item 2</SettingsItem>
+              <SettingsExpanderGroup label="Subgroup">
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>Subitem</SettingsItem>
+              </SettingsExpanderGroup>
+            </SettingsExpanderGroup>
+          </div>
         </AppModal>
       </div>
     );

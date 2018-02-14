@@ -42,3 +42,11 @@
   top: 0;
   width: 100%;
 }
+
+.App-settings-container {
+  height: 25rem;
+  max-height: 25rem;
+  max-width: 100%;
+  overflow-y: auto;
+  width: 30rem;
+}

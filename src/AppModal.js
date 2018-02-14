@@ -44,10 +44,10 @@ export default function AppModal(props) {
 
 AppModal.propTypes = {
   children: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.node,
+    PropTypes.arrayOf(PropTypes.node),
   ]),
   isOpen: PropTypes.bool,
   onRequestClose: PropTypes.func,
-  title: PropTypes.string.required,
+  title: PropTypes.string.isRequired,
 };
