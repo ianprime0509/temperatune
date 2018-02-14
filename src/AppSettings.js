@@ -14,8 +14,13 @@ import './AppSettings.css';
  * A item in a settings list with a consistent style.
  */
 export function SettingsItem(props) {
+  let className = 'SettingsItem';
+  if (props.isSelected) {
+    className += ' selected';
+  }
+
   return (
-    <div className="SettingsItem" onClick={props.onClick}>
+    <div className={className} onClick={props.onClick}>
       {props.children}
     </div>
   );
@@ -24,6 +29,7 @@ export function SettingsItem(props) {
 SettingsItem.propTypes = {
   children: PropTypes.string,
   onClick: PropTypes.func,
+  isSelected: PropTypes.bool,
 };
 
 /**
@@ -33,19 +39,22 @@ export class SettingsExpanderGroup extends Component {
   constructor() {
     super();
     this.state = {
-      expanded: false,
+      isExpanded: false,
     };
   }
 
   render() {
     let innerClassName = 'SettingsExpanderGroup-inner';
-    if (this.state.expanded) {
+    if (this.state.isExpanded) {
       innerClassName += ' expanded';
     }
 
     return (
       <div>
-        <SettingsItem onClick={this._handleExpandToggle.bind(this)}>
+        <SettingsItem
+          isSelected={this.state.isExpanded}
+          onClick={this._handleExpandToggle.bind(this)}
+        >
           {this.props.label}
         </SettingsItem>
         <div className={innerClassName}>
@@ -60,7 +69,7 @@ export class SettingsExpanderGroup extends Component {
 
   _handleExpandToggle() {
     this.setState(state => {
-      return { expanded: !state.expanded };
+      return { isExpanded: !state.isExpanded };
     });
   }
 }

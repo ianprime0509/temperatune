@@ -169,6 +169,7 @@ export default class PitchGenerator extends Component {
               .map(note => (
                 <Button
                   key={note}
+                  isSelected={note === this.props.selectedNote}
                   label={prettifyNoteName(note)}
                   onClick={() => this.handleNoteSelect(note)}
                 />
@@ -186,6 +187,7 @@ export default class PitchGenerator extends Component {
               .map(octave => (
                 <Button
                   key={octave}
+                  isSelected={octave === this.props.selectedOctave}
                   label={String(octave)}
                   onClick={() => this.handleOctaveSelect(octave)}
                 />

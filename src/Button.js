@@ -12,8 +12,13 @@ import './Button.css';
 
 /** A reusable button component with a consistent style. */
 export default function Button(props) {
+  let className = 'Button';
+  if (props.isSelected) {
+    className += ' selected';
+  }
+
   return (
-    <div className="Button" onClick={props.onClick}>
+    <div className={className} onClick={props.onClick}>
       {props.label}
     </div>
   );
@@ -22,4 +27,5 @@ export default function Button(props) {
 Button.propTypes = {
   label: PropTypes.string,
   onClick: PropTypes.func,
+  isSelected: PropTypes.bool,
 };
