@@ -25,11 +25,9 @@
   border-bottom: 1px solid #ddd;
   cursor: pointer;
   font-size: 1.5rem;
-  line-height: 3rem;
-  padding-left: 0.5rem;
+  padding: 0.5rem 0 0.5rem 0.5rem;
   transition: background 200ms;
   user-select: none;
-  vertical-align: middle;
   width: 100%;
 }
 

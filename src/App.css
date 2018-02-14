@@ -44,9 +44,14 @@
 }
 
 .App-settings-container {
-  height: 25rem;
+  height: calc(100vh - 3rem);
   max-height: 25rem;
   max-width: 100%;
-  overflow-y: auto;
-  width: 30rem;
+  width: 35rem;
+}
+
+@media (min-height: 30rem) {
+  .App-settings-container {
+    height: 25rem;
+  }
 }

@@ -92,7 +92,10 @@ export default class App extends Component {
             <SettingsExpanderGroup label="Group">
               <SettingsItem>Item 1</SettingsItem>
               <SettingsExpanderGroup label="Subgroup">
-                <SettingsItem>Subitem</SettingsItem>
+                <SettingsItem>
+                  Subitem very very very very long long long long long overflow
+                  yay
+                </SettingsItem>
               </SettingsExpanderGroup>
               <SettingsItem>Item 2</SettingsItem>
               <SettingsExpanderGroup label="Subgroup">
