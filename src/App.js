@@ -16,6 +16,10 @@ import Temperament from './Temperament';
 
 import './App.css';
 import equalTemperament from './temperaments/equal.json';
+import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
+
+/** All the built-in temperaments. */
+const builtInTemperaments = [equalTemperament, quarterCommaMeantone];
 
 export default class App extends Component {
   constructor() {
@@ -48,8 +52,20 @@ export default class App extends Component {
     this.setState({ settingsAreOpen: true });
   }
 
+  handleTemperamentSelect(temperamentData) {
+    let temperament = new Temperament(temperamentData);
+    this.setState({
+      temperament,
+      selectedNote: temperament.referenceName,
+      selectedOctave: temperament.referenceOctave,
+      settingsAreOpen: false,
+    });
+  }
+
   handleViewFlip() {
-    this.setState({ isFrontPanel: !this.state.isFrontPanel });
+    this.setState(state => {
+      return { isFrontPanel: !state.isFrontPanel };
+    });
   }
 
   render() {
@@ -88,29 +104,18 @@ export default class App extends Component {
           title="Settings"
         >
           <div className="App-settings-container">
-            <SettingsItem>Item 0</SettingsItem>
-            <SettingsExpanderGroup label="Group">
-              <SettingsItem>Item 1</SettingsItem>
-              <SettingsExpanderGroup label="Subgroup">
-                <SettingsItem>
-                  Subitem very very very very long long long long long overflow
-                  yay
+            <SettingsExpanderGroup
+              label={`Temperament: ${this.state.temperament.name}`}
+            >
+              {builtInTemperaments.map(temperament => (
+                <SettingsItem
+                  key={temperament.name}
+                  isSelected={temperament.name === this.state.temperament.name}
+                  onClick={() => this.handleTemperamentSelect(temperament)}
+                >
+                  {temperament.name}
                 </SettingsItem>
-              </SettingsExpanderGroup>
-              <SettingsItem>Item 2</SettingsItem>
-              <SettingsExpanderGroup label="Subgroup">
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-                <SettingsItem>Subitem</SettingsItem>
-              </SettingsExpanderGroup>
+              ))}
             </SettingsExpanderGroup>
           </div>
         </AppModal>

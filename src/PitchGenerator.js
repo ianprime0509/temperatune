@@ -28,7 +28,7 @@ function PlaybackControl(props) {
     <div className="PlaybackControl">
       <FontAwesomeIcon
         icon={icon}
-        size="10x"
+        size="8x"
         className="PlaybackControl-icon"
         onClick={props.onClick}
       />
@@ -137,6 +137,15 @@ export default class PitchGenerator extends Component {
   }
 
   render() {
+    let pitch =
+      Math.round(
+        10 *
+        this.props.temperament.getPitch(
+          this.props.selectedNote,
+          this.props.selectedOctave
+        )
+      ) / 10;
+
     return (
       <div className="PitchGenerator">
         <div className="PitchGenerator-controls">
@@ -153,6 +162,7 @@ export default class PitchGenerator extends Component {
           isPlaying={this.state.isPlaying}
           onClick={this.handlePlaybackClick.bind(this)}
         />
+        <span className="PitchGenerator-pitch">{`${pitch} Hz`}</span>
         <SettingsBar
           switchIcon={faMicrophone}
           onViewFlip={this.props.onViewFlip}

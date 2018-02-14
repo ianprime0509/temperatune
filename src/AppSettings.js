@@ -43,6 +43,12 @@ export class SettingsExpanderGroup extends Component {
     };
   }
 
+  handleExpandToggle() {
+    this.setState(state => {
+      return { isExpanded: !state.isExpanded };
+    });
+  }
+
   render() {
     let innerClassName = 'SettingsExpanderGroup-inner';
     if (this.state.isExpanded) {
@@ -51,10 +57,7 @@ export class SettingsExpanderGroup extends Component {
 
     return (
       <div>
-        <SettingsItem
-          isSelected={this.state.isExpanded}
-          onClick={this._handleExpandToggle.bind(this)}
-        >
+        <SettingsItem onClick={this.handleExpandToggle.bind(this)}>
           {this.props.label}
         </SettingsItem>
         <div className={innerClassName}>
@@ -65,12 +68,6 @@ export class SettingsExpanderGroup extends Component {
         </div>
       </div>
     );
-  }
-
-  _handleExpandToggle() {
-    this.setState(state => {
-      return { isExpanded: !state.isExpanded };
-    });
   }
 }
 

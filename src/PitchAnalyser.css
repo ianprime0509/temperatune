@@ -1,6 +1,5 @@
 .PitchAnalyser {
   background: #f7f7f7;
-  border: 1px solid #ddd;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -10,6 +9,7 @@
 
 @media (min-width: 500px) {
   .PitchAnalyser {
+    border: 1px solid #ddd;
     border-radius: 5px;
   }
 }
