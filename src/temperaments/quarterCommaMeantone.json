@@ -5,7 +5,6 @@
   "referenceOctave": 4,
   "octaveBaseName": "C",
   "notes": {
-    "A{flat}": ["D", 620.5],
     "E{flat}": ["D", 117.1],
     "B{flat}": ["D", 813.7],
     "F": ["D", 310.3],

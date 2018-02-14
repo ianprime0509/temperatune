@@ -158,7 +158,6 @@ describe('Temperament', () => {
         'F{sharp}',
         'G',
         'G{sharp}',
-        'A{flat}',
         'A',
         'B{flat}',
         'B',
