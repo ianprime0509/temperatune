@@ -7,6 +7,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import { faCaretRight } from '@fortawesome/fontawesome-free-solid';
 
 import './AppSettings.css';
 
@@ -27,7 +29,10 @@ export function SettingsItem(props) {
 }
 
 SettingsItem.propTypes = {
-  children: PropTypes.string,
+  children: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.arrayOf(PropTypes.node),
+  ]),
   onClick: PropTypes.func,
   isSelected: PropTypes.bool,
 };
@@ -50,6 +55,10 @@ export class SettingsExpanderGroup extends Component {
   }
 
   render() {
+    let caretClassName = 'SettingsExpanderGroup-caret';
+    if (this.state.isExpanded) {
+      caretClassName += ' rotated';
+    }
     let innerClassName = 'SettingsExpanderGroup-inner';
     if (this.state.isExpanded) {
       innerClassName += ' expanded';
@@ -58,7 +67,12 @@ export class SettingsExpanderGroup extends Component {
     return (
       <div>
         <SettingsItem onClick={this.handleExpandToggle.bind(this)}>
-          {this.props.label}
+          <div className="SettingsExpanderGroup-label">
+            <div className="SettingsExpanderGroup-label-text">
+              {this.props.label}
+            </div>
+            <FontAwesomeIcon className={caretClassName} icon={faCaretRight} />
+          </div>
         </SettingsItem>
         <div className={innerClassName}>
           <div className="SettingsExpanderGroup-inner-bar" />
