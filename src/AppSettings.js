@@ -16,14 +16,25 @@ import './AppSettings.css';
  * A item in a settings list with a consistent style.
  */
 export function SettingsItem(props) {
+  let { children, isSelected, onClick, ...rest } = props;
+
   let className = 'SettingsItem';
-  if (props.isSelected) {
+  if (isSelected) {
     className += ' selected';
   }
 
   return (
-    <div className={className} onClick={props.onClick}>
-      {props.children}
+    <div
+      className={className}
+      onClick={onClick}
+      onKeyPress={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onClick();
+        }
+      }}
+      {...rest}
+    >
+      {children}
     </div>
   );
 }
@@ -33,8 +44,8 @@ SettingsItem.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]),
-  onClick: PropTypes.func,
   isSelected: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 
 /**
@@ -55,6 +66,8 @@ export class SettingsExpanderGroup extends Component {
   }
 
   render() {
+    let { children, label, ...rest } = this.props;
+
     let caretClassName = 'SettingsExpanderGroup-caret';
     if (this.state.isExpanded) {
       caretClassName += ' rotated';
@@ -66,19 +79,27 @@ export class SettingsExpanderGroup extends Component {
 
     return (
       <div>
-        <SettingsItem onClick={this.handleExpandToggle.bind(this)}>
+        <SettingsItem
+          onClick={this.handleExpandToggle.bind(this)}
+          onKeyPress={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              this.handleExpandToggle();
+            }
+          }}
+          {...rest}
+        >
           <div className="SettingsExpanderGroup-label">
-            <div className="SettingsExpanderGroup-label-text">
-              {this.props.label}
-            </div>
+            <div className="SettingsExpanderGroup-label-text">{label}</div>
             <FontAwesomeIcon className={caretClassName} icon={faCaretRight} />
           </div>
         </SettingsItem>
-        <div className={innerClassName}>
+        <div
+          aria-expanded={this.state.isExpanded}
+          aria-hidden={!this.state.isExpanded}
+          className={innerClassName}
+        >
           <div className="SettingsExpanderGroup-inner-bar" />
-          <div className="SettingsExpanderGroup-inner-children">
-            {this.props.children}
-          </div>
+          <div className="SettingsExpanderGroup-inner-children">{children}</div>
         </div>
       </div>
     );

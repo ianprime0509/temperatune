@@ -50,6 +50,10 @@
   width: 5rem;
 }
 
+.App-reference-input:focus {
+  box-shadow: 0 0 8px skyblue;
+}
+
 .App-settings-container {
   height: calc(100vh - 3rem);
   max-height: 25rem;

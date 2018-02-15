@@ -91,7 +91,7 @@ export default class App extends Component {
       // animation
       <div className="App">
         <div className={flipperClasses} id="App-flipper">
-          <div className="App-front">
+          <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
             <PitchGenerator
               onNoteSelect={this.handleNoteSelect.bind(this)}
               onOctaveSelect={this.handleOctaveSelect.bind(this)}
@@ -102,7 +102,7 @@ export default class App extends Component {
               temperament={this.state.temperament}
             />
           </div>
-          <div className="App-back">
+          <div className="App-back" aria-hidden={this.state.isFrontPanel}>
             <PitchAnalyser
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
               onViewFlip={this.handleViewFlip.bind(this)}
@@ -118,12 +118,14 @@ export default class App extends Component {
           <div className="App-settings-container">
             <SettingsExpanderGroup
               label={`Temperament: ${this.state.temperament.name}`}
+              tabIndex={0}
             >
               {builtInTemperaments.map(temperament => (
                 <SettingsItem
                   key={temperament.name}
                   isSelected={temperament.name === this.state.temperament.name}
                   onClick={() => this.handleTemperamentSelect(temperament)}
+                  tabIndex={0}
                 >
                   {temperament.name}
                 </SettingsItem>

@@ -20,17 +20,6 @@
   justify-content: space-between;
 }
 
-.PlaybackControl {
-  align-items: center;
-  display: flex;
-  flex: 1 1 100%;
-  justify-content: center;
-}
-
-.PlaybackControl-icon {
-  cursor: pointer;
-}
-
 .PitchGenerator-notes,
 .PitchGenerator-octaves {
   display: flex;
@@ -48,8 +37,27 @@
 
 .PitchGenerator-pitch {
   font-size: 2rem;
-  height: 4rem;
+  height: 2rem;
   margin: 1rem;
+  min-height: 2rem;
   text-align: center;
   user-select: none;
+}
+
+.PlaybackControl {
+  align-items: center;
+  display: flex;
+  flex: 1 1;
+  justify-content: center;
+}
+
+.PlaybackControl-icon {
+  cursor: pointer;
+  font-size: 7rem;
+  outline: none;
+  user-select: none;
+}
+
+.PlaybackControl-icon:focus {
+  filter: drop-shadow(0 0 20px lightskyblue);
 }

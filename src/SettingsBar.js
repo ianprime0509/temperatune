@@ -24,12 +24,24 @@ export default function SettingsBar(props) {
         icon={faCog}
         size="3x"
         onClick={props.onSettingsOpen}
+        onKeyPress={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            props.onSettingsOpen();
+          }
+        }}
+        tabIndex={0}
       />
       <FontAwesomeIcon
         className="SettingsBar-icon"
         icon={props.switchIcon}
         size="3x"
         onClick={props.onViewFlip}
+        onKeyPress={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            props.onViewFlip();
+          }
+        }}
+        tabIndex={0}
       />
     </div>
   );

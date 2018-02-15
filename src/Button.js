@@ -12,20 +12,31 @@ import './Button.css';
 
 /** A reusable button component with a consistent style. */
 export default function Button(props) {
+  let { isSelected, label, onClick, ...rest } = props;
+
   let className = 'Button';
-  if (props.isSelected) {
+  if (isSelected) {
     className += ' selected';
   }
 
   return (
-    <div className={className} onClick={props.onClick}>
-      {props.label}
+    <div
+      className={className}
+      onClick={onClick}
+      onKeyPress={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onClick();
+        }
+      }}
+      {...rest}
+    >
+      {label}
     </div>
   );
 }
 
 Button.propTypes = {
+  isSelected: PropTypes.bool,
   label: PropTypes.string,
   onClick: PropTypes.func,
-  isSelected: PropTypes.bool,
 };

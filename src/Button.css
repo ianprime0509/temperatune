@@ -6,6 +6,7 @@
   font-size: 5rem;
   line-height: 6rem;
   margin: 0.5rem;
+  outline: none;
   padding: 0 0.5rem 0 0.5rem;
   text-align: center;
   transition: background 200ms;
@@ -17,6 +18,10 @@
   background: rgba(0, 0, 0, 10%);
 }
 
+.Button:focus {
+  box-shadow: 0 0 8px lightskyblue;
+}
+
 .Button.selected {
-  background: hsl(240, 100%, 85%);
+  background: lightskyblue;
 }

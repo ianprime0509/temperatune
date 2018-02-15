@@ -23,14 +23,20 @@ import './PitchGenerator.css';
 
 /** The playback control. */
 function PlaybackControl(props) {
-  const icon = props.isPlaying ? faPause : faPlay;
+  let { isPlaying, onClick, ...rest } = props;
+  const icon = isPlaying ? faPause : faPlay;
   return (
     <div className="PlaybackControl">
       <FontAwesomeIcon
         icon={icon}
-        size="8x"
         className="PlaybackControl-icon"
         onClick={props.onClick}
+        onKeyPress={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            props.onClick();
+          }
+        }}
+        {...rest}
       />
     </div>
   );
@@ -152,15 +158,18 @@ export default class PitchGenerator extends Component {
           <Button
             label={prettifyNoteName(this.props.selectedNote)}
             onClick={this.handleNotesModalOpen.bind(this)}
+            tabIndex={0}
           />
           <Button
             label={String(this.props.selectedOctave)}
             onClick={this.handleOctavesModalOpen.bind(this)}
+            tabIndex={0}
           />
         </div>
         <PlaybackControl
           isPlaying={this.state.isPlaying}
           onClick={this.handlePlaybackClick.bind(this)}
+          tabIndex={0}
         />
         <span className="PitchGenerator-pitch">{`${pitch} Hz`}</span>
         <SettingsBar
@@ -182,6 +191,7 @@ export default class PitchGenerator extends Component {
                   isSelected={note === this.props.selectedNote}
                   label={prettifyNoteName(note)}
                   onClick={() => this.handleNoteSelect(note)}
+                  tabIndex={0}
                 />
               ))}
           </div>
@@ -200,6 +210,7 @@ export default class PitchGenerator extends Component {
                   isSelected={octave === this.props.selectedOctave}
                   label={String(octave)}
                   onClick={() => this.handleOctaveSelect(octave)}
+                  tabIndex={0}
                 />
               ))}
           </div>

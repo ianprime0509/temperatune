@@ -48,6 +48,7 @@
   cursor: pointer;
   display: flex;
   font-size: 1.5rem;
+  outline: none;
   padding: 0.5rem 0 0.5rem 0.5rem;
   transition: background 200ms;
   user-select: none;
@@ -58,6 +59,10 @@
   background: rgba(0, 0, 0, 10%);
 }
 
+.SettingsItem:focus {
+  border: 2px solid lightskyblue;
+}
+
 .SettingsItem.selected {
-  background: hsl(240, 100%, 85%);
+  background: lightskyblue;
 }
