@@ -34,6 +34,7 @@
 .SettingsExpanderGroup-label {
   align-items: center;
   display: flex;
+  flex-grow: 1;
 }
 
 .SettingsExpanderGroup-label-text {
@@ -41,9 +42,11 @@
 }
 
 .SettingsItem {
+  align-items: center;
   background: rgba(0, 0, 0, 0%);
   border-bottom: 1px solid #ddd;
   cursor: pointer;
+  display: flex;
   font-size: 1.5rem;
   padding: 0.5rem 0 0.5rem 0.5rem;
   transition: background 200ms;

@@ -7,6 +7,7 @@
  */
 import React, { Component } from 'react';
 import Modal from 'react-modal';
+import cloneDeep from 'lodash.clonedeep';
 
 import AppModal from './AppModal';
 import { SettingsItem, SettingsExpanderGroup } from './AppSettings';
@@ -45,7 +46,19 @@ export default class App extends Component {
   }
 
   handleSettingsClose() {
-    this.setState({ settingsAreOpen: false });
+    this.setState(state => {
+      let temperament;
+      let pitchText = this.referencePitchInput.value.trim();
+      if (/^[0-9]+$/.test(pitchText)) {
+        // TODO: do we really need a deep clone here?  It seems like the safest
+        // option for now, and not terribly expensive.
+        temperament = cloneDeep(state.temperament);
+        temperament.referencePitch = parseInt(pitchText, 10);
+      } else {
+        temperament = state.temperament;
+      }
+      return { settingsAreOpen: false, temperament };
+    });
   }
 
   handleSettingsOpen() {
@@ -58,7 +71,6 @@ export default class App extends Component {
       temperament,
       selectedNote: temperament.referenceName,
       selectedOctave: temperament.referenceOctave,
-      settingsAreOpen: false,
     });
   }
 
@@ -117,6 +129,19 @@ export default class App extends Component {
                 </SettingsItem>
               ))}
             </SettingsExpanderGroup>
+            <SettingsItem>
+              Reference pitch:
+              <input
+                ref={input => {
+                  this.referencePitchInput = input;
+                }}
+                className="App-reference-input"
+                pattern="[0-9]*"
+                type="text"
+                placeholder={this.state.temperament.referencePitch}
+              />
+              Hz
+            </SettingsItem>
           </div>
         </AppModal>
       </div>

@@ -43,6 +43,13 @@
   width: 100%;
 }
 
+.App-reference-input {
+  font-size: 1.5rem;
+  margin: 0 0.5rem;
+  text-align: right;
+  width: 5rem;
+}
+
 .App-settings-container {
   height: calc(100vh - 3rem);
   max-height: 25rem;
