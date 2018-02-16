@@ -12,7 +12,7 @@ import './Button.css';
 
 /** A reusable button component with a consistent style. */
 export default function Button(props) {
-  let { isSelected, label, onClick, ...rest } = props;
+  let { isFocusable, isSelected, label, onClick, ...rest } = props;
 
   let className = 'Button';
   if (isSelected) {
@@ -25,9 +25,10 @@ export default function Button(props) {
       onClick={onClick}
       onKeyPress={e => {
         if (e.key === 'Enter' || e.key === ' ') {
-          onClick();
+          onClick && onClick();
         }
       }}
+      tabIndex={isFocusable ? 0 : -1}
       {...rest}
     >
       {label}
@@ -36,6 +37,7 @@ export default function Button(props) {
 }
 
 Button.propTypes = {
+  isFocusable: PropTypes.bool,
   isSelected: PropTypes.bool,
   label: PropTypes.string,
   onClick: PropTypes.func,

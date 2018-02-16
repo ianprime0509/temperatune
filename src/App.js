@@ -93,6 +93,7 @@ export default class App extends Component {
         <div className={flipperClasses} id="App-flipper">
           <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
             <PitchGenerator
+              isFocusable={this.state.isFrontPanel}
               onNoteSelect={this.handleNoteSelect.bind(this)}
               onOctaveSelect={this.handleOctaveSelect.bind(this)}
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
@@ -104,6 +105,7 @@ export default class App extends Component {
           </div>
           <div className="App-back" aria-hidden={this.state.isFrontPanel}>
             <PitchAnalyser
+              isFocusable={!this.state.isFrontPanel}
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
               onViewFlip={this.handleViewFlip.bind(this)}
               temperament={this.state.temperament}
@@ -117,15 +119,14 @@ export default class App extends Component {
         >
           <div className="App-settings-container">
             <SettingsExpanderGroup
+              isFocusable={true}
               label={`Temperament: ${this.state.temperament.name}`}
-              tabIndex={0}
             >
               {builtInTemperaments.map(temperament => (
                 <SettingsItem
                   key={temperament.name}
                   isSelected={temperament.name === this.state.temperament.name}
                   onClick={() => this.handleTemperamentSelect(temperament)}
-                  tabIndex={0}
                 >
                   {temperament.name}
                 </SettingsItem>
@@ -138,9 +139,10 @@ export default class App extends Component {
                   this.referencePitchInput = input;
                 }}
                 className="App-reference-input"
+                isFocusable={true}
                 pattern="[0-9]*"
-                type="text"
                 placeholder={this.state.temperament.referencePitch}
+                type="text"
               />
               Hz
             </SettingsItem>

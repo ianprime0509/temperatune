@@ -23,7 +23,7 @@ import './PitchGenerator.css';
 
 /** The playback control. */
 function PlaybackControl(props) {
-  let { isPlaying, onClick, ...rest } = props;
+  let { isFocusable, isPlaying, onClick, ...rest } = props;
   const icon = isPlaying ? faPause : faPlay;
   return (
     <div className="PlaybackControl">
@@ -33,9 +33,10 @@ function PlaybackControl(props) {
         onClick={props.onClick}
         onKeyPress={e => {
           if (e.key === 'Enter' || e.key === ' ') {
-            props.onClick();
+            props.onClick && props.onClick();
           }
         }}
+        tabIndex={isFocusable ? 0 : -1}
         {...rest}
       />
     </div>
@@ -43,6 +44,7 @@ function PlaybackControl(props) {
 }
 
 PlaybackControl.propTypes = {
+  isFocusable: PropTypes.bool,
   isPlaying: PropTypes.bool.isRequired,
   onClick: PropTypes.func,
 };
@@ -156,23 +158,24 @@ export default class PitchGenerator extends Component {
       <div className="PitchGenerator">
         <div className="PitchGenerator-controls">
           <Button
+            isFocusable={this.props.isFocusable}
             label={prettifyNoteName(this.props.selectedNote)}
             onClick={this.handleNotesModalOpen.bind(this)}
-            tabIndex={0}
           />
           <Button
+            isFocusable={this.props.isFocusable}
             label={String(this.props.selectedOctave)}
             onClick={this.handleOctavesModalOpen.bind(this)}
-            tabIndex={0}
           />
         </div>
         <PlaybackControl
+          isFocusable={this.props.isFocusable}
           isPlaying={this.state.isPlaying}
           onClick={this.handlePlaybackClick.bind(this)}
-          tabIndex={0}
         />
         <span className="PitchGenerator-pitch">{`${pitch} Hz`}</span>
         <SettingsBar
+          isFocusable={this.props.isFocusable}
           switchIcon={faMicrophone}
           onViewFlip={this.props.onViewFlip}
           onSettingsOpen={this.props.onSettingsOpen}
@@ -221,6 +224,7 @@ export default class PitchGenerator extends Component {
 }
 
 PitchGenerator.propTypes = {
+  isFocusable: PropTypes.bool,
   onNoteSelect: PropTypes.func,
   onOctaveSelect: PropTypes.func,
   onSettingsOpen: PropTypes.func,

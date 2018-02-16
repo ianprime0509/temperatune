@@ -29,7 +29,7 @@ export default function SettingsBar(props) {
             props.onSettingsOpen();
           }
         }}
-        tabIndex={0}
+        tabIndex={props.isFocusable ? 0 : -1}
       />
       <FontAwesomeIcon
         className="SettingsBar-icon"
@@ -41,13 +41,14 @@ export default function SettingsBar(props) {
             props.onViewFlip();
           }
         }}
-        tabIndex={0}
+        tabIndex={props.isFocusable ? 0 : -1}
       />
     </div>
   );
 }
 
 SettingsBar.propTypes = {
+  isFocusable: PropTypes.bool,
   onSettingsOpen: PropTypes.func,
   onViewFlip: PropTypes.func,
   /** The icon to show for the switch button. */

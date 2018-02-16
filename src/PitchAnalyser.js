@@ -34,45 +34,23 @@ export default class PitchAnalyser extends Component {
       /** The offset of the current pitch from the detected note. */
       offset: 0,
     };
-    this._getMicrophoneInput();
+    this.getMicrophoneInput();
   }
 
   componentDidMount() {
-    window.setInterval(() => this._updateNote(), 100);
-  }
-
-  render() {
-    let background = this.state.note
-      ? `hsl(${getHue(this.state.offset)}, 100%, 85%)`
-      : '#f7f7f7';
-    let noteName = this.state.note ? prettifyNoteName(this.state.note) : '-';
-    let offsetString = this.state.note
-      ? getOffsetString(this.state.offset)
-      : '';
-
-    return (
-      <div className="PitchAnalyser" style={{ background }}>
-        <span className="PitchAnalyser-note">{noteName}</span>
-        <span className="PitchAnalyser-offset">{offsetString}</span>
-        <SettingsBar
-          switchIcon={faMusic}
-          onSettingsOpen={this.props.onSettingsOpen}
-          onViewFlip={this.props.onViewFlip}
-        />
-      </div>
-    );
+    window.setInterval(() => this.updateNote(), 100);
   }
 
   /** Starts the process of getting microphone access. */
-  _getMicrophoneInput() {
+  getMicrophoneInput() {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
-      .then(this._handleGetInputStream.bind(this))
+      .then(this.handleGetInputStream.bind(this))
       .catch(err => console.error(`Could not get audio input: ${err}`));
   }
 
   /** Sets up the analyserNode with the provided input stream. */
-  _handleGetInputStream(stream) {
+  handleGetInputStream(stream) {
     this.setState(state => {
       let ctx = state.audioContext;
       let analyserNode = ctx.createAnalyser();
@@ -83,7 +61,7 @@ export default class PitchAnalyser extends Component {
     });
   }
 
-  _updateNote() {
+  updateNote() {
     this.setState((state, props) => {
       let ctx = state.audioContext;
       let analyserNode = state.analyserNode;
@@ -103,9 +81,33 @@ export default class PitchAnalyser extends Component {
       return { note: note, offset };
     });
   }
+
+  render() {
+    let background = this.state.note
+      ? `hsl(${getHue(this.state.offset)}, 100%, 85%)`
+      : '#f7f7f7';
+    let noteName = this.state.note ? prettifyNoteName(this.state.note) : '-';
+    let offsetString = this.state.note
+      ? getOffsetString(this.state.offset)
+      : '';
+
+    return (
+      <div className="PitchAnalyser" style={{ background }}>
+        <span className="PitchAnalyser-note">{noteName}</span>
+        <span className="PitchAnalyser-offset">{offsetString}</span>
+        <SettingsBar
+          isFocusable={this.props.isFocusable}
+          onSettingsOpen={this.props.onSettingsOpen}
+          onViewFlip={this.props.onViewFlip}
+          switchIcon={faMusic}
+        />
+      </div>
+    );
+  }
 }
 
 PitchAnalyser.propTypes = {
+  isFocusable: PropTypes.bool,
   onSettingsOpen: PropTypes.func,
   onViewFlip: PropTypes.func,
   temperament: PropTypes.instanceOf(Temperament),

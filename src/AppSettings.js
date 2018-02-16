@@ -16,7 +16,7 @@ import './AppSettings.css';
  * A item in a settings list with a consistent style.
  */
 export function SettingsItem(props) {
-  let { children, isSelected, onClick, ...rest } = props;
+  let { children, isFocusable, isSelected, onClick, ...rest } = props;
 
   let className = 'SettingsItem';
   if (isSelected) {
@@ -29,9 +29,10 @@ export function SettingsItem(props) {
       onClick={onClick}
       onKeyPress={e => {
         if (e.key === 'Enter' || e.key === ' ') {
-          onClick();
+          onClick && onClick();
         }
       }}
+      tabIndex={isFocusable ? 0 : -1}
       {...rest}
     >
       {children}
@@ -44,6 +45,7 @@ SettingsItem.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]),
+  isFocusable: PropTypes.bool,
   isSelected: PropTypes.bool,
   onClick: PropTypes.func,
 };
@@ -66,7 +68,7 @@ export class SettingsExpanderGroup extends Component {
   }
 
   render() {
-    let { children, label, ...rest } = this.props;
+    let { children, isFocusable, label, ...rest } = this.props;
 
     let caretClassName = 'SettingsExpanderGroup-caret';
     if (this.state.isExpanded) {
@@ -86,6 +88,7 @@ export class SettingsExpanderGroup extends Component {
               this.handleExpandToggle();
             }
           }}
+          tabIndex={isFocusable ? 0 : -1}
           {...rest}
         >
           <div className="SettingsExpanderGroup-label">
@@ -99,7 +102,13 @@ export class SettingsExpanderGroup extends Component {
           className={innerClassName}
         >
           <div className="SettingsExpanderGroup-inner-bar" />
-          <div className="SettingsExpanderGroup-inner-children">{children}</div>
+          <div className="SettingsExpanderGroup-inner-children">
+            {React.Children.map(children, child => {
+              return React.cloneElement(child, {
+                isFocusable: isFocusable && this.state.isExpanded,
+              });
+            })}
+          </div>
         </div>
       </div>
     );
@@ -111,5 +120,6 @@ SettingsExpanderGroup.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]),
+  isFocusable: PropTypes.bool,
   label: PropTypes.string.isRequired,
 };
