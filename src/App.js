@@ -139,9 +139,9 @@ export default class App extends Component {
                   this.referencePitchInput = input;
                 }}
                 className="App-reference-input"
-                isFocusable={true}
                 pattern="[0-9]*"
                 placeholder={this.state.temperament.referencePitch}
+                tabIndex={0}
                 type="text"
               />
               Hz
