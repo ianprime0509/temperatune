@@ -98,6 +98,8 @@ describe('Temperament', () => {
       expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[0]).toBe(
         'B{flat}'
       );
+      expect(equal.getNoteNameFromPitch(addCents(493.883, 25))[0]).toBe('B');
+      expect(equal.getNoteNameFromPitch(addCents(523.251, -25))[0]).toBe('C');
     });
 
     test('identifies the offset (in cents) from the closest note to a pitch', () => {
@@ -123,6 +125,12 @@ describe('Temperament', () => {
       );
       expect(equal.getNoteNameFromPitch(addCents(29.1352, -8))[1]).toBeCloseTo(
         -8
+      );
+      expect(equal.getNoteNameFromPitch(addCents(493.883, 25))[1]).toBeCloseTo(
+        25
+      );
+      expect(equal.getNoteNameFromPitch(addCents(523.251, -25))[1]).toBeCloseTo(
+        -25
       );
     });
   });

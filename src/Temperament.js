@@ -63,7 +63,7 @@ export default class Temperament {
     // Now we need to figure out the closest note using a (slightly modified)
     // binary search.
     let start = 0;
-    let end = this.noteNames.length - 1;
+    let end = this.noteNames.length;
     while (end - start > 1) {
       let mid = Math.trunc((end + start) / 2);
       let midOffset = this.offsets.get(this.noteNames[mid]);
@@ -78,8 +78,16 @@ export default class Temperament {
 
     let startNote = this.noteNames[start];
     let startDifference = offset - this.offsets.get(startNote);
-    let endNote = this.noteNames[end];
-    let endDifference = offset - this.offsets.get(endNote);
+    let endNote, endDifference;
+    if (end === this.noteNames.length) {
+      // It's possible that end === this.noteNames.length, indicating that we
+      // need to check an octave above the base note.
+      endNote = this.noteNames[0];
+      endDifference = offset - this.offsets.get(endNote) - OCTAVE_SIZE;
+    } else {
+      endNote = this.noteNames[end];
+      endDifference = offset - this.offsets.get(endNote);
+    }
     if (Math.abs(startDifference) < Math.abs(endDifference)) {
       return [startNote, startDifference];
     } else {
