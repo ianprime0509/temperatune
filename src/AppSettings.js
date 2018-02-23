@@ -54,20 +54,23 @@ SettingsItem.propTypes = {
  * A settings item that, when clicked, opens a file selection dialog.
  */
 export class SettingsFileChooser extends Component {
+  handleFileSelect() {
+    this.props.onFileSelect && this.props.onFileSelect(this.input.files[0]);
+  }
+
   render() {
-    let { label, ...rest } = this.props;
+    let { label, onFileSelect, ...rest } = this.props;
     return (
-      <SettingsItem {...rest}>
+      <SettingsItem onClick={() => this.input && this.input.click()} {...rest}>
         <input
           id="fileInput"
           ref={ref => (this.input = ref)}
+          onChange={this.handleFileSelect.bind(this)}
           style={{ height: 0, opacity: 0, width: 0 }}
           tabIndex={-1}
           type="file"
         />
-        <label style={{ cursor: 'inherit' }} htmlFor="fileInput">
-          {label}
-        </label>
+        <span>{label}</span>
       </SettingsItem>
     );
   }
@@ -75,6 +78,11 @@ export class SettingsFileChooser extends Component {
 
 SettingsFileChooser.propTypes = {
   label: PropTypes.string.isRequired,
+  /**
+   * A function that will be called when a file is selected.  The `File` object
+   * corresponding to the chosen file will be passed as the only object.
+   */
+  onFileSelect: PropTypes.func,
 };
 
 /**

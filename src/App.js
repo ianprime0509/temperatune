@@ -23,8 +23,19 @@ import './App.css';
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
 
-/** All the built-in temperaments. */
+/**
+ * All the built-in temperaments, as plain objects.  These are not actually
+ * instances of `Temperament`; rather, they are only the base data.  This is so
+ * that there's no delay in loading the rest of the app just to precompute a
+ * bunch of temperament data that probably won't get used.
+ */
 const builtInTemperaments = [equalTemperament, quarterCommaMeantone];
+/**
+ * All the user temperaments, as `Temperament` objects.  Unlike the built-in
+ * temperaments, user temperaments are processed when they are chosen, because
+ * the user has expressed an intent to use them.
+ */
+const userTemperaments = [];
 
 export default class App extends Component {
   constructor() {
@@ -76,6 +87,44 @@ export default class App extends Component {
       selectedNote: temperament.referenceName,
       selectedOctave: temperament.referenceOctave,
     });
+  }
+
+  handleTemperamentFileSelect(file) {
+    let url = URL.createObjectURL(file);
+    fetch(url)
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        let temperament;
+        try {
+          temperament = new Temperament(json);
+        } catch (err) {
+          console.error(`Invalid temperament input: ${err}`);
+          return;
+        }
+        // We aren't allowed to have a temperament with the same name as some
+        // other temperament, or it would cause confusion.
+        let sameName = t => t.name === temperament.name;
+        if (
+          builtInTemperaments.some(sameName) ||
+          userTemperaments.some(sameName)
+        ) {
+          console.error(
+            `Temperament with name ${temperament.name} already exists`
+          );
+          return;
+        }
+        userTemperaments.push(temperament);
+        this.setState({
+          temperament,
+          selectedNote: temperament.referenceName,
+          selectedOctave: temperament.referenceOctave,
+        });
+      })
+      .catch(err => {
+        console.error(`Error getting JSON data: ${err}`);
+      });
   }
 
   handleViewFlip() {
@@ -135,7 +184,19 @@ export default class App extends Component {
                   {temperament.name}
                 </SettingsItem>
               ))}
-              <SettingsFileChooser label="Choose file" />
+              {userTemperaments.map(temperament => (
+                <SettingsItem
+                  key={temperament.name}
+                  isSelected={temperament.name === this.state.temperament.name}
+                  onClick={() => this.handleTemperamentSelect(temperament)}
+                >
+                  {temperament.name}
+                </SettingsItem>
+              ))}
+              <SettingsFileChooser
+                label="Choose file"
+                onFileSelect={this.handleTemperamentFileSelect.bind(this)}
+              />
             </SettingsExpanderGroup>
             <SettingsItem>
               Reference pitch:
