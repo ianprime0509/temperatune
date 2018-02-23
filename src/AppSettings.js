@@ -55,16 +55,18 @@ SettingsItem.propTypes = {
  */
 export class SettingsFileChooser extends Component {
   render() {
+    let { label, ...rest } = this.props;
     return (
-      <SettingsItem>
+      <SettingsItem {...rest}>
         <input
           id="fileInput"
           ref={ref => (this.input = ref)}
-          type="file"
           style={{ height: 0, opacity: 0, width: 0 }}
+          tabIndex={-1}
+          type="file"
         />
         <label style={{ cursor: 'inherit' }} htmlFor="fileInput">
-          {this.props.label}
+          {label}
         </label>
       </SettingsItem>
     );
@@ -129,13 +131,9 @@ export class SettingsExpanderGroup extends Component {
           <div className="SettingsExpanderGroup-inner-bar" />
           <div className="SettingsExpanderGroup-inner-children">
             {React.Children.map(children, child => {
-              if (child instanceof SettingsItem) {
-                return React.cloneElement(child, {
-                  isFocusable: isFocusable && this.state.isExpanded,
-                });
-              } else {
-                return child;
-              }
+              return React.cloneElement(child, {
+                isFocusable: isFocusable && this.state.isExpanded,
+              });
             })}
           </div>
         </div>
