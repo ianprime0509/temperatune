@@ -10,7 +10,11 @@ import Modal from 'react-modal';
 import cloneDeep from 'lodash.clonedeep';
 
 import AppModal from './AppModal';
-import { SettingsItem, SettingsExpanderGroup } from './AppSettings';
+import {
+  SettingsItem,
+  SettingsFileChooser,
+  SettingsExpanderGroup,
+} from './AppSettings';
 import PitchAnalyser from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 import Temperament from './Temperament';
@@ -131,6 +135,7 @@ export default class App extends Component {
                   {temperament.name}
                 </SettingsItem>
               ))}
+              <SettingsFileChooser label="Choose file" />
             </SettingsExpanderGroup>
             <SettingsItem>
               Reference pitch:

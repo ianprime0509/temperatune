@@ -51,6 +51,31 @@ SettingsItem.propTypes = {
 };
 
 /**
+ * A settings item that, when clicked, opens a file selection dialog.
+ */
+export class SettingsFileChooser extends Component {
+  render() {
+    return (
+      <SettingsItem>
+        <input
+          id="fileInput"
+          ref={ref => (this.input = ref)}
+          type="file"
+          style={{ height: 0, opacity: 0, width: 0 }}
+        />
+        <label style={{ cursor: 'inherit' }} htmlFor="fileInput">
+          {this.props.label}
+        </label>
+      </SettingsItem>
+    );
+  }
+}
+
+SettingsFileChooser.propTypes = {
+  label: PropTypes.string.isRequired,
+};
+
+/**
  * A setting which can be clicked/tapped to expand a list of sub-settings.
  */
 export class SettingsExpanderGroup extends Component {
@@ -104,9 +129,13 @@ export class SettingsExpanderGroup extends Component {
           <div className="SettingsExpanderGroup-inner-bar" />
           <div className="SettingsExpanderGroup-inner-children">
             {React.Children.map(children, child => {
-              return React.cloneElement(child, {
-                isFocusable: isFocusable && this.state.isExpanded,
-              });
+              if (child instanceof SettingsItem) {
+                return React.cloneElement(child, {
+                  isFocusable: isFocusable && this.state.isExpanded,
+                });
+              } else {
+                return child;
+              }
             })}
           </div>
         </div>
