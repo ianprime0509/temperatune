@@ -85,7 +85,7 @@ export default class PitchAnalyser extends Component {
   render() {
     let background = this.state.note
       ? `hsl(${getHue(this.state.offset)}, 100%, 85%)`
-      : '#f7f7f7';
+      : '#f0f0f0';
     let noteName = this.state.note ? prettifyNoteName(this.state.note) : '-';
     let offsetString = this.state.note
       ? getOffsetString(this.state.offset)
