@@ -43,9 +43,8 @@ export default class App extends Component {
     super();
     this.state = {
       /**
-       * The stack of alert messages currently being shown.  Each alert is a
-       * pair, with the first element being a heading and the second element a
-       * description.
+       * The stack of alert messages currently being shown.  Each alert is an
+       * object with keys `title`, `description` and `isOpen`.
        */
       alerts: [],
       /** Whether the front panel is being shown. */
@@ -62,15 +61,22 @@ export default class App extends Component {
   /** Close the alert on the top of the stack. */
   handleAlertClose() {
     this.setState(state => {
-      return {
-        alerts: state.alerts.slice(0, -1),
-      };
+      // Actually, all we do is set the `isOpen` property of the top-most alert
+      // to `false` so that its close animation can play.  The closed alerts
+      // will be cleaned up when the next alert is opened.
+      let alerts = state.alerts.slice();
+      alerts[alerts.length - 1].isOpen = false;
+      return { alerts };
     });
   }
 
   handleAlertOpen(title, description) {
     this.setState(state => {
-      return { alerts: state.alerts.concat([[title, description]]) };
+      // We also clean up any alerts that have been closed already.
+      let alerts = state.alerts.filter(alert => alert.isOpen);
+      return {
+        alerts: alerts.concat([{ title, description, isOpen: true }]),
+      };
     });
   }
 
@@ -250,13 +256,13 @@ export default class App extends Component {
             <AppModal
               key={i}
               aria={{ describedby: descriptionId }}
-              isOpen={true}
+              isOpen={alert.isOpen}
               onRequestClose={this.handleAlertClose.bind(this)}
-              title={alert[0]}
+              title={alert.title}
             >
               <div className="App-alert-content">
                 <p className="App-alert-description" id={descriptionId}>
-                  {alert[1]}
+                  {alert.description}
                 </p>
                 <Button
                   fontSizeRem={1.5}
