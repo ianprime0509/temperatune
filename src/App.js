@@ -102,8 +102,7 @@ export default class App extends Component {
     this.setState({ settingsAreOpen: true });
   }
 
-  handleTemperamentSelect(temperamentData) {
-    let temperament = new Temperament(temperamentData);
+  handleTemperamentSelect(temperament) {
     this.setState({
       temperament,
       selectedNote: temperament.referenceName,
@@ -200,13 +199,18 @@ export default class App extends Component {
               isFocusable={true}
               label={`Temperament: ${this.state.temperament.name}`}
             >
-              {builtInTemperaments.map(temperament => (
+              {builtInTemperaments.map(temperamentData => (
                 <SettingsItem
-                  key={temperament.name}
-                  isSelected={temperament.name === this.state.temperament.name}
-                  onClick={() => this.handleTemperamentSelect(temperament)}
+                  key={temperamentData.name}
+                  isSelected={
+                    temperamentData.name === this.state.temperament.name
+                  }
+                  onClick={() => {
+                    let temperament = new Temperament(temperamentData);
+                    this.handleTemperamentSelect(temperament);
+                  }}
                 >
-                  {temperament.name}
+                  {temperamentData.name}
                 </SettingsItem>
               ))}
               {userTemperaments.map(temperament => (
