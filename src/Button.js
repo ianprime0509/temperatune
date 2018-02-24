@@ -12,7 +12,8 @@ import './Button.css';
 
 /** A reusable button component with a consistent style. */
 export default function Button(props) {
-  let { isFocusable, isSelected, label, onClick, ...rest } = props;
+  let { fontSizeRem, isFocusable, isSelected, label, onClick, ...rest } = props;
+  let fontSize = String(fontSizeRem) + 'rem';
 
   let className = 'Button';
   if (isSelected) {
@@ -28,6 +29,7 @@ export default function Button(props) {
           onClick && onClick();
         }
       }}
+      style={{ fontSize, lineHeight: fontSize }}
       tabIndex={isFocusable ? 0 : -1}
       {...rest}
     >
@@ -37,6 +39,7 @@ export default function Button(props) {
 }
 
 Button.propTypes = {
+  fontSizeRem: PropTypes.number,
   isFocusable: PropTypes.bool,
   isSelected: PropTypes.bool,
   label: PropTypes.string,

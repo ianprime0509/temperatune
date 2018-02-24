@@ -158,11 +158,13 @@ export default class PitchGenerator extends Component {
       <div className="PitchGenerator">
         <div className="PitchGenerator-controls">
           <Button
+            fontSizeRem={5}
             isFocusable={this.props.isFocusable}
             label={prettifyNoteName(this.props.selectedNote)}
             onClick={this.handleNotesModalOpen.bind(this)}
           />
           <Button
+            fontSizeRem={5}
             isFocusable={this.props.isFocusable}
             label={String(this.props.selectedOctave)}
             onClick={this.handleOctavesModalOpen.bind(this)}
@@ -191,6 +193,7 @@ export default class PitchGenerator extends Component {
               .map(note => (
                 <Button
                   key={note}
+                  fontSizeRem={5}
                   isSelected={note === this.props.selectedNote}
                   label={prettifyNoteName(note)}
                   onClick={() => this.handleNoteSelect(note)}
@@ -210,6 +213,7 @@ export default class PitchGenerator extends Component {
               .map(octave => (
                 <Button
                   key={octave}
+                  fontSizeRem={5}
                   isSelected={octave === this.props.selectedOctave}
                   label={String(octave)}
                   onClick={() => this.handleOctaveSelect(octave)}

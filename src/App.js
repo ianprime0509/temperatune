@@ -15,6 +15,7 @@ import {
   SettingsFileChooser,
   SettingsExpanderGroup,
 } from './AppSettings';
+import Button from './Button';
 import PitchAnalyser from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 import Temperament from './Temperament';
@@ -41,6 +42,12 @@ export default class App extends Component {
   constructor() {
     super();
     this.state = {
+      /**
+       * The stack of alert messages currently being shown.  Each alert is a
+       * pair, with the first element being a heading and the second element a
+       * description.
+       */
+      alerts: [],
       /** Whether the front panel is being shown. */
       isFrontPanel: true,
       settingsAreOpen: false,
@@ -50,6 +57,21 @@ export default class App extends Component {
     this.state.selectedOctave = this.state.temperament.referenceOctave;
 
     Modal.setAppElement(document.getElementById('root'));
+  }
+
+  /** Close the alert on the top of the stack. */
+  handleAlertClose() {
+    this.setState(state => {
+      return {
+        alerts: state.alerts.slice(0, -1),
+      };
+    });
+  }
+
+  handleAlertOpen(title, description) {
+    this.setState(state => {
+      return { alerts: state.alerts.concat([[title, description]]) };
+    });
   }
 
   handleNoteSelect(note) {
@@ -214,6 +236,30 @@ export default class App extends Component {
             </SettingsItem>
           </div>
         </AppModal>
+        {this.state.alerts.map((alert, i) => {
+          let descriptionId = 'description-' + String(i);
+
+          return (
+            <AppModal
+              key={i}
+              aria={{ describedby: descriptionId }}
+              isOpen={true}
+              title={alert[0]}
+            >
+              <div className="App-alert-content">
+                <p className="App-alert-description" id={descriptionId}>
+                  {alert[1]}
+                </p>
+                <Button
+                  fontSizeRem={1.5}
+                  label="OK"
+                  onClick={this.handleAlertClose.bind(this)}
+                  tabIndex={0}
+                />
+              </div>
+            </AppModal>
+          );
+        })}
       </div>
     );
   }
