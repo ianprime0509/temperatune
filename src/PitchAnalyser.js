@@ -46,7 +46,13 @@ export default class PitchAnalyser extends Component {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(this.handleGetInputStream.bind(this))
-      .catch(err => console.error(`Could not get audio input: ${err}`));
+      .catch(err =>
+        this.handleAlertOpen('Error', `Could not get audio input: ${err}`)
+      );
+  }
+
+  handleAlertOpen(title, description) {
+    this.props.onAlertOpen && this.props.onAlertOpen(title, description);
   }
 
   /** Sets up the analyserNode with the provided input stream. */
@@ -108,6 +114,7 @@ export default class PitchAnalyser extends Component {
 
 PitchAnalyser.propTypes = {
   isFocusable: PropTypes.bool,
+  onAlertOpen: PropTypes.func,
   onSettingsOpen: PropTypes.func,
   onViewFlip: PropTypes.func,
   temperament: PropTypes.instanceOf(Temperament),

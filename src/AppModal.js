@@ -47,7 +47,7 @@ AppModal.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]),
-  isOpen: PropTypes.bool,
-  onRequestClose: PropTypes.func,
+  isOpen: PropTypes.bool.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
 };

@@ -74,6 +74,10 @@ export default class PitchGenerator extends Component {
     }
   }
 
+  handleAlertOpen(title, description) {
+    this.props.onAlertOpen && this.props.onAlertOpen(title, description);
+  }
+
   handleNoteSelect(note) {
     this.props.onNoteSelect(note);
     this.handleNotesModalClose();
@@ -229,6 +233,7 @@ export default class PitchGenerator extends Component {
 
 PitchGenerator.propTypes = {
   isFocusable: PropTypes.bool,
+  onAlertOpen: PropTypes.func,
   onNoteSelect: PropTypes.func,
   onOctaveSelect: PropTypes.func,
   onSettingsOpen: PropTypes.func,

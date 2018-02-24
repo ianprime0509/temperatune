@@ -122,7 +122,7 @@ export default class App extends Component {
         try {
           temperament = new Temperament(json);
         } catch (err) {
-          console.error(`Invalid temperament input: ${err}`);
+          this.handleAlertOpen('Error', `Invalid temperament input: ${err}`);
           return;
         }
         // We aren't allowed to have a temperament with the same name as some
@@ -132,8 +132,9 @@ export default class App extends Component {
           builtInTemperaments.some(sameName) ||
           userTemperaments.some(sameName)
         ) {
-          console.error(
-            `Temperament with name ${temperament.name} already exists`
+          this.handleAlertOpen(
+            'Error',
+            `Temperament with name ${temperament.name} already exists.`
           );
           return;
         }
@@ -145,7 +146,7 @@ export default class App extends Component {
         });
       })
       .catch(err => {
-        console.error(`Error getting JSON data: ${err}`);
+        this.handleAlertOpen('Error', `Could not get JSON data: ${err}`);
       });
   }
 
@@ -169,6 +170,7 @@ export default class App extends Component {
           <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
             <PitchGenerator
               isFocusable={this.state.isFrontPanel}
+              onAlertOpen={this.handleAlertOpen.bind(this)}
               onNoteSelect={this.handleNoteSelect.bind(this)}
               onOctaveSelect={this.handleOctaveSelect.bind(this)}
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
@@ -181,6 +183,7 @@ export default class App extends Component {
           <div className="App-back" aria-hidden={this.state.isFrontPanel}>
             <PitchAnalyser
               isFocusable={!this.state.isFrontPanel}
+              onAlertOpen={this.handleAlertOpen.bind(this)}
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
               onViewFlip={this.handleViewFlip.bind(this)}
               temperament={this.state.temperament}
@@ -244,6 +247,7 @@ export default class App extends Component {
               key={i}
               aria={{ describedby: descriptionId }}
               isOpen={true}
+              onRequestClose={this.handleAlertClose.bind(this)}
               title={alert[0]}
             >
               <div className="App-alert-content">
