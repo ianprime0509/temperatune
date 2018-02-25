@@ -8,11 +8,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import 'web-audio-test-api';
 
 test('renders without crashing', () => {
-  // Look at this sorry excuse for an AudioContext mock...  TODO: come up with
-  // something actually useful.
-  window.AudioContext = Object;
   // Another mock, this time for the getUserMedia method of
   // navigator.mediaDevices.
   navigator.mediaDevices = {
