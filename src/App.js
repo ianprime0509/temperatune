@@ -50,11 +50,16 @@ export default class App extends Component {
       alerts: [],
       /** Whether the front panel is being shown. */
       isFrontPanel: true,
+      /** Whether the tone is being played in the pitch generator. */
+      isPlaying: false,
       settingsAreOpen: false,
       temperament: new Temperament(equalTemperament),
     };
     this.state.selectedNote = this.state.temperament.referenceName;
     this.state.selectedOctave = this.state.temperament.referenceOctave;
+
+    this.audioContext = new AudioContext();
+    this.oscillatorCreate();
 
     ReactModal.setAppElement(document.getElementById('root'));
   }
@@ -82,11 +87,25 @@ export default class App extends Component {
   }
 
   handleNoteSelect(note) {
-    this.setState({ selectedNote: note });
+    this.setState({ selectedNote: note }, () => this.soundUpdate());
   }
 
   handleOctaveSelect(octave) {
-    this.setState({ selectedOctave: octave });
+    this.setState({ selectedOctave: octave }, () => this.soundUpdate());
+  }
+
+  handlePlayToggle() {
+    this.setState(state => {
+      if (state.isPlaying) {
+        this.soundStop();
+      } else {
+        this.soundPlay();
+      }
+
+      return {
+        isPlaying: !state.isPlaying,
+      };
+    });
   }
 
   handleSettingsClose() {
@@ -110,11 +129,14 @@ export default class App extends Component {
   }
 
   handleTemperamentSelect(temperament) {
-    this.setState({
-      temperament,
-      selectedNote: temperament.referenceName,
-      selectedOctave: temperament.referenceOctave,
-    });
+    this.setState(
+      {
+        temperament,
+        selectedNote: temperament.referenceName,
+        selectedOctave: temperament.referenceOctave,
+      },
+      () => this.soundUpdate()
+    );
   }
 
   handleTemperamentFileSelect(file) {
@@ -170,6 +192,35 @@ export default class App extends Component {
     });
   }
 
+  /** Create the oscillator node for the tuning pitch. */
+  oscillatorCreate() {
+    this.oscillator = this.audioContext.createOscillator();
+    this.oscillator.connect(this.audioContext.destination);
+  }
+
+  /** Begin playing the tuning pitch. */
+  soundPlay() {
+    this.oscillator.start();
+  }
+
+  /** Stop playing the tuning pitch. */
+  soundStop() {
+    this.oscillator.stop();
+    this.oscillatorCreate();
+  }
+
+  /** Update the frequency of the tuning pitch. */
+  soundUpdate() {
+    let pitch = this.state.temperament.getPitch(
+      this.state.selectedNote,
+      this.state.selectedOctave
+    );
+    this.oscillator.frequency.setValueAtTime(
+      pitch,
+      this.audioContext.currentTime
+    );
+  }
+
   render() {
     let flipperClasses = 'App-flipper';
     if (!this.state.isFrontPanel) {
@@ -184,9 +235,11 @@ export default class App extends Component {
           <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
             <PitchGenerator
               isFocusable={this.state.isFrontPanel}
+              isPlaying={this.state.isPlaying}
               onAlertOpen={this.handleAlertOpen.bind(this)}
               onNoteSelect={this.handleNoteSelect.bind(this)}
               onOctaveSelect={this.handleOctaveSelect.bind(this)}
+              onPlayToggle={this.handlePlayToggle.bind(this)}
               onSettingsOpen={this.handleSettingsOpen.bind(this)}
               onViewFlip={this.handleViewFlip.bind(this)}
               selectedNote={this.state.selectedNote}

@@ -55,23 +55,10 @@ export default class PitchGenerator extends Component {
     super();
     this.state = {
       audioContext: new window.AudioContext(),
-      isPlaying: false,
       notesModalIsOpen: false,
       octavesModalIsOpen: false,
       oscillator: null,
     };
-  }
-
-  componentWillReceiveProps(newProps) {
-    // We should update the sound when the selected note or octave is changed.
-    if (
-      this.props.selectedNote !== newProps.selectedNote ||
-      this.props.selectedOctave !== newProps.octave
-    ) {
-      const note = newProps.selectedNote;
-      const octave = newProps.selectedOctave;
-      this.soundUpdate(newProps.temperament.getPitch(note, octave));
-    }
   }
 
   handleAlertOpen(title, description) {
@@ -104,50 +91,6 @@ export default class PitchGenerator extends Component {
     this.setState({ octavesModalIsOpen: true });
   }
 
-  handlePlaybackClick() {
-    if (this.state.isPlaying) {
-      this.soundStop();
-      this.setState({ isPlaying: false });
-    } else {
-      const note = this.props.selectedNote;
-      const octave = this.props.selectedOctave;
-      this.soundPlay(this.props.temperament.getPitch(note, octave));
-      this.setState({ isPlaying: true });
-    }
-  }
-
-  soundPlay(pitch) {
-    this.setState(state => {
-      if (state.oscillator) {
-        state.oscillator.stop();
-      }
-      let ctx = state.audioContext;
-      let oscillator = ctx.createOscillator();
-      oscillator.frequency.setValueAtTime(pitch, ctx.currentTime);
-      oscillator.connect(ctx.destination);
-      oscillator.start();
-
-      return { oscillator };
-    });
-  }
-
-  soundStop() {
-    this.setState(state => {
-      if (state.oscillator) {
-        state.oscillator.stop();
-        return { oscillator: null };
-      } else {
-        return {};
-      }
-    });
-  }
-
-  soundUpdate(pitch) {
-    if (this.state.oscillator) {
-      this.soundPlay(pitch);
-    }
-  }
-
   render() {
     let pitch =
       Math.round(
@@ -176,8 +119,8 @@ export default class PitchGenerator extends Component {
         </div>
         <PlaybackControl
           isFocusable={this.props.isFocusable}
-          isPlaying={this.state.isPlaying}
-          onClick={this.handlePlaybackClick.bind(this)}
+          isPlaying={this.props.isPlaying}
+          onClick={this.props.onPlayToggle}
         />
         <span className="PitchGenerator-pitch">{`${pitch} Hz`}</span>
         <SettingsBar
@@ -233,9 +176,11 @@ export default class PitchGenerator extends Component {
 
 PitchGenerator.propTypes = {
   isFocusable: PropTypes.bool,
+  isPlaying: PropTypes.bool,
   onAlertOpen: PropTypes.func,
   onNoteSelect: PropTypes.func,
   onOctaveSelect: PropTypes.func,
+  onPlayToggle: PropTypes.func,
   onSettingsOpen: PropTypes.func,
   onViewFlip: PropTypes.func,
   selectedNote: PropTypes.string,
