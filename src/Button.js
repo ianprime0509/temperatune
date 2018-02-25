@@ -5,37 +5,51 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import './Button.css';
 
 /** A reusable button component with a consistent style. */
-export default function Button(props) {
-  let { fontSizeRem, isFocusable, isSelected, label, onClick, ...rest } = props;
-  let fontSize = String(fontSizeRem) + 'rem';
-
-  let className = 'Button';
-  if (isSelected) {
-    className += ' selected';
+export default class Button extends Component {
+  focus() {
+    this.innerDiv.focus();
   }
 
-  return (
-    <div
-      className={className}
-      onClick={onClick}
-      onKeyPress={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onClick && onClick();
-        }
-      }}
-      style={{ fontSize, lineHeight: fontSize }}
-      tabIndex={isFocusable ? 0 : -1}
-      {...rest}
-    >
-      {label}
-    </div>
-  );
+  render() {
+    let {
+      fontSizeRem,
+      isFocusable,
+      isSelected,
+      label,
+      onClick,
+      ...rest
+    } = this.props;
+    let fontSize = String(fontSizeRem) + 'rem';
+
+    let className = 'Button';
+    if (isSelected) {
+      className += ' selected';
+    }
+
+    return (
+      <div
+        ref={ref => (this.innerDiv = ref)}
+        className={className}
+        onClick={onClick}
+        onKeyPress={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            onClick && onClick();
+          }
+        }}
+        style={{ fontSize, lineHeight: fontSize }}
+        tabIndex={isFocusable ? 0 : -1}
+        {...rest}
+      >
+        {label}
+      </div>
+    );
+  }
 }
 
 Button.propTypes = {

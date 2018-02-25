@@ -19,6 +19,8 @@ import './Modal.css';
 
 /** A modal dialog with a consistent style. */
 export function Modal(props) {
+  let { children, isOpen, onRequestClose, title, ...rest } = props;
+
   return (
     <ReactModal
       className={{
@@ -28,20 +30,21 @@ export function Modal(props) {
       }}
       overlayClassName="Modal-overlay"
       closeTimeoutMS={200}
-      contentLabel={props.title}
-      isOpen={props.isOpen}
-      onRequestClose={props.onRequestClose}
+      contentLabel={title}
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      {...rest}
     >
       <div className="Modal-titlebar">
-        <span className="Modal-title">{props.title}</span>
+        <span className="Modal-title">{title}</span>
         <FontAwesomeIcon
           icon={faTimes}
           size="2x"
           className="Modal-close"
-          onClick={props.onRequestClose}
+          onClick={onRequestClose}
         />
       </div>
-      <div className="Modal-children">{props.children}</div>
+      <div className="Modal-children">{children}</div>
     </ReactModal>
   );
 }
@@ -68,6 +71,10 @@ export class Alert extends Component {
     };
   }
 
+  handleAfterOpen() {
+    this.okButton.focus();
+  }
+
   handleDetailsClick() {
     this.setState(state => {
       return { areDetailsExpanded: !state.areDetailsExpanded };
@@ -76,35 +83,40 @@ export class Alert extends Component {
 
   render() {
     let { description, details, isOpen, title } = this.props;
+    let alertDetailsStyle = details ? {} : { display: 'none' };
 
     return (
       <Modal
         aria={{ describedby: this.state.descriptionId }}
         isOpen={isOpen}
+        onAfterOpen={this.handleAfterOpen.bind(this)}
         onRequestClose={this.props.handleAlertClose}
         title={title}
       >
         <div className="Alert-content">
           <div className="Alert-description" id={this.state.descriptionId}>
             <p>{description}</p>
-            <div
-              className="Alert-details-expander"
-              onClick={this.handleDetailsClick.bind(this)}
-              onKeyPress={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  this.handleDetailsClick();
-                }
-              }}
-              tabIndex={0}
-            >
-              Details
-              <Caret isExpanded={this.state.areDetailsExpanded} />
+            <div style={alertDetailsStyle}>
+              <div
+                className="Alert-details-expander"
+                onClick={this.handleDetailsClick.bind(this)}
+                onKeyPress={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    this.handleDetailsClick();
+                  }
+                }}
+                tabIndex={0}
+              >
+                Details
+                <Caret isExpanded={this.state.areDetailsExpanded} />
+              </div>
+              <ExpandingContent isExpanded={this.state.areDetailsExpanded}>
+                <p className="Alert-details-content">{details}</p>
+              </ExpandingContent>
             </div>
-            <ExpandingContent isExpanded={this.state.areDetailsExpanded}>
-              <p className="Alert-details">{details}</p>
-            </ExpandingContent>
           </div>
           <Button
+            ref={ref => (this.okButton = ref)}
             fontSizeRem={1.5}
             label="OK"
             onClick={this.props.handleAlertClose}

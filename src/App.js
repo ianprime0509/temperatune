@@ -144,7 +144,7 @@ export default class App extends Component {
         ) {
           this.handleAlertOpen(
             'Error',
-            `Temperament with name ${temperament.name} already exists.`
+            `A temperament with the name '${temperament.name}' already exists.`
           );
           return;
         }
@@ -260,6 +260,7 @@ export default class App extends Component {
         </Modal>
         {this.state.alerts.map((alert, i) => (
           <Alert
+            key={i}
             description={alert.description}
             details={alert.details}
             handleAlertClose={this.handleAlertClose.bind(this)}
