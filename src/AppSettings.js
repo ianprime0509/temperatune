@@ -7,8 +7,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faCaretRight } from '@fortawesome/fontawesome-free-solid';
+
+import { Caret, Content as ExpandingContent } from './Expand';
 
 import './AppSettings.css';
 
@@ -105,15 +105,6 @@ export class SettingsExpanderGroup extends Component {
   render() {
     let { children, isFocusable, label, ...rest } = this.props;
 
-    let caretClassName = 'SettingsExpanderGroup-caret';
-    if (this.state.isExpanded) {
-      caretClassName += ' rotated';
-    }
-    let innerClassName = 'SettingsExpanderGroup-inner';
-    if (this.state.isExpanded) {
-      innerClassName += ' expanded';
-    }
-
     return (
       <div>
         <SettingsItem
@@ -128,23 +119,20 @@ export class SettingsExpanderGroup extends Component {
         >
           <div className="SettingsExpanderGroup-label">
             <div className="SettingsExpanderGroup-label-text">{label}</div>
-            <FontAwesomeIcon className={caretClassName} icon={faCaretRight} />
+            <Caret isExpanded={this.state.isExpanded} />
           </div>
         </SettingsItem>
-        <div
-          aria-expanded={this.state.isExpanded}
-          aria-hidden={!this.state.isExpanded}
-          className={innerClassName}
-        >
-          <div className="SettingsExpanderGroup-inner-bar" />
-          <div className="SettingsExpanderGroup-inner-children">
-            {React.Children.map(children, child => {
-              return React.cloneElement(child, {
-                isFocusable: isFocusable && this.state.isExpanded,
-              });
-            })}
-          </div>
-        </div>
+        <ExpandingContent isExpanded={this.state.isExpanded}>
+          {React.Children.map(children, child => {
+            // For now, we make the assumption that all the children accept the
+            // `isFocusable` prop, since our only uses of
+            // `SettingsExpanderGroup` are to contain `SettingsItem`s.  This
+            // may need to be changed in the future.
+            return React.cloneElement(child, {
+              isFocusable: isFocusable && this.state.isExpanded,
+            });
+          })}
+        </ExpandingContent>
       </div>
     );
   }

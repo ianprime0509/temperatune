@@ -14,7 +14,7 @@ import {
   faPlay,
 } from '@fortawesome/fontawesome-free-solid';
 
-import AppModal from './AppModal';
+import { Modal } from './Modal';
 import Button from './Button';
 import SettingsBar from './SettingsBar';
 import Temperament, { prettifyNoteName } from './Temperament';
@@ -186,7 +186,7 @@ export default class PitchGenerator extends Component {
           onViewFlip={this.props.onViewFlip}
           onSettingsOpen={this.props.onSettingsOpen}
         />
-        <AppModal
+        <Modal
           isOpen={this.state.notesModalIsOpen}
           onRequestClose={this.handleNotesModalClose.bind(this)}
           title="Select note"
@@ -205,8 +205,8 @@ export default class PitchGenerator extends Component {
                 />
               ))}
           </div>
-        </AppModal>
-        <AppModal
+        </Modal>
+        <Modal
           isOpen={this.state.octavesModalIsOpen}
           onRequestClose={this.handleOctavesModalClose.bind(this)}
           title="Select octave"
@@ -225,7 +225,7 @@ export default class PitchGenerator extends Component {
                 />
               ))}
           </div>
-        </AppModal>
+        </Modal>
       </div>
     );
   }

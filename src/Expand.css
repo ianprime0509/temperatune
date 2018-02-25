@@ -1,0 +1,32 @@
+.Caret {
+  float: right;
+  margin: 0 0.75rem;
+  transform: rotate(0);
+  transition: transform 200ms;
+}
+
+.Caret.expanded {
+  transform: rotate(90deg);
+}
+
+.Content {
+  display: flex;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 200ms ease-out;
+}
+
+.Content.expanded {
+  max-height: 100rem;
+  transition: max-height 200ms ease-in;
+}
+
+.Content-bar {
+  background: #aaa;
+  margin-right: 0.5rem;
+  width: 0.2rem;
+}
+
+.Content-children {
+  flex-grow: 1;
+}

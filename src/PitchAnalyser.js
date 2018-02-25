@@ -47,12 +47,13 @@ export default class PitchAnalyser extends Component {
       .getUserMedia({ audio: true })
       .then(this.handleGetInputStream.bind(this))
       .catch(err =>
-        this.handleAlertOpen('Error', `Could not get audio input: ${err}`)
+        this.handleAlertOpen('Error', 'Could not get audio input.', String(err))
       );
   }
 
-  handleAlertOpen(title, description) {
-    this.props.onAlertOpen && this.props.onAlertOpen(title, description);
+  handleAlertOpen(title, description, details) {
+    this.props.onAlertOpen &&
+      this.props.onAlertOpen(title, description, details);
   }
 
   /** Sets up the analyserNode with the provided input stream. */

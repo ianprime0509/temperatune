@@ -11,20 +11,6 @@
   }
 }
 
-.App-alert-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-}
-
-.App-alert-description {
-  flex-grow: 1;
-  min-height: 5rem;
-  min-width: 15rem;
-  max-width: 25rem;
-}
-
 .App-back {
   transform: rotateY(180deg);
 }

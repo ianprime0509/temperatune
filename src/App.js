@@ -6,16 +6,15 @@
  * https://opensource.org/licenses/MIT.
  */
 import React, { Component } from 'react';
-import Modal from 'react-modal';
+import ReactModal from 'react-modal';
 import cloneDeep from 'lodash.clonedeep';
 
-import AppModal from './AppModal';
+import { Modal, Alert } from './Modal';
 import {
   SettingsItem,
   SettingsFileChooser,
   SettingsExpanderGroup,
 } from './AppSettings';
-import Button from './Button';
 import PitchAnalyser from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 import Temperament from './Temperament';
@@ -44,7 +43,9 @@ export default class App extends Component {
     this.state = {
       /**
        * The stack of alert messages currently being shown.  Each alert is an
-       * object with keys `title`, `description` and `isOpen`.
+       * object with keys `title`, `description` and `isOpen`.  Optionally, the
+       * `details` property can provide more information that isn't
+       * automatically shown to the user.
        */
       alerts: [],
       /** Whether the front panel is being shown. */
@@ -55,7 +56,7 @@ export default class App extends Component {
     this.state.selectedNote = this.state.temperament.referenceName;
     this.state.selectedOctave = this.state.temperament.referenceOctave;
 
-    Modal.setAppElement(document.getElementById('root'));
+    ReactModal.setAppElement(document.getElementById('root'));
   }
 
   /** Close the alert on the top of the stack. */
@@ -70,12 +71,12 @@ export default class App extends Component {
     });
   }
 
-  handleAlertOpen(title, description) {
+  handleAlertOpen(title, description, details) {
     this.setState(state => {
       // We also clean up any alerts that have been closed already.
       let alerts = state.alerts.filter(alert => alert.isOpen);
       return {
-        alerts: alerts.concat([{ title, description, isOpen: true }]),
+        alerts: alerts.concat([{ title, description, details, isOpen: true }]),
       };
     });
   }
@@ -127,7 +128,11 @@ export default class App extends Component {
         try {
           temperament = new Temperament(json);
         } catch (err) {
-          this.handleAlertOpen('Error', `Invalid temperament input: ${err}`);
+          this.handleAlertOpen(
+            'Error',
+            'Invalid temperament input.',
+            String(err)
+          );
           return;
         }
         // We aren't allowed to have a temperament with the same name as some
@@ -151,7 +156,11 @@ export default class App extends Component {
         });
       })
       .catch(err => {
-        this.handleAlertOpen('Error', `Could not get JSON data: ${err}`);
+        this.handleAlertOpen(
+          'Error',
+          'Could not process input file.  Please ensure that you selected the correct file and try again.',
+          String(err)
+        );
       });
   }
 
@@ -195,7 +204,7 @@ export default class App extends Component {
             />
           </div>
         </div>
-        <AppModal
+        <Modal
           isOpen={this.state.settingsAreOpen}
           onRequestClose={this.handleSettingsClose.bind(this)}
           title="Settings"
@@ -248,32 +257,16 @@ export default class App extends Component {
               Hz
             </SettingsItem>
           </div>
-        </AppModal>
-        {this.state.alerts.map((alert, i) => {
-          let descriptionId = 'description-' + String(i);
-
-          return (
-            <AppModal
-              key={i}
-              aria={{ describedby: descriptionId }}
-              isOpen={alert.isOpen}
-              onRequestClose={this.handleAlertClose.bind(this)}
-              title={alert.title}
-            >
-              <div className="App-alert-content">
-                <p className="App-alert-description" id={descriptionId}>
-                  {alert.description}
-                </p>
-                <Button
-                  fontSizeRem={1.5}
-                  label="OK"
-                  onClick={this.handleAlertClose.bind(this)}
-                  tabIndex={0}
-                />
-              </div>
-            </AppModal>
-          );
-        })}
+        </Modal>
+        {this.state.alerts.map((alert, i) => (
+          <Alert
+            description={alert.description}
+            details={alert.details}
+            handleAlertClose={this.handleAlertClose.bind(this)}
+            isOpen={alert.isOpen}
+            title={alert.title}
+          />
+        ))}
       </div>
     );
   }

@@ -1,16 +1,43 @@
-.AppModal-children {
+.Alert-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.Alert-description {
+  flex-grow: 1;
+  min-height: 5rem;
+  min-width: 15rem;
+  max-width: 25rem;
+}
+
+.Alert-details {
+  color: #666;
+}
+
+.Alert-details-expander {
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.Alert-details-expander:focus {
+  border: 1px solid lightskyblue;
+}
+
+.Modal-children {
   max-height: calc(100vh - 3rem);
   max-width: 100vw;
   overflow-y: auto;
 }
 
-.AppModal-close {
+.Modal-close {
   cursor: pointer;
   float: right;
   margin-left: 0.5rem;
 }
 
-.AppModal-content {
+.Modal-content {
   background: #f0f0f0;
   box-shadow: 8px 8px 16px hsla(0, 0%, 0%, 0.1);
   max-height: 100vh;
@@ -21,16 +48,16 @@
   position: relative;
 }
 
-.AppModal-content--after-open {
+.Modal-content--after-open {
   opacity: 1;
   transition: opacity 200ms ease-in-out;
 }
 
-.AppModal-content--before-close {
+.Modal-content--before-close {
   opacity: 0;
 }
 
-.AppModal-overlay {
+.Modal-overlay {
   align-items: center;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
@@ -42,13 +69,13 @@
   width: 100vw;
 }
 
-.AppModal-title {
+.Modal-title {
   font-size: 1.5rem;
   line-height: 2rem;
   vertical-align: middle;
 }
 
-.AppModal-titlebar {
+.Modal-titlebar {
   border-bottom: 1px solid black;
   height: 2.5rem;
 }
