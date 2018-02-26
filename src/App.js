@@ -9,12 +9,13 @@ import React, { Component } from 'react';
 import ReactModal from 'react-modal';
 import cloneDeep from 'lodash.clonedeep';
 
-import { Modal, Alert } from './Modal';
 import {
   SettingsItem,
   SettingsFileChooser,
   SettingsExpanderGroup,
 } from './AppSettings';
+import Background from './Background';
+import { Modal, Alert } from './Modal';
 import PitchAnalyser from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 import Temperament from './Temperament';
@@ -48,6 +49,8 @@ export default class App extends Component {
        * automatically shown to the user.
        */
       alerts: [],
+      appHeight: 0,
+      appWidth: 0,
       /** Whether the front panel is being shown. */
       isFrontPanel: true,
       /** Whether the tone is being played in the pitch generator. */
@@ -62,6 +65,17 @@ export default class App extends Component {
     this.oscillatorCreate();
 
     ReactModal.setAppElement(document.getElementById('root'));
+  }
+
+  componentDidMount() {
+    // For now, it should be OK to only calculate the width and height when the
+    // component mounts, since the app doesn't change size unless it's filling
+    // up the whole viewport (in which case the background isn't shown).
+    let appBounds = this.app.getBoundingClientRect();
+    this.setState({
+      appHeight: appBounds.height,
+      appWidth: appBounds.width,
+    });
   }
 
   /** Close the alert on the top of the stack. */
@@ -230,97 +244,106 @@ export default class App extends Component {
     return (
       // Using a variant of https://davidwalsh.name/css-flip for the flip
       // animation
-      <div className="App">
-        <div className={flipperClasses} id="App-flipper">
-          <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
-            <PitchGenerator
-              isFocusable={this.state.isFrontPanel}
-              isPlaying={this.state.isPlaying}
-              onAlertOpen={this.handleAlertOpen.bind(this)}
-              onNoteSelect={this.handleNoteSelect.bind(this)}
-              onOctaveSelect={this.handleOctaveSelect.bind(this)}
-              onPlayToggle={this.handlePlayToggle.bind(this)}
-              onSettingsOpen={this.handleSettingsOpen.bind(this)}
-              onViewFlip={this.handleViewFlip.bind(this)}
-              selectedNote={this.state.selectedNote}
-              selectedOctave={this.state.selectedOctave}
-              temperament={this.state.temperament}
-            />
+      <div>
+        <Background
+          appHeight={this.state.appHeight}
+          appWidth={this.state.appWidth}
+          isActive={this.state.isPlaying}
+        />
+        <div ref={ref => (this.app = ref)} className="App">
+          <div className={flipperClasses} id="App-flipper">
+            <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
+              <PitchGenerator
+                isFocusable={this.state.isFrontPanel}
+                isPlaying={this.state.isPlaying}
+                onAlertOpen={this.handleAlertOpen.bind(this)}
+                onNoteSelect={this.handleNoteSelect.bind(this)}
+                onOctaveSelect={this.handleOctaveSelect.bind(this)}
+                onPlayToggle={this.handlePlayToggle.bind(this)}
+                onSettingsOpen={this.handleSettingsOpen.bind(this)}
+                onViewFlip={this.handleViewFlip.bind(this)}
+                selectedNote={this.state.selectedNote}
+                selectedOctave={this.state.selectedOctave}
+                temperament={this.state.temperament}
+              />
+            </div>
+            <div className="App-back" aria-hidden={this.state.isFrontPanel}>
+              <PitchAnalyser
+                isFocusable={!this.state.isFrontPanel}
+                onAlertOpen={this.handleAlertOpen.bind(this)}
+                onSettingsOpen={this.handleSettingsOpen.bind(this)}
+                onViewFlip={this.handleViewFlip.bind(this)}
+                temperament={this.state.temperament}
+              />
+            </div>
           </div>
-          <div className="App-back" aria-hidden={this.state.isFrontPanel}>
-            <PitchAnalyser
-              isFocusable={!this.state.isFrontPanel}
-              onAlertOpen={this.handleAlertOpen.bind(this)}
-              onSettingsOpen={this.handleSettingsOpen.bind(this)}
-              onViewFlip={this.handleViewFlip.bind(this)}
-              temperament={this.state.temperament}
-            />
-          </div>
-        </div>
-        <Modal
-          isOpen={this.state.settingsAreOpen}
-          onRequestClose={this.handleSettingsClose.bind(this)}
-          title="Settings"
-        >
-          <div className="App-settings-container">
-            <SettingsExpanderGroup
-              isFocusable={true}
-              label={`Temperament: ${this.state.temperament.name}`}
-            >
-              {builtInTemperaments.map(temperamentData => (
-                <SettingsItem
-                  key={temperamentData.name}
-                  isSelected={
-                    temperamentData.name === this.state.temperament.name
-                  }
-                  onClick={() => {
-                    let temperament = new Temperament(temperamentData);
-                    this.handleTemperamentSelect(temperament);
+          <Modal
+            isOpen={this.state.settingsAreOpen}
+            onRequestClose={this.handleSettingsClose.bind(this)}
+            title="Settings"
+          >
+            <div className="App-settings-container">
+              <SettingsExpanderGroup
+                isFocusable={true}
+                label={`Temperament: ${this.state.temperament.name}`}
+              >
+                {builtInTemperaments.map(temperamentData => (
+                  <SettingsItem
+                    key={temperamentData.name}
+                    isSelected={
+                      temperamentData.name === this.state.temperament.name
+                    }
+                    onClick={() => {
+                      let temperament = new Temperament(temperamentData);
+                      this.handleTemperamentSelect(temperament);
+                    }}
+                  >
+                    {temperamentData.name}
+                  </SettingsItem>
+                ))}
+                {userTemperaments.map(temperament => (
+                  <SettingsItem
+                    key={temperament.name}
+                    isSelected={
+                      temperament.name === this.state.temperament.name
+                    }
+                    onClick={() => this.handleTemperamentSelect(temperament)}
+                  >
+                    {temperament.name}
+                  </SettingsItem>
+                ))}
+                <SettingsFileChooser
+                  label="Choose file"
+                  onFileSelect={this.handleTemperamentFileSelect.bind(this)}
+                />
+              </SettingsExpanderGroup>
+              <SettingsItem>
+                Reference pitch:
+                <input
+                  ref={input => {
+                    this.referencePitchInput = input;
                   }}
-                >
-                  {temperamentData.name}
-                </SettingsItem>
-              ))}
-              {userTemperaments.map(temperament => (
-                <SettingsItem
-                  key={temperament.name}
-                  isSelected={temperament.name === this.state.temperament.name}
-                  onClick={() => this.handleTemperamentSelect(temperament)}
-                >
-                  {temperament.name}
-                </SettingsItem>
-              ))}
-              <SettingsFileChooser
-                label="Choose file"
-                onFileSelect={this.handleTemperamentFileSelect.bind(this)}
-              />
-            </SettingsExpanderGroup>
-            <SettingsItem>
-              Reference pitch:
-              <input
-                ref={input => {
-                  this.referencePitchInput = input;
-                }}
-                className="App-reference-input"
-                pattern="[0-9]*"
-                placeholder={this.state.temperament.referencePitch}
-                tabIndex={0}
-                type="text"
-              />
-              Hz
-            </SettingsItem>
-          </div>
-        </Modal>
-        {this.state.alerts.map((alert, i) => (
-          <Alert
-            key={i}
-            description={alert.description}
-            details={alert.details}
-            handleAlertClose={this.handleAlertClose.bind(this)}
-            isOpen={alert.isOpen}
-            title={alert.title}
-          />
-        ))}
+                  className="App-reference-input"
+                  pattern="[0-9]*"
+                  placeholder={this.state.temperament.referencePitch}
+                  tabIndex={0}
+                  type="text"
+                />
+                Hz
+              </SettingsItem>
+            </div>
+          </Modal>
+          {this.state.alerts.map((alert, i) => (
+            <Alert
+              key={i}
+              description={alert.description}
+              details={alert.details}
+              handleAlertClose={this.handleAlertClose.bind(this)}
+              isOpen={alert.isOpen}
+              title={alert.title}
+            />
+          ))}
+        </div>
       </div>
     );
   }
