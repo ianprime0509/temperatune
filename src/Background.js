@@ -35,7 +35,12 @@ export default class Background extends Component {
   /** Produce a new ripple. */
   ripple() {
     if (this.props.isActive) {
-      this.ripples.push({ size: 0, alpha: 1, wobbliness: 20, t: 0 });
+      this.ripples.push({
+        size: 0,
+        alpha: 1,
+        wobbliness: this.props.wobbliness,
+        t: 0,
+      });
     }
   }
 
@@ -109,4 +114,9 @@ Background.propTypes = {
   appHeight: PropTypes.number.isRequired,
   appWidth: PropTypes.number.isRequired,
   isActive: PropTypes.bool.isRequired,
+  wobbliness: PropTypes.number,
+};
+
+Background.defaultProps = {
+  wobbliness: 0,
 };

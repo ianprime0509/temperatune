@@ -8,94 +8,35 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/fontawesome-free-solid';
-import { findPitch } from 'pitchy';
 
 import SettingsBar from './SettingsBar';
 import Temperament, { prettifyNoteName } from './Temperament';
 
 import './PitchAnalyser.css';
 
-// The maximum offset that should still be considered perfect.
-const PERFECT_OFFSET = 5;
-// The minimum offset that should be considered completely off.
-const BAD_OFFSET = 50;
+/** The maximum offset that should still be considered perfect. */
+export const PERFECT_OFFSET = 5;
+/** The minimum offset that should be considered completely off. */
+export const BAD_OFFSET = 50;
 
 /**
  * The component handling the "pitch detection" panel of the tuner.
  */
 export default class PitchAnalyser extends Component {
-  constructor() {
-    super();
-    this.state = {
-      analyserNode: null,
-      audioContext: new window.AudioContext(),
-      /** The current detected note. */
-      note: null,
-      /** The offset of the current pitch from the detected note. */
-      offset: 0,
-    };
-    this.getMicrophoneInput();
-  }
-
-  componentDidMount() {
-    window.setInterval(() => this.updateNote(), 100);
-  }
-
-  /** Starts the process of getting microphone access. */
-  getMicrophoneInput() {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(this.handleGetInputStream.bind(this))
-      .catch(err =>
-        this.handleAlertOpen('Error', 'Could not get audio input.', String(err))
-      );
-  }
-
   handleAlertOpen(title, description, details) {
     this.props.onAlertOpen &&
       this.props.onAlertOpen(title, description, details);
   }
 
-  /** Sets up the analyserNode with the provided input stream. */
-  handleGetInputStream(stream) {
-    this.setState(state => {
-      let ctx = state.audioContext;
-      let analyserNode = ctx.createAnalyser();
-      let sourceNode = ctx.createMediaStreamSource(stream);
-      sourceNode.connect(analyserNode);
-
-      return { analyserNode };
-    });
-  }
-
-  updateNote() {
-    this.setState((state, props) => {
-      let ctx = state.audioContext;
-      let analyserNode = state.analyserNode;
-
-      if (!analyserNode) {
-        // Nothing to get updates from.
-        return {};
-      }
-      let data = new Float32Array(analyserNode.fftSize);
-      analyserNode.getFloatTimeDomainData(data);
-      let [pitch, clarity] = findPitch(data, ctx.sampleRate);
-      if (clarity < 0.8) {
-        return { note: null, offset: 0 };
-      }
-      let [note, offset] = props.temperament.getNoteNameFromPitch(pitch);
-
-      return { note: note, offset };
-    });
-  }
-
   render() {
-    let background = this.state.note
-      ? `hsl(${getHue(this.state.offset)}, 70%, 80%)`
+    let background = this.props.detectedNote
+      ? `hsl(${getHue(this.props.detectedOffset)}, 70%, 80%)`
       : '#e7e7e7';
-    let noteName = this.state.note ? prettifyNoteName(this.state.note) : '-';
-    let offsetString = this.state.note
-      ? getOffsetString(this.state.offset)
+    let noteName = this.props.detectedNote
+      ? prettifyNoteName(this.props.detectedNote)
+      : '-';
+    let offsetString = this.props.detectedNote
+      ? getOffsetString(this.props.detectedOffset)
       : '';
 
     return (
@@ -114,6 +55,8 @@ export default class PitchAnalyser extends Component {
 }
 
 PitchAnalyser.propTypes = {
+  detectedNote: PropTypes.string,
+  detectedOffset: PropTypes.number,
   isFocusable: PropTypes.bool,
   onAlertOpen: PropTypes.func,
   onSettingsOpen: PropTypes.func,

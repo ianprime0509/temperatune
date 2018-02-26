@@ -8,6 +8,7 @@
 import React, { Component } from 'react';
 import ReactModal from 'react-modal';
 import cloneDeep from 'lodash.clonedeep';
+import { findPitch } from 'pitchy';
 
 import {
   SettingsItem,
@@ -16,7 +17,7 @@ import {
 } from './AppSettings';
 import Background from './Background';
 import { Modal, Alert } from './Modal';
-import PitchAnalyser from './PitchAnalyser';
+import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 import Temperament from './Temperament';
 
@@ -51,6 +52,10 @@ export default class App extends Component {
       alerts: [],
       appHeight: 0,
       appWidth: 0,
+      /** The current detected note. */
+      detectedNote: null,
+      /** The offset of the current pitch from the detected note. */
+      detectedOffset: 0,
       /** Whether the front panel is being shown. */
       isFrontPanel: true,
       /** Whether the tone is being played in the pitch generator. */
@@ -63,6 +68,7 @@ export default class App extends Component {
 
     this.audioContext = new AudioContext();
     this.oscillatorCreate();
+    this.analyserNode = null;
 
     ReactModal.setAppElement(document.getElementById('root'));
   }
@@ -76,6 +82,19 @@ export default class App extends Component {
       appHeight: appBounds.height,
       appWidth: appBounds.width,
     });
+
+    window.setInterval(() => this.inputNoteUpdate(), 100);
+  }
+
+  /** Attempt to create the `AnalyserNode` and get microphone access. */
+  analyserCreate() {
+    this.analyserNode = this.audioContext.createAnalyser();
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(stream => this.handleInputStreamGet(stream))
+      .catch(err =>
+        this.handleAlertOpen('Error', 'Could not get audio input.', String(err))
+      );
   }
 
   /** Close the alert on the top of the stack. */
@@ -98,6 +117,12 @@ export default class App extends Component {
         alerts: alerts.concat([{ title, description, details, isOpen: true }]),
       };
     });
+  }
+
+  /** Set up the `AnalyserNode` with the provided input stream. */
+  handleInputStreamGet(stream) {
+    let sourceNode = this.audioContext.createMediaStreamSource(stream);
+    sourceNode.connect(this.analyserNode);
   }
 
   handleNoteSelect(note) {
@@ -202,8 +227,41 @@ export default class App extends Component {
 
   handleViewFlip() {
     this.setState(state => {
-      return { isFrontPanel: !state.isFrontPanel };
+      if (state.isFrontPanel) {
+        // We don't want the tuning note to keep playing when we switch over to
+        // analyser mode.
+        if (state.isPlaying) {
+          this.soundStop();
+        }
+        return { isFrontPanel: false, isPlaying: false };
+      } else {
+        return { isFrontPanel: true };
+      }
     });
+  }
+
+  /** Update the input note from the microphone input. */
+  inputNoteUpdate() {
+    // We shouldn't even bother updating the input note if the analyser
+    // interface isn't open.
+    if (this.state.isFrontPanel) return;
+
+    if (!this.analyserNode) {
+      this.analyserCreate();
+    }
+    let ctx = this.audioContext;
+    let analyserNode = this.analyserNode;
+
+    let data = new Float32Array(analyserNode.fftSize);
+    analyserNode.getFloatTimeDomainData(data);
+    let [pitch, clarity] = findPitch(data, ctx.sampleRate);
+    if (clarity < 0.8) {
+      this.setState({ detectedNote: null, detectedOffset: 0 });
+      return;
+    }
+    let [note, offset] = this.state.temperament.getNoteNameFromPitch(pitch);
+
+    this.setState({ detectedNote: note, detectedOffset: offset });
   }
 
   /** Create the oscillator node for the tuning pitch. */
@@ -241,6 +299,14 @@ export default class App extends Component {
       flipperClasses += ' flipped';
     }
 
+    let backgroundIsActive =
+      this.state.isPlaying ||
+      (!this.state.isFrontPanel && this.state.detectedNote !== null);
+    let wobbliness =
+      !this.state.isFrontPanel && this.state.detectedNote
+        ? getWobbliness(this.state.detectedOffset)
+        : 0;
+
     return (
       // Using a variant of https://davidwalsh.name/css-flip for the flip
       // animation
@@ -248,7 +314,8 @@ export default class App extends Component {
         <Background
           appHeight={this.state.appHeight}
           appWidth={this.state.appWidth}
-          isActive={this.state.isPlaying}
+          isActive={backgroundIsActive}
+          wobbliness={wobbliness}
         />
         <div ref={ref => (this.app = ref)} className="App">
           <div className={flipperClasses} id="App-flipper">
@@ -269,6 +336,8 @@ export default class App extends Component {
             </div>
             <div className="App-back" aria-hidden={this.state.isFrontPanel}>
               <PitchAnalyser
+                detectedNote={this.state.detectedNote}
+                detectedOffset={this.state.detectedOffset}
                 isFocusable={!this.state.isFrontPanel}
                 onAlertOpen={this.handleAlertOpen.bind(this)}
                 onSettingsOpen={this.handleSettingsOpen.bind(this)}
@@ -346,5 +415,23 @@ export default class App extends Component {
         </div>
       </div>
     );
+  }
+}
+
+/**
+ * Get a wobbliness value from the given pitch offset.  Bigger offsets produce
+ * more wobbliness.
+ */
+function getWobbliness(offset) {
+  const MAX = 20; // The maximum wobbliness
+
+  let abs = Math.abs(offset);
+  if (abs > BAD_OFFSET) {
+    return MAX;
+  } else if (abs > PERFECT_OFFSET) {
+    const a = MAX / (BAD_OFFSET - PERFECT_OFFSET);
+    return a * (abs - PERFECT_OFFSET);
+  } else {
+    return 0;
   }
 }
