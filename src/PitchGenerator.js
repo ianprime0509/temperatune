@@ -61,10 +61,6 @@ export default class PitchGenerator extends Component {
     };
   }
 
-  handleAlertOpen(title, description) {
-    this.props.onAlertOpen && this.props.onAlertOpen(title, description);
-  }
-
   handleNoteSelect(note) {
     this.props.onNoteSelect(note);
     this.handleNotesModalClose();
@@ -108,13 +104,13 @@ export default class PitchGenerator extends Component {
             fontSizeRem={5}
             isFocusable={this.props.isFocusable}
             label={prettifyNoteName(this.props.selectedNote)}
-            onClick={this.handleNotesModalOpen.bind(this)}
+            onClick={() => this.handleNotesModalOpen()}
           />
           <Button
             fontSizeRem={5}
             isFocusable={this.props.isFocusable}
             label={String(this.props.selectedOctave)}
-            onClick={this.handleOctavesModalOpen.bind(this)}
+            onClick={() => this.handleOctavesModalOpen()}
           />
         </div>
         <PlaybackControl
@@ -131,7 +127,7 @@ export default class PitchGenerator extends Component {
         />
         <Modal
           isOpen={this.state.notesModalIsOpen}
-          onRequestClose={this.handleNotesModalClose.bind(this)}
+          onRequestClose={() => this.handleNotesModalClose()}
           title="Select note"
         >
           <div className="PitchGenerator-notes">
@@ -151,7 +147,7 @@ export default class PitchGenerator extends Component {
         </Modal>
         <Modal
           isOpen={this.state.octavesModalIsOpen}
-          onRequestClose={this.handleOctavesModalClose.bind(this)}
+          onRequestClose={() => this.handleOctavesModalClose()}
           title="Select octave"
         >
           <div className="PitchGenerator-octaves">
@@ -177,7 +173,6 @@ export default class PitchGenerator extends Component {
 PitchGenerator.propTypes = {
   isFocusable: PropTypes.bool,
   isPlaying: PropTypes.bool,
-  onAlertOpen: PropTypes.func,
   onNoteSelect: PropTypes.func,
   onOctaveSelect: PropTypes.func,
   onPlayToggle: PropTypes.func,

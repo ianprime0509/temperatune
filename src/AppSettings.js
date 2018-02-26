@@ -65,7 +65,7 @@ export class SettingsFileChooser extends Component {
         <input
           id="fileInput"
           ref={ref => (this.input = ref)}
-          onChange={this.handleFileSelect.bind(this)}
+          onChange={() => this.handleFileSelect()}
           style={{ height: 0, opacity: 0, width: 0 }}
           tabIndex={-1}
           type="file"
@@ -108,7 +108,7 @@ export class SettingsExpanderGroup extends Component {
     return (
       <div>
         <SettingsItem
-          onClick={this.handleExpandToggle.bind(this)}
+          onClick={() => this.handleExpandToggle()}
           onKeyPress={e => {
             if (e.key === 'Enter' || e.key === ' ') {
               this.handleExpandToggle();

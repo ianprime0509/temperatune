@@ -23,11 +23,6 @@ export const BAD_OFFSET = 50;
  * The component handling the "pitch detection" panel of the tuner.
  */
 export default class PitchAnalyser extends Component {
-  handleAlertOpen(title, description, details) {
-    this.props.onAlertOpen &&
-      this.props.onAlertOpen(title, description, details);
-  }
-
   render() {
     let background = this.props.detectedNote
       ? `hsl(${getHue(this.props.detectedOffset)}, 70%, 80%)`
@@ -58,7 +53,6 @@ PitchAnalyser.propTypes = {
   detectedNote: PropTypes.string,
   detectedOffset: PropTypes.number,
   isFocusable: PropTypes.bool,
-  onAlertOpen: PropTypes.func,
   onSettingsOpen: PropTypes.func,
   onViewFlip: PropTypes.func,
   temperament: PropTypes.instanceOf(Temperament),

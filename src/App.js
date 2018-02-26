@@ -272,6 +272,7 @@ export default class App extends Component {
 
   /** Begin playing the tuning pitch. */
   soundPlay() {
+    this.soundUpdate();
     this.oscillator.start();
   }
 
@@ -323,12 +324,12 @@ export default class App extends Component {
               <PitchGenerator
                 isFocusable={this.state.isFrontPanel}
                 isPlaying={this.state.isPlaying}
-                onAlertOpen={this.handleAlertOpen.bind(this)}
-                onNoteSelect={this.handleNoteSelect.bind(this)}
-                onOctaveSelect={this.handleOctaveSelect.bind(this)}
-                onPlayToggle={this.handlePlayToggle.bind(this)}
-                onSettingsOpen={this.handleSettingsOpen.bind(this)}
-                onViewFlip={this.handleViewFlip.bind(this)}
+                onAlertOpen={() => this.handleAlertOpen()}
+                onNoteSelect={note => this.handleNoteSelect(note)}
+                onOctaveSelect={octave => this.handleOctaveSelect(octave)}
+                onPlayToggle={() => this.handlePlayToggle()}
+                onSettingsOpen={() => this.handleSettingsOpen()}
+                onViewFlip={() => this.handleViewFlip()}
                 selectedNote={this.state.selectedNote}
                 selectedOctave={this.state.selectedOctave}
                 temperament={this.state.temperament}
@@ -339,16 +340,16 @@ export default class App extends Component {
                 detectedNote={this.state.detectedNote}
                 detectedOffset={this.state.detectedOffset}
                 isFocusable={!this.state.isFrontPanel}
-                onAlertOpen={this.handleAlertOpen.bind(this)}
-                onSettingsOpen={this.handleSettingsOpen.bind(this)}
-                onViewFlip={this.handleViewFlip.bind(this)}
+                onAlertOpen={() => this.handleAlertOpen()}
+                onSettingsOpen={() => this.handleSettingsOpen()}
+                onViewFlip={() => this.handleViewFlip()}
                 temperament={this.state.temperament}
               />
             </div>
           </div>
           <Modal
             isOpen={this.state.settingsAreOpen}
-            onRequestClose={this.handleSettingsClose.bind(this)}
+            onRequestClose={() => this.handleSettingsClose()}
             title="Settings"
           >
             <div className="App-settings-container">
@@ -383,7 +384,7 @@ export default class App extends Component {
                 ))}
                 <SettingsFileChooser
                   label="Choose file"
-                  onFileSelect={this.handleTemperamentFileSelect.bind(this)}
+                  onFileSelect={() => this.handleTemperamentFileSelect()}
                 />
               </SettingsExpanderGroup>
               <SettingsItem>
@@ -407,7 +408,7 @@ export default class App extends Component {
               key={i}
               description={alert.description}
               details={alert.details}
-              handleAlertClose={this.handleAlertClose.bind(this)}
+              handleAlertClose={() => this.handleAlertClose()}
               isOpen={alert.isOpen}
               title={alert.title}
             />

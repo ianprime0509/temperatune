@@ -89,7 +89,7 @@ export class Alert extends Component {
       <Modal
         aria={{ describedby: this.state.descriptionId }}
         isOpen={isOpen}
-        onAfterOpen={this.handleAfterOpen.bind(this)}
+        onAfterOpen={() => this.handleAfterOpen()}
         onRequestClose={this.props.handleAlertClose}
         title={title}
       >
@@ -99,7 +99,7 @@ export class Alert extends Component {
             <div style={alertDetailsStyle}>
               <div
                 className="Alert-details-expander"
-                onClick={this.handleDetailsClick.bind(this)}
+                onClick={() => this.handleDetailsClick()}
                 onKeyPress={e => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     this.handleDetailsClick();
