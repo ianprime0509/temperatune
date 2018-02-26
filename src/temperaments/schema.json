@@ -39,6 +39,7 @@
     "notes": {
       "description": "A mapping of note names to a description of each note.",
       "type": "object",
+      "minProperties": 1,
       "additionalProperties": {
         "description":
           "A description of the note, as an offset from another note.",

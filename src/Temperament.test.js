@@ -36,6 +36,18 @@ describe('Temperament', () => {
             },
           })
       ).toThrow('Incorrect temperament format');
+
+      expect(
+        () =>
+          new Temperament({
+            name: 'Empty notes object',
+            referenceName: 'A',
+            referencePitch: 440,
+            referenceOctave: 4,
+            octaveBaseName: 'C',
+            notes: {},
+          })
+      ).toThrow('Incorrect temperament format');
     });
 
     test('throws an error when given conflicting note definitions', () => {
