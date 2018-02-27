@@ -13,11 +13,11 @@ import {
   faPause,
   faPlay,
 } from '@fortawesome/fontawesome-free-solid';
+import { Temperament, prettifyNoteName } from 'temperament';
 
 import { Modal } from './Modal';
 import Button from './Button';
 import SettingsBar from './SettingsBar';
-import Temperament, { prettifyNoteName } from './Temperament';
 
 import './PitchGenerator.css';
 

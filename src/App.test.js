@@ -11,13 +11,6 @@ import App from './App';
 import 'web-audio-test-api';
 
 test('renders without crashing', () => {
-  // Another mock, this time for the getUserMedia method of
-  // navigator.mediaDevices.
-  navigator.mediaDevices = {
-    getUserMedia: jest
-      .fn()
-      .mockReturnValue(Promise.reject(new Error('this is a mock'))),
-  };
   // We need to make sure that we give our root element the 'root' id and
   // actually put it in the document body, since react-modal will complain
   // about the app element if we don't.

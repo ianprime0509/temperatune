@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import ReactModal from 'react-modal';
 import cloneDeep from 'lodash.clonedeep';
 import { findPitch } from 'pitchy';
+import { Temperament } from 'temperament';
 
 import {
   SettingsItem,
@@ -19,7 +20,6 @@ import Background from './Background';
 import { Modal, Alert } from './Modal';
 import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
-import Temperament from './Temperament';
 
 import './App.css';
 import equalTemperament from './temperaments/equal.json';

@@ -97,7 +97,7 @@ ajv@^5.0.0, ajv@^5.1.0, ajv@^5.1.5, ajv@^5.2.0, ajv@^5.3.0:
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.3.0"
 
-ajv@^6.0.1:
+ajv@^6.0.1, ajv@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.2.0.tgz#afac295bbaa0152449e522742e4547c1ae9328d2"
   dependencies:
@@ -4858,7 +4858,7 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
-pitchy@^1.0.2:
+pitchy@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/pitchy/-/pitchy-1.0.3.tgz#5448cf63d7b4759ec3f4a8cac536501bba57b7df"
   dependencies:
@@ -6298,6 +6298,12 @@ tar@^2.2.1:
     block-stream "*"
     fstream "^1.0.2"
     inherits "2"
+
+temperament@^1.0.0-alpha.0:
+  version "1.0.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/temperament/-/temperament-1.0.0-alpha.0.tgz#0fc15758ee4d903bf9d5ff177be44c0bceff8cdb"
+  dependencies:
+    ajv "^6.2.0"
 
 term-size@^1.2.0:
   version "1.2.0"

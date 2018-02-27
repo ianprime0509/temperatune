@@ -8,9 +8,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/fontawesome-free-solid';
+import { Temperament, prettifyNoteName } from 'temperament';
 
 import SettingsBar from './SettingsBar';
-import Temperament, { prettifyNoteName } from './Temperament';
 
 import './PitchAnalyser.css';
 
