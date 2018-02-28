@@ -86,6 +86,10 @@ SettingsFileChooser.propTypes = {
   onFileSelect: PropTypes.func,
 };
 
+SettingsFileChooser.defaultProps = {
+  tabIndex: 0,
+};
+
 /**
  * A setting which can be clicked/tapped to expand a list of sub-settings.
  */
@@ -137,4 +141,8 @@ SettingsExpanderGroup.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
   ]),
   label: PropTypes.string.isRequired,
+};
+
+SettingsExpanderGroup.defaultProps = {
+  tabIndex: 0,
 };

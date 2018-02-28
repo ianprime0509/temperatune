@@ -351,7 +351,6 @@ export default class App extends Component {
             <div className="App-settings-container">
               <SettingsExpanderGroup
                 label={`Temperament: ${this.state.temperament.name}`}
-                tabIndex={0}
               >
                 {builtInTemperaments.map(temperamentData => (
                   <SettingsItem
@@ -385,7 +384,6 @@ export default class App extends Component {
                   onFileSelect={file =>
                     file && this.handleTemperamentFileSelect(file)
                   }
-                  tabIndex={0}
                 />
               </SettingsExpanderGroup>
               <SettingsItem>
