@@ -9,6 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faCaretRight } from '@fortawesome/fontawesome-free-solid';
+import AnimateHeight from 'react-animate-height';
 
 import './Expand.css';
 
@@ -30,20 +31,17 @@ Caret.propTypes = {
 export function Content(props) {
   let { children, isExpanded } = props;
 
-  let className = 'Content';
-  if (isExpanded) {
-    className += ' expanded';
-  }
-
   return (
-    <div
+    <AnimateHeight
       aria-expanded={isExpanded}
       aria-hidden={!isExpanded}
-      className={className}
+      height={isExpanded ? 'auto' : 0}
     >
-      <div className="Content-bar" />
-      <div className="Content-children">{children}</div>
-    </div>
+      <div className="Content">
+        <div className="Content-bar" />
+        <div className="Content-children">{children}</div>
+      </div>
+    </AnimateHeight>
   );
 }
 

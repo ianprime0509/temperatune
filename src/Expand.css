@@ -11,14 +11,7 @@
 
 .Content {
   display: flex;
-  max-height: 0;
   overflow: hidden;
-  transition: max-height 200ms ease-out;
-}
-
-.Content.expanded {
-  max-height: 100rem;
-  transition: max-height 200ms ease-in;
 }
 
 .Content-bar {

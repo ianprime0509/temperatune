@@ -8,8 +8,8 @@
 .Alert-description {
   flex-grow: 1;
   min-height: 5rem;
-  min-width: 15rem;
   max-width: 25rem;
+  width: 100vw;
 }
 
 .Alert-details-content {
