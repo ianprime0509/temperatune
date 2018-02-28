@@ -98,6 +98,7 @@ export class Alert extends Component {
             <p>{description}</p>
             <div style={alertDetailsStyle}>
               <div
+                aria-expanded={this.state.areDetailsExpanded}
                 className="Alert-details-expander"
                 onClick={() => this.handleDetailsClick()}
                 onKeyPress={e => {

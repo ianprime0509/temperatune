@@ -20,7 +20,13 @@ export function Caret(props) {
     className += ' expanded';
   }
 
-  return <FontAwesomeIcon className={className} icon={faCaretRight} />;
+  return (
+    <FontAwesomeIcon
+      aria-hidden={true}
+      className={className}
+      icon={faCaretRight}
+    />
+  );
 }
 
 Caret.propTypes = {
@@ -32,11 +38,7 @@ export function Content(props) {
   let { children, isExpanded } = props;
 
   return (
-    <AnimateHeight
-      aria-expanded={isExpanded}
-      aria-hidden={!isExpanded}
-      height={isExpanded ? 'auto' : 0}
-    >
+    <AnimateHeight aria-hidden={!isExpanded} height={isExpanded ? 'auto' : 0}>
       <div className="Content">
         <div className="Content-bar" />
         <div className="Content-children">{children}</div>

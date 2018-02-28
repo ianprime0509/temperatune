@@ -16,7 +16,7 @@ import './AppSettings.css';
  * A item in a settings list with a consistent style.
  */
 export function SettingsItem(props) {
-  let { children, isFocusable, isSelected, onClick, ...rest } = props;
+  let { children, isSelected, onClick, ...rest } = props;
 
   let className = 'SettingsItem';
   if (isSelected) {
@@ -32,7 +32,6 @@ export function SettingsItem(props) {
           onClick && onClick();
         }
       }}
-      tabIndex={isFocusable ? 0 : -1}
       {...rest}
     >
       {children}
@@ -45,7 +44,6 @@ SettingsItem.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]),
-  isFocusable: PropTypes.bool,
   isSelected: PropTypes.bool,
   onClick: PropTypes.func,
 };
@@ -106,18 +104,18 @@ export class SettingsExpanderGroup extends Component {
   }
 
   render() {
-    let { children, isFocusable, label, ...rest } = this.props;
+    let { children, label, ...rest } = this.props;
 
     return (
       <div>
         <SettingsItem
+          aria-expanded={this.state.isExpanded}
           onClick={() => this.handleExpandToggle()}
           onKeyPress={e => {
             if (e.key === 'Enter' || e.key === ' ') {
               this.handleExpandToggle();
             }
           }}
-          tabIndex={isFocusable ? 0 : -1}
           {...rest}
         >
           <div className="SettingsExpanderGroup-label">
@@ -126,15 +124,7 @@ export class SettingsExpanderGroup extends Component {
           </div>
         </SettingsItem>
         <ExpandingContent isExpanded={this.state.isExpanded}>
-          {React.Children.map(children, child => {
-            // For now, we make the assumption that all the children accept the
-            // `isFocusable` prop, since our only uses of
-            // `SettingsExpanderGroup` are to contain `SettingsItem`s.  This
-            // may need to be changed in the future.
-            return React.cloneElement(child, {
-              isFocusable: isFocusable && this.state.isExpanded,
-            });
-          })}
+          {children}
         </ExpandingContent>
       </div>
     );
@@ -146,6 +136,5 @@ SettingsExpanderGroup.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]),
-  isFocusable: PropTypes.bool,
   label: PropTypes.string.isRequired,
 };

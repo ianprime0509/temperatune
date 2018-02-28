@@ -350,8 +350,8 @@ export default class App extends Component {
           >
             <div className="App-settings-container">
               <SettingsExpanderGroup
-                isFocusable={true}
                 label={`Temperament: ${this.state.temperament.name}`}
+                tabIndex={0}
               >
                 {builtInTemperaments.map(temperamentData => (
                   <SettingsItem
@@ -363,6 +363,7 @@ export default class App extends Component {
                       let temperament = new Temperament(temperamentData);
                       this.handleTemperamentSelect(temperament);
                     }}
+                    tabIndex={0}
                   >
                     {temperamentData.name}
                   </SettingsItem>
@@ -374,6 +375,7 @@ export default class App extends Component {
                       temperament.name === this.state.temperament.name
                     }
                     onClick={() => this.handleTemperamentSelect(temperament)}
+                    tabIndex={0}
                   >
                     {temperament.name}
                   </SettingsItem>
@@ -383,6 +385,7 @@ export default class App extends Component {
                   onFileSelect={file =>
                     file && this.handleTemperamentFileSelect(file)
                   }
+                  tabIndex={0}
                 />
               </SettingsExpanderGroup>
               <SettingsItem>

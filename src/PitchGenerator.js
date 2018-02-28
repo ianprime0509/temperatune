@@ -137,10 +137,10 @@ export default class PitchGenerator extends Component {
                 <Button
                   key={note}
                   fontSizeRem={5}
+                  isFocusable={true}
                   isSelected={note === this.props.selectedNote}
                   label={Temperament.prettifyNoteName(note)}
                   onClick={() => this.handleNoteSelect(note)}
-                  tabIndex={0}
                 />
               ))}
           </div>
@@ -157,10 +157,10 @@ export default class PitchGenerator extends Component {
                 <Button
                   key={octave}
                   fontSizeRem={5}
+                  isFocusable={true}
                   isSelected={octave === this.props.selectedOctave}
                   label={String(octave)}
                   onClick={() => this.handleOctaveSelect(octave)}
-                  tabIndex={0}
                 />
               ))}
           </div>
