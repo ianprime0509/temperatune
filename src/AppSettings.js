@@ -65,7 +65,10 @@ export class SettingsFileChooser extends Component {
         <input
           id="fileInput"
           ref={ref => (this.input = ref)}
-          onChange={() => this.handleFileSelect()}
+          onChange={() => {
+            this.handleFileSelect();
+            this.input.value = '';
+          }}
           style={{ height: 0, opacity: 0, width: 0 }}
           tabIndex={-1}
           type="file"

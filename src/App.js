@@ -380,7 +380,9 @@ export default class App extends Component {
                 ))}
                 <SettingsFileChooser
                   label="Choose file"
-                  onFileSelect={file => this.handleTemperamentFileSelect(file)}
+                  onFileSelect={file =>
+                    file && this.handleTemperamentFileSelect(file)
+                  }
                 />
               </SettingsExpanderGroup>
               <SettingsItem>
