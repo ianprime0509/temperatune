@@ -118,6 +118,7 @@ export class Alert extends Component {
           <Button
             ref={ref => (this.okButton = ref)}
             fontSizeRem={1.5}
+            hasBorder={true}
             label="OK"
             onClick={this.props.handleAlertClose}
             tabIndex={0}

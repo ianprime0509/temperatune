@@ -19,6 +19,7 @@ export default class Button extends Component {
   render() {
     let {
       fontSizeRem,
+      hasBorder,
       isFocusable,
       isSelected,
       label,
@@ -28,6 +29,9 @@ export default class Button extends Component {
     let fontSize = String(fontSizeRem) + 'rem';
 
     let className = 'Button';
+    if (hasBorder) {
+      className += ' bordered';
+    }
     if (isSelected) {
       className += ' selected';
     }
@@ -54,8 +58,16 @@ export default class Button extends Component {
 
 Button.propTypes = {
   fontSizeRem: PropTypes.number,
+  hasBorder: PropTypes.bool,
   isFocusable: PropTypes.bool,
   isSelected: PropTypes.bool,
-  label: PropTypes.string,
+  label: PropTypes.string.isRequired,
   onClick: PropTypes.func,
+};
+
+Button.defaultProps = {
+  fontSizeRem: 1,
+  hasBorder: false,
+  isFocusable: true,
+  isSelected: false,
 };

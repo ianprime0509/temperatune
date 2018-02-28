@@ -1,6 +1,5 @@
 .Button {
   background: transparent;
-  border: 1px solid #ccc;
   cursor: pointer;
   margin: 0.5rem;
   outline: none;
@@ -11,12 +10,20 @@
   vertical-align: middle;
 }
 
+.Button.bordered {
+  border: 1px solid #ccc;
+}
+
 .Button:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
-.Button:focus {
+.Button.bordered:focus {
   box-shadow: 0 0 12px lightskyblue;
+}
+
+.Button:not(.bordered):focus {
+  filter: drop-shadow(0 0 10px lightskyblue);
 }
 
 .Button.selected {
