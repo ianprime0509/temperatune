@@ -13,7 +13,7 @@ import {
   faPause,
   faPlay,
 } from '@fortawesome/fontawesome-free-solid';
-import { Temperament, prettifyNoteName } from 'temperament';
+import { Temperament } from 'temperament';
 
 import { Modal } from './Modal';
 import Button from './Button';
@@ -103,7 +103,7 @@ export default class PitchGenerator extends Component {
           <Button
             fontSizeRem={5}
             isFocusable={this.props.isFocusable}
-            label={prettifyNoteName(this.props.selectedNote)}
+            label={Temperament.prettifyNoteName(this.props.selectedNote)}
             onClick={() => this.handleNotesModalOpen()}
           />
           <Button
@@ -138,7 +138,7 @@ export default class PitchGenerator extends Component {
                   key={note}
                   fontSizeRem={5}
                   isSelected={note === this.props.selectedNote}
-                  label={prettifyNoteName(note)}
+                  label={Temperament.prettifyNoteName(note)}
                   onClick={() => this.handleNoteSelect(note)}
                   tabIndex={0}
                 />

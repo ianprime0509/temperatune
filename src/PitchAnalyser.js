@@ -8,7 +8,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/fontawesome-free-solid';
-import { Temperament, prettifyNoteName } from 'temperament';
+import { Temperament } from 'temperament';
 
 import SettingsBar from './SettingsBar';
 
@@ -28,7 +28,7 @@ export default class PitchAnalyser extends Component {
       ? `hsl(${getHue(this.props.detectedOffset)}, 70%, 80%)`
       : '#e7e7e7';
     let noteName = this.props.detectedNote
-      ? prettifyNoteName(this.props.detectedNote)
+      ? Temperament.prettifyNoteName(this.props.detectedNote)
       : '-';
     let offsetString = this.props.detectedNote
       ? getOffsetString(this.props.detectedOffset)

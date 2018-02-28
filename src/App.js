@@ -63,8 +63,8 @@ export default class App extends Component {
       settingsAreOpen: false,
       temperament: new Temperament(equalTemperament),
     };
-    this.state.selectedNote = this.state.temperament.referenceName;
-    this.state.selectedOctave = this.state.temperament.referenceOctave;
+    this.state.selectedNote = this.state.temperament.getReferenceName();
+    this.state.selectedOctave = this.state.temperament.getReferenceOctave();
 
     this.audioContext = new AudioContext();
     this.oscillatorCreate();
@@ -155,7 +155,7 @@ export default class App extends Component {
         // TODO: do we really need a deep clone here?  It seems like the safest
         // option for now, and not terribly expensive.
         temperament = cloneDeep(state.temperament);
-        temperament.referencePitch = parseInt(pitchText, 10);
+        temperament.setReferencePitch(parseInt(pitchText, 10));
       } else {
         temperament = state.temperament;
       }
@@ -171,8 +171,8 @@ export default class App extends Component {
     this.setState(
       {
         temperament,
-        selectedNote: temperament.referenceName,
-        selectedOctave: temperament.referenceOctave,
+        selectedNote: temperament.getReferenceName(),
+        selectedOctave: temperament.getReferenceOctave(),
       },
       () => this.soundUpdate()
     );
@@ -210,11 +210,7 @@ export default class App extends Component {
           return;
         }
         userTemperaments.push(temperament);
-        this.setState({
-          temperament,
-          selectedNote: temperament.referenceName,
-          selectedOctave: temperament.referenceOctave,
-        });
+        this.handleTemperamentSelect(temperament);
       })
       .catch(err => {
         this.handleAlertOpen(
@@ -395,7 +391,7 @@ export default class App extends Component {
                   }}
                   className="App-reference-input"
                   pattern="[0-9]*"
-                  placeholder={this.state.temperament.referencePitch}
+                  placeholder={this.state.temperament.getReferencePitch()}
                   tabIndex={0}
                   type="text"
                 />
