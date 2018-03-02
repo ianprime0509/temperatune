@@ -363,6 +363,7 @@ export default class App extends Component {
                       this.handleTemperamentSelect(temperament);
                     }}
                     tabIndex={0}
+                    tooltip={temperamentData.description}
                   >
                     {temperamentData.name}
                   </SettingsItem>
@@ -375,6 +376,7 @@ export default class App extends Component {
                     }
                     onClick={() => this.handleTemperamentSelect(temperament)}
                     tabIndex={0}
+                    tooltip={temperament.description}
                   >
                     {temperament.name}
                   </SettingsItem>
@@ -384,6 +386,7 @@ export default class App extends Component {
                   onFileSelect={file =>
                     file && this.handleTemperamentFileSelect(file)
                   }
+                  tooltip="Select your own temperament."
                 />
               </SettingsExpanderGroup>
               <SettingsItem>

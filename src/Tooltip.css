@@ -1,0 +1,53 @@
+.Tooltip {
+  background: hsla(0, 0%, 10%, 0.9);
+  border-radius: 5px;
+  color: #eee;
+  margin: 0.5rem;
+  max-width: 20rem;
+  padding: 0.5rem;
+}
+
+/* Arrow styling taken substantially from the react-Tooltip examples. */
+.Tooltip .Tooltip-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  position: absolute;
+  margin: 5px;
+}
+
+.Tooltip[data-placement^='top'] .Tooltip-arrow {
+  border-width: 5px 5px 0 5px;
+  border-color: hsla(0, 0%, 10%, 0.9) transparent transparent transparent;
+  bottom: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.Tooltip[data-placement^='bottom'] .Tooltip-arrow {
+  border-width: 0 5px 5px 5px;
+  border-color: transparent transparent hsla(0, 0%, 10%, 0.9) transparent;
+  top: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.Tooltip[data-placement^='right'] .Tooltip-arrow {
+  border-width: 5px 5px 5px 0;
+  border-color: transparent hsla(0, 0%, 10%, 0.9) transparent transparent;
+  left: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.Tooltip[data-placement^='left'] .Tooltip-arrow {
+  border-width: 5px 0 5px 5px;
+  border-color: transparent transparent transparent hsla(0, 0%, 10%, 0.9);
+  right: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}

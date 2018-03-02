@@ -1,5 +1,8 @@
 {
   "name": "Equal temperament",
+  "description": "Standard twelve-tone equal temperament.",
+  "source":
+    "https://en.wikipedia.org/wiki/Equal_temperament#Twelve-tone_equal_temperament",
   "referenceName": "A",
   "referencePitch": 440,
   "referenceOctave": 4,

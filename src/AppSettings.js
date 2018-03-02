@@ -6,46 +6,81 @@
  * https://opensource.org/licenses/MIT.
  */
 import React, { Component } from 'react';
+import { Manager as PopperManager, Target as PopperTarget } from 'react-popper';
 import PropTypes from 'prop-types';
+import uniqueId from 'lodash.uniqueid';
 
 import { Caret, Content as ExpandingContent } from './Expand';
+import Tooltip from './Tooltip';
 
 import './AppSettings.css';
 
 /**
  * A item in a settings list with a consistent style.
  */
-export function SettingsItem(props) {
-  let { children, isSelected, onClick, ...rest } = props;
-
-  let className = 'SettingsItem';
-  if (isSelected) {
-    className += ' selected';
+export class SettingsItem extends Component {
+  constructor() {
+    super();
+    this.state = {
+      isTooltipOpen: false,
+    };
   }
 
-  return (
-    <div
-      className={className}
-      onClick={onClick}
-      onKeyPress={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onClick && onClick();
-        }
-      }}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
+  handleTooltipClose() {
+    this.setState({ isTooltipOpen: false });
+  }
+
+  handleTooltipOpen() {
+    this.setState({ isTooltipOpen: true });
+  }
+
+  render() {
+    let { children, isSelected, onClick, tooltip, ...rest } = this.props;
+
+    let className = 'SettingsItem';
+    if (isSelected) {
+      className += ' selected';
+    }
+
+    let shouldShowTooltip = !!tooltip && this.state.isTooltipOpen;
+    let tooltipId = uniqueId('tooltip-');
+    let targetRestProps = {};
+    if (shouldShowTooltip) {
+      targetRestProps['aria-describedby'] = tooltipId;
+    }
+
+    return (
+      <PopperManager>
+        <PopperTarget
+          className={className}
+          onBlur={() => this.handleTooltipClose()}
+          onClick={onClick}
+          onFocus={() => this.handleTooltipOpen()}
+          onKeyPress={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              onClick && onClick();
+            }
+          }}
+          onMouseEnter={() => this.handleTooltipOpen()}
+          onMouseLeave={() => this.handleTooltipClose()}
+          {...rest}
+          {...targetRestProps}
+        >
+          {children}
+        </PopperTarget>
+        <Tooltip id={tooltipId} isOpen={shouldShowTooltip}>
+          {tooltip}
+        </Tooltip>
+      </PopperManager>
+    );
+  }
 }
 
 SettingsItem.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.node,
-    PropTypes.arrayOf(PropTypes.node),
-  ]),
+  children: PropTypes.node,
   isSelected: PropTypes.bool,
   onClick: PropTypes.func,
+  tooltip: PropTypes.string,
 };
 
 /**
@@ -136,10 +171,7 @@ export class SettingsExpanderGroup extends Component {
 }
 
 SettingsExpanderGroup.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.node,
-    PropTypes.arrayOf(PropTypes.node),
-  ]),
+  children: PropTypes.node,
   label: PropTypes.string.isRequired,
 };
 
