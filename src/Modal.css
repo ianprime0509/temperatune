@@ -17,8 +17,16 @@
 }
 
 .Alert-details-expander {
+  align-items: center;
   border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
   outline: none;
+  user-select: none;
+}
+
+.Alert-details-expander-label {
+  flex-grow: 1;
 }
 
 .Alert-details-expander:focus {

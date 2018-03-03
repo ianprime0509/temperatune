@@ -108,7 +108,7 @@ export class Alert extends Component {
                 }}
                 tabIndex={0}
               >
-                Details
+                <span class="Alert-details-expander-label">Details</span>
                 <Caret isExpanded={this.state.areDetailsExpanded} />
               </div>
               <ExpandingContent isExpanded={this.state.areDetailsExpanded}>
