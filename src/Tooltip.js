@@ -9,7 +9,16 @@ export default function Tooltip(props) {
 
   if (isOpen) {
     return (
-      <Popper className="Tooltip" placement="top" {...rest}>
+      <Popper
+        className="Tooltip"
+        placement="top"
+        modifiers={{
+          preventOverflow: {
+            boundariesElement: 'viewport',
+          },
+        }}
+        {...rest}
+      >
         {children}
         <Arrow className="Tooltip-arrow" />
       </Popper>
