@@ -26,6 +26,11 @@ import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
 
 /**
+ * The current version of Temperatune.
+ */
+const VERSION = '0.1.0';
+
+/**
  * All the built-in temperaments, as plain objects.  These are not actually
  * instances of `Temperament`; rather, they are only the base data.  This is so
  * that there's no delay in loading the rest of the app just to precompute a
@@ -403,6 +408,18 @@ export default class App extends Component {
                 />
                 Hz
               </SettingsItem>
+              <SettingsExpanderGroup label="About Temperatune">
+                <p>Version: {VERSION}</p>
+                <p>
+                  Temperatune is hosted on GitHub: you can browse its source
+                  code{' '}
+                  <a href="https://github.com/ianprime0509/temperatune">here</a>.
+                  For more information on defining your own temperaments, see{' '}
+                  <a href="https://github.com/ianprime0509/temperament/blob/master/README.md">
+                    this README
+                  </a>.
+                </p>
+              </SettingsExpanderGroup>
             </div>
           </Modal>
           {this.state.alerts.map((alert, i) => (
