@@ -72,7 +72,8 @@ export default class App extends Component {
     this.state.selectedOctave = this.state.temperament.getReferenceOctave();
 
     this.audioContext = new AudioContext();
-    this.oscillatorCreate();
+    this.oscillator = this.audioContext.createOscillator();
+    this.oscillator.start();
     this.analyserNode = null;
 
     ReactModal.setAppElement(document.getElementById('root'));
@@ -234,8 +235,10 @@ export default class App extends Component {
         if (state.isPlaying) {
           this.soundStop();
         }
+        this.audioContext.resume();
         return { isFrontPanel: false, isPlaying: false };
       } else {
+        this.audioContext.suspend();
         return { isFrontPanel: true };
       }
     });
@@ -265,22 +268,17 @@ export default class App extends Component {
     this.setState({ detectedNote: note, detectedOffset: offset });
   }
 
-  /** Create the oscillator node for the tuning pitch. */
-  oscillatorCreate() {
-    this.oscillator = this.audioContext.createOscillator();
-    this.oscillator.connect(this.audioContext.destination);
-  }
-
   /** Begin playing the tuning pitch. */
   soundPlay() {
     this.soundUpdate();
-    this.oscillator.start();
+    this.oscillator.connect(this.audioContext.destination);
+    this.audioContext.resume();
   }
 
   /** Stop playing the tuning pitch. */
   soundStop() {
-    this.oscillator.stop();
-    this.oscillatorCreate();
+    this.oscillator.disconnect(this.audioContext.destination);
+    this.audioContext.suspend();
   }
 
   /** Update the frequency of the tuning pitch. */
