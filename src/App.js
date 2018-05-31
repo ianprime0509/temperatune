@@ -74,7 +74,9 @@ export default class App extends Component {
     this.audioContext = new AudioContext();
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.start();
-    this.analyserNode = null;
+    this.analyserNode = this.audioContext.createAnalyser();
+    this.microphoneSource = null;
+    this.inputNoteInterval = null;
 
     ReactModal.setAppElement(document.getElementById('root'));
   }
@@ -88,19 +90,6 @@ export default class App extends Component {
       appHeight: appBounds.height,
       appWidth: appBounds.width,
     });
-
-    window.setInterval(() => this.inputNoteUpdate(), 100);
-  }
-
-  /** Attempt to create the `AnalyserNode` and get microphone access. */
-  analyserCreate() {
-    this.analyserNode = this.audioContext.createAnalyser();
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(stream => this.handleInputStreamGet(stream))
-      .catch(err =>
-        this.handleAlertOpen('Error', 'Could not get audio input.', String(err))
-      );
   }
 
   /** Close the alert on the top of the stack. */
@@ -123,12 +112,6 @@ export default class App extends Component {
         alerts: alerts.concat([{ title, description, details, isOpen: true }]),
       };
     });
-  }
-
-  /** Set up the `AnalyserNode` with the provided input stream. */
-  handleInputStreamGet(stream) {
-    let sourceNode = this.audioContext.createMediaStreamSource(stream);
-    sourceNode.connect(this.analyserNode);
   }
 
   handleNoteSelect(note) {
@@ -235,9 +218,23 @@ export default class App extends Component {
         if (state.isPlaying) {
           this.soundStop();
         }
-        this.audioContext.resume();
+        this.microphoneSourceObtain().then(() => {
+          this.microphoneSource.connect(this.analyserNode);
+          this.audioContext.resume();
+          this.inputNoteInterval = window.setInterval(
+            () => this.inputNoteUpdate(),
+            100
+          );
+        });
         return { isFrontPanel: false, isPlaying: false };
       } else {
+        if (this.inputNoteInterval !== null) {
+          // We don't need to be updating the microphone input note if the
+          // analyser view isn't open.
+          window.clearInterval(this.inputNoteInterval);
+          this.inputNoteInterval = null;
+          this.microphoneSource.disconnect(this.analyserNode);
+        }
         this.audioContext.suspend();
         return { isFrontPanel: true };
       }
@@ -266,6 +263,28 @@ export default class App extends Component {
     let [note, offset] = this.state.temperament.getNoteNameFromPitch(pitch);
 
     this.setState({ detectedNote: note, detectedOffset: offset });
+  }
+
+  /** Attempt to get microphone access and set up the source node. */
+  microphoneSourceObtain() {
+    if (!this.microphoneSource) {
+      return navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(stream => {
+          this.microphoneSource = this.audioContext.createMediaStreamSource(
+            stream
+          );
+        })
+        .catch(err =>
+          this.handleAlertOpen(
+            'Error',
+            'Could not get audio input.',
+            String(err)
+          )
+        );
+    } else {
+      return Promise.resolve();
+    }
   }
 
   /** Begin playing the tuning pitch. */
