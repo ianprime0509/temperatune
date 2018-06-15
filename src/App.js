@@ -136,20 +136,27 @@ export default class App extends Component {
     });
   }
 
+  handleReferencePitchChange() {
+    this.setState(
+      state => {
+        let temperament;
+        let pitchText = this.referencePitchInput.value.trim();
+        if (/^[0-9]+$/.test(pitchText)) {
+          // TODO: do we really need a deep clone here?  It seems like the
+          // safest option for now, and not terribly expensive.
+          temperament = cloneDeep(state.temperament);
+          temperament.setReferencePitch(parseInt(pitchText, 10));
+        } else {
+          temperament = state.temperament;
+        }
+        return { temperament };
+      },
+      () => this.soundUpdate()
+    );
+  }
+
   handleSettingsClose() {
-    this.setState(state => {
-      let temperament;
-      let pitchText = this.referencePitchInput.value.trim();
-      if (/^[0-9]+$/.test(pitchText)) {
-        // TODO: do we really need a deep clone here?  It seems like the safest
-        // option for now, and not terribly expensive.
-        temperament = cloneDeep(state.temperament);
-        temperament.setReferencePitch(parseInt(pitchText, 10));
-      } else {
-        temperament = state.temperament;
-      }
-      return { settingsAreOpen: false, temperament };
-    });
+    this.setState(state => ({ settingsAreOpen: false }));
   }
 
   handleSettingsOpen() {
@@ -418,6 +425,12 @@ export default class App extends Component {
                     this.referencePitchInput = input;
                   }}
                   className="App-reference-input"
+                  onBlur={() => this.handleReferencePitchChange()}
+                  onKeyPress={e => {
+                    if (e.key === 'Enter') {
+                      this.handleReferencePitchChange();
+                    }
+                  }}
                   pattern="[0-9]*"
                   placeholder={this.state.temperament.getReferencePitch()}
                   tabIndex={0}
