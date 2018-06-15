@@ -25,7 +25,7 @@
     humps "^2.0.1"
     prop-types "^15.5.7"
 
-"@types/react@>=15":
+"@types/react@>=16":
   version "16.3.17"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.3.17.tgz#d59d1a632570b0713946ed9c2949d994773633c5"
   dependencies:
@@ -5598,7 +5598,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0:
+prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.6.0, prop-types@^15.6.1:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
   dependencies:
@@ -5733,14 +5733,14 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-animate-height@^0.10.9:
-  version "0.10.10"
-  resolved "https://registry.yarnpkg.com/react-animate-height/-/react-animate-height-0.10.10.tgz#c9f5095f30eb7317f30c1eecf5a4fec2f86b30cf"
+react-animate-height@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-animate-height/-/react-animate-height-2.0.1.tgz#6ec3f8d5126d0d90fed591afad0adf76b707ee2f"
   dependencies:
     classnames "^2.2.5"
-    prop-types "^15.5.8"
+    prop-types "^15.6.1"
   optionalDependencies:
-    "@types/react" ">=15"
+    "@types/react" ">=16"
 
 react-dev-utils@^5.0.1:
   version "5.0.1"
