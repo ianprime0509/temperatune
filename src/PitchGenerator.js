@@ -91,10 +91,10 @@ export default class PitchGenerator extends Component {
     let pitch =
       Math.round(
         10 *
-        this.props.temperament.getPitch(
-          this.props.selectedNote,
-          this.props.selectedOctave
-        )
+          this.props.temperament.getPitch(
+            this.props.selectedNote,
+            this.props.selectedOctave
+          )
       ) / 10;
 
     return (
