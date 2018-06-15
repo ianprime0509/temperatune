@@ -82,14 +82,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    // For now, it should be OK to only calculate the width and height when the
-    // component mounts, since the app doesn't change size unless it's filling
-    // up the whole viewport (in which case the background isn't shown).
-    let appBounds = this.app.getBoundingClientRect();
-    this.setState({
-      appHeight: appBounds.height,
-      appWidth: appBounds.width,
-    });
+    window.addEventListener('resize', () => this.handleResize());
   }
 
   /** Close the alert on the top of the stack. */
@@ -153,6 +146,15 @@ export default class App extends Component {
       },
       () => this.soundUpdate()
     );
+  }
+
+  /** Handle the window (viewport) resizing to update the canvas background. */
+  handleResize() {
+    let appBounds = this.app.getBoundingClientRect();
+    this.setState({
+      appHeight: appBounds.height,
+      appWidth: appBounds.width,
+    });
   }
 
   handleSettingsClose() {
