@@ -18,7 +18,6 @@
   font-size: 13rem;
   line-height: 15rem;
   text-align: center;
-  user-select: none;
   vertical-align: middle;
 }
 
@@ -28,5 +27,4 @@
   margin: 1rem;
   min-height: 4rem;
   text-align: center;
-  user-select: none;
 }

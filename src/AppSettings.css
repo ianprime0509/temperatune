@@ -19,7 +19,6 @@
   outline: none;
   padding: 0.5rem 0 0.5rem 0.5rem;
   transition: background 200ms;
-  user-select: none;
   width: 100%;
 }
 

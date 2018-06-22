@@ -9,11 +9,13 @@
   flex-grow: 1;
   min-height: 5rem;
   max-width: 25rem;
+  user-select: text;
   width: 100vw;
 }
 
 .Alert-details-content {
   color: #666;
+  user-select: text;
 }
 
 .Alert-details-expander {
@@ -22,7 +24,6 @@
   cursor: pointer;
   display: flex;
   outline: none;
-  user-select: none;
 }
 
 .Alert-details-expander-label {
