@@ -1,0 +1,24 @@
+{
+  "name": "D-based Pythagorean tuning",
+  "description": "The Pythagorean tuning system with D as the base note.",
+  "source": "https://en.wikipedia.org/wiki/Pythagorean_tuning#Method",
+  "referenceName": "A",
+  "referencePitch": 440,
+  "referenceOctave": 4,
+  "octaveBaseName": "C",
+  "notes": {
+    "A{flat}": ["D", 588.27],
+    "E{flat}": ["D", 90.22],
+    "B{flat}": ["D", 792.18],
+    "F" : ["D", 294.13],
+    "C" : ["D", 996.09],
+    "G" : ["D", 498.04],
+    "D" : ["D", 0],
+    "A" : ["D", 701.96],
+    "E" : ["D", 203.91],
+    "B" : ["D", 905.87],
+    "F{sharp}" : ["D", 407.82],
+    "C{sharp}" : ["D", 1109.78],
+    "G{sharp}" : ["D", 611.73]
+  }
+}

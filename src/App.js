@@ -24,6 +24,7 @@ import PitchGenerator from './PitchGenerator';
 import './App.css';
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
+import pythagoreanD from './temperaments/pythagoreanD.json';
 
 /**
  * The current version of Temperatune.
@@ -36,7 +37,11 @@ const VERSION = '0.1.0';
  * that there's no delay in loading the rest of the app just to precompute a
  * bunch of temperament data that probably won't get used.
  */
-const builtInTemperaments = [equalTemperament, quarterCommaMeantone];
+const builtInTemperaments = [
+  equalTemperament,
+  quarterCommaMeantone,
+  pythagoreanD,
+];
 /**
  * All the user temperaments, as `Temperament` objects.  Unlike the built-in
  * temperaments, user temperaments are processed when they are chosen, because
