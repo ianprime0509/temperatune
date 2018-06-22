@@ -227,14 +227,24 @@ export default class App extends Component {
         if (state.isPlaying) {
           this.soundStop();
         }
-        this.microphoneSourceObtain().then(() => {
-          this.microphoneSource.connect(this.analyserNode);
-          this.audioContext.resume();
-          this.inputNoteInterval = window.setInterval(
-            () => this.inputNoteUpdate(),
-            100
+        // Try to obtain the microphone source and start updating the input
+        // note.
+        this.microphoneSourceObtain()
+          .then(() => {
+            this.microphoneSource.connect(this.analyserNode);
+            this.audioContext.resume();
+            this.inputNoteInterval = window.setInterval(
+              () => this.inputNoteUpdate(),
+              100
+            );
+          })
+          .catch(err =>
+            this.handleAlertOpen(
+              'Error',
+              'Could not get audio input.',
+              String(err)
+            )
           );
-        });
         return { isFrontPanel: false, isPlaying: false };
       } else {
         if (this.inputNoteInterval !== null) {
@@ -252,13 +262,6 @@ export default class App extends Component {
 
   /** Update the input note from the microphone input. */
   inputNoteUpdate() {
-    // We shouldn't even bother updating the input note if the analyser
-    // interface isn't open.
-    if (this.state.isFrontPanel) return;
-
-    if (!this.analyserNode) {
-      this.analyserCreate();
-    }
     let ctx = this.audioContext;
     let analyserNode = this.analyserNode;
 
@@ -283,14 +286,7 @@ export default class App extends Component {
           this.microphoneSource = this.audioContext.createMediaStreamSource(
             stream
           );
-        })
-        .catch(err =>
-          this.handleAlertOpen(
-            'Error',
-            'Could not get audio input.',
-            String(err)
-          )
-        );
+        });
     } else {
       return Promise.resolve();
     }
