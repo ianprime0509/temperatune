@@ -21,15 +21,12 @@ import { Modal, Alert } from './Modal';
 import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
 
+import { version as VERSION } from '../package.json';
+
 import './App.css';
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
 import pythagoreanD from './temperaments/pythagoreanD.json';
-
-/**
- * The current version of Temperatune.
- */
-const VERSION = '0.1.0';
 
 /**
  * All the built-in temperaments, as plain objects.  These are not actually
@@ -446,11 +443,12 @@ export default class App extends Component {
                 <p>
                   Temperatune is hosted on GitHub: you can browse its source
                   code{' '}
-                  <a href="https://github.com/ianprime0509/temperatune">here</a>.
-                  For more information on defining your own temperaments, see{' '}
+                  <a href="https://github.com/ianprime0509/temperatune">here</a>
+                  . For more information on defining your own temperaments, see{' '}
                   <a href="https://github.com/ianprime0509/temperament/blob/master/README.md">
                     this README
-                  </a>.
+                  </a>
+                  .
                 </p>
               </SettingsExpanderGroup>
             </div>
