@@ -25,6 +25,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.12.1",
     "@fortawesome/react-fontawesome": "0.1.9",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.uniqueid": "^4.0.1",
     "pitchy": "^1.1.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.0",
@@ -37,7 +38,6 @@
   },
   "devDependencies": {
     "gh-pages": "^2.2.0",
-    "lodash.uniqueid": "^4.0.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
     "web-audio-test-api": "^0.5.2"
