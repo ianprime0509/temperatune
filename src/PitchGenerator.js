@@ -7,7 +7,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMicrophone,
   faPause,
@@ -131,18 +131,16 @@ export default class PitchGenerator extends Component {
           title="Select note"
         >
           <div className="PitchGenerator-notes">
-            {this.props.temperament
-              .getNoteNames()
-              .map(note => (
-                <Button
-                  key={note}
-                  fontSizeRem={5}
-                  isFocusable={true}
-                  isSelected={note === this.props.selectedNote}
-                  label={Temperament.prettifyNoteName(note)}
-                  onClick={() => this.handleNoteSelect(note)}
-                />
-              ))}
+            {this.props.temperament.getNoteNames().map(note => (
+              <Button
+                key={note}
+                fontSizeRem={5}
+                isFocusable={true}
+                isSelected={note === this.props.selectedNote}
+                label={Temperament.prettifyNoteName(note)}
+                onClick={() => this.handleNoteSelect(note)}
+              />
+            ))}
           </div>
         </Modal>
         <Modal
@@ -151,18 +149,16 @@ export default class PitchGenerator extends Component {
           title="Select octave"
         >
           <div className="PitchGenerator-octaves">
-            {this.props.temperament
-              .getOctaveRange(2)
-              .map(octave => (
-                <Button
-                  key={octave}
-                  fontSizeRem={5}
-                  isFocusable={true}
-                  isSelected={octave === this.props.selectedOctave}
-                  label={String(octave)}
-                  onClick={() => this.handleOctaveSelect(octave)}
-                />
-              ))}
+            {this.props.temperament.getOctaveRange(2).map(octave => (
+              <Button
+                key={octave}
+                fontSizeRem={5}
+                isFocusable={true}
+                isSelected={octave === this.props.selectedOctave}
+                label={String(octave)}
+                onClick={() => this.handleOctaveSelect(octave)}
+              />
+            ))}
           </div>
         </Modal>
       </div>
