@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import ReactModal from 'react-modal';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/fontawesome-free-solid';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import uniqueId from 'lodash.uniqueid';
 
 import Button from './Button';

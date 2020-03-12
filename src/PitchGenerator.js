@@ -12,7 +12,7 @@ import {
   faMicrophone,
   faPause,
   faPlay,
-} from '@fortawesome/fontawesome-free-solid';
+} from '@fortawesome/free-solid-svg-icons';
 import { Temperament } from 'temperament';
 
 import { Modal } from './Modal';

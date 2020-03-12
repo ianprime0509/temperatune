@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretRight } from '@fortawesome/fontawesome-free-solid';
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import AnimateHeight from 'react-animate-height';
 
 import './Expand.css';

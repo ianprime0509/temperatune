@@ -7,7 +7,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { faMusic } from '@fortawesome/fontawesome-free-solid';
+import { faMusic } from '@fortawesome/free-solid-svg-icons';
 import { Temperament } from 'temperament';
 
 import SettingsBar from './SettingsBar';
