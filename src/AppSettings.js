@@ -6,7 +6,10 @@
  * https://opensource.org/licenses/MIT.
  */
 import React, { Component } from 'react';
-import { Manager as PopperManager, Target as PopperTarget } from 'react-popper';
+import {
+  Manager as PopperManager,
+  Reference as PopperReference,
+} from 'react-popper';
 import PropTypes from 'prop-types';
 import uniqueId from 'lodash.uniqueid';
 
@@ -51,23 +54,28 @@ export class SettingsItem extends Component {
 
     return (
       <PopperManager>
-        <PopperTarget
-          className={className}
-          onBlur={() => this.handleTooltipClose()}
-          onClick={onClick}
-          onFocus={() => this.handleTooltipOpen()}
-          onKeyPress={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              onClick && onClick();
-            }
-          }}
-          onMouseEnter={() => this.handleTooltipOpen()}
-          onMouseLeave={() => this.handleTooltipClose()}
-          {...rest}
-          {...targetRestProps}
-        >
-          {children}
-        </PopperTarget>
+        <PopperReference>
+          {({ ref }) => (
+            <div
+              ref={ref}
+              className={className}
+              onBlur={() => this.handleTooltipClose()}
+              onClick={onClick}
+              onFocus={() => this.handleTooltipOpen()}
+              onKeyPress={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onClick && onClick();
+                }
+              }}
+              onMouseEnter={() => this.handleTooltipOpen()}
+              onMouseLeave={() => this.handleTooltipClose()}
+              {...rest}
+              {...targetRestProps}
+            >
+              {children}
+            </div>
+          )}
+        </PopperReference>
         <Tooltip id={tooltipId} isOpen={shouldShowTooltip}>
           {tooltip}
         </Tooltip>

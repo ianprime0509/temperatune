@@ -1,5 +1,5 @@
 import React from 'react';
-import { Popper, Arrow } from 'react-popper';
+import { Popper } from 'react-popper';
 import PropTypes from 'prop-types';
 
 import './Tooltip.css';
@@ -10,17 +10,29 @@ export default function Tooltip(props) {
   if (isOpen) {
     return (
       <Popper
-        className="Tooltip"
         placement="top"
         modifiers={{
           preventOverflow: {
             boundariesElement: 'viewport',
           },
         }}
-        {...rest}
       >
-        {children}
-        <Arrow className="Tooltip-arrow" />
+        {({ ref, style, placement, arrowProps }) => (
+          <div
+            ref={ref}
+            className="Tooltip"
+            style={style}
+            data-placement={placement}
+            {...rest}
+          >
+            {children}
+            <div
+              ref={arrowProps.ref}
+              className="Tooltip-arrow"
+              style={arrowProps.style}
+            />
+          </div>
+        )}
       </Popper>
     );
   } else {
