@@ -106,7 +106,7 @@ export default class Background extends Component {
   }
 
   render() {
-    return <canvas ref={ref => (this.canvas = ref)} aria-hidden={true} />;
+    return <canvas ref={ref => (this.canvas = ref)} aria-hidden="true" />;
   }
 }
 

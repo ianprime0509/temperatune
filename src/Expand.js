@@ -22,7 +22,7 @@ export function Caret({ isExpanded }) {
 
   return (
     <FontAwesomeIcon
-      aria-hidden={true}
+      aria-hidden="true"
       className={className}
       icon={faCaretRight}
     />

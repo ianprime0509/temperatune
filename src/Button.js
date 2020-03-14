@@ -28,6 +28,7 @@ function Button(
   return (
     <div
       ref={forwardedRef}
+      role="button"
       className={className}
       onClick={onClick}
       onKeyPress={e => {

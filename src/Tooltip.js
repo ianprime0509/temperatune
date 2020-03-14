@@ -18,6 +18,7 @@ export default function Tooltip({ children, isOpen, ...rest }) {
         {({ ref, style, placement, arrowProps }) => (
           <div
             ref={ref}
+            role="tooltip"
             className="Tooltip"
             style={style}
             data-placement={placement}
@@ -26,6 +27,7 @@ export default function Tooltip({ children, isOpen, ...rest }) {
             {children}
             <div
               ref={arrowProps.ref}
+              aria-hidden="true"
               className="Tooltip-arrow"
               style={arrowProps.style}
             />

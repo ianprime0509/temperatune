@@ -66,7 +66,7 @@ export function SettingsItem({
           </div>
         )}
       </PopperReference>
-      <Tooltip id={tooltipId} isOpen={shouldShowTooltip}>
+      <Tooltip role="tooltip" id={tooltipId} isOpen={shouldShowTooltip}>
         {tooltip}
       </Tooltip>
     </PopperManager>

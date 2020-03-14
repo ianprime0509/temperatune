@@ -25,6 +25,7 @@ export default function SettingsBar({
   return (
     <div className="SettingsBar">
       <FontAwesomeIcon
+        role="button"
         className="SettingsBar-icon"
         icon={faCog}
         size="3x"
@@ -37,6 +38,7 @@ export default function SettingsBar({
         tabIndex={isFocusable ? 0 : -1}
       />
       <FontAwesomeIcon
+        role="button"
         className="SettingsBar-icon"
         icon={switchIcon}
         size="3x"

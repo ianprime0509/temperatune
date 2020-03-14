@@ -18,9 +18,19 @@ import { Caret, Content as ExpandingContent } from './Expand';
 import './Modal.css';
 
 /** A modal dialog with a consistent style. */
-export function Modal({ children, isOpen, onRequestClose, title, ...rest }) {
+export function Modal({
+  aria,
+  children,
+  isOpen,
+  onRequestClose,
+  title,
+  ...rest
+}) {
+  const titleId = uniqueId('modal-title-');
+
   return (
     <ReactModal
+      aria={{ ...aria, labelledby: titleId }}
       className={{
         base: 'Modal-content',
         afterOpen: 'Modal-content--after-open',
@@ -34,8 +44,11 @@ export function Modal({ children, isOpen, onRequestClose, title, ...rest }) {
       {...rest}
     >
       <div className="Modal-titlebar">
-        <span className="Modal-title">{title}</span>
+        <span id={titleId} className="Modal-title">
+          {title}
+        </span>
         <FontAwesomeIcon
+          role="button"
           icon={faTimes}
           size="2x"
           className="Modal-close"
@@ -48,6 +61,7 @@ export function Modal({ children, isOpen, onRequestClose, title, ...rest }) {
 }
 
 Modal.propTypes = {
+  aria: PropTypes.objectOf(PropTypes.string),
   children: PropTypes.oneOfType([
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
@@ -75,6 +89,7 @@ export function Alert({
 
   return (
     <Modal
+      role="alert"
       aria={{ describedby: descriptionId }}
       isOpen={isOpen}
       onAfterOpen={() => okButtonRef.current.focus()}

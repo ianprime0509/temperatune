@@ -330,7 +330,7 @@ export default class App extends Component {
     return (
       // Using a variant of https://davidwalsh.name/css-flip for the flip
       // animation
-      <div>
+      <>
         <Background
           appHeight={this.state.appHeight}
           appWidth={this.state.appWidth}
@@ -458,7 +458,7 @@ export default class App extends Component {
             />
           ))}
         </div>
-      </div>
+      </>
     );
   }
 }
