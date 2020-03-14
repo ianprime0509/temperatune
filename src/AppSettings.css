@@ -1,3 +1,27 @@
+.AppSettings-container {
+  height: calc(100vh - 3rem);
+  max-height: 25rem;
+  max-width: 100%;
+  width: 35rem;
+}
+
+@media (min-height: 30rem) {
+  .AppSettings-container {
+    height: 25rem;
+  }
+}
+
+.ReferencePitchChooser-input {
+  font-size: 1.5rem;
+  margin: 0 0.5rem;
+  text-align: right;
+  width: 5rem;
+}
+
+.ReferencePitchChooser-input:focus {
+  box-shadow: 0 0 8px skyblue;
+}
+
 .SettingsExpanderGroup-label {
   align-items: center;
   display: flex;

@@ -11,41 +11,19 @@ import cloneDeep from 'lodash.clonedeep';
 import { findPitch } from 'pitchy';
 import { Temperament } from 'temperament';
 
-import {
-  SettingsItem,
-  SettingsFileChooser,
-  SettingsExpanderGroup,
-} from './AppSettings';
+import AppError from './AppError';
+import AppSettings from './AppSettings';
 import Background from './Background';
-import { Modal, Alert } from './Modal';
+import { Alert } from './Modal';
 import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
-
-import { version as VERSION } from '../package.json';
 
 import './App.css';
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
 import pythagoreanD from './temperaments/pythagoreanD.json';
 
-/**
- * All the built-in temperaments, as plain objects.  These are not actually
- * instances of `Temperament`; rather, they are only the base data.  This is so
- * that there's no delay in loading the rest of the app just to precompute a
- * bunch of temperament data that probably won't get used.
- */
-const builtInTemperaments = [
-  equalTemperament,
-  quarterCommaMeantone,
-  pythagoreanD,
-];
-/**
- * All the user temperaments, as `Temperament` objects.  Unlike the built-in
- * temperaments, user temperaments are processed when they are chosen, because
- * the user has expressed an intent to use them.
- */
-const userTemperaments = [];
-
+/** The main application. */
 export default class App extends Component {
   constructor() {
     super();
@@ -68,10 +46,16 @@ export default class App extends Component {
       /** Whether the tone is being played in the pitch generator. */
       isPlaying: false,
       areSettingsOpen: false,
-      temperament: new Temperament(equalTemperament),
+      selectedTemperament: new Temperament(equalTemperament),
+      /** The installed temperaments. */
+      temperaments: [
+        new Temperament(equalTemperament),
+        new Temperament(quarterCommaMeantone),
+        new Temperament(pythagoreanD),
+      ],
     };
-    this.state.selectedNote = this.state.temperament.getReferenceName();
-    this.state.selectedOctave = this.state.temperament.getReferenceOctave();
+    this.state.selectedNote = this.state.selectedTemperament.getReferenceName();
+    this.state.selectedOctave = this.state.selectedTemperament.getReferenceOctave();
 
     this.audioContext = new AudioContext();
     this.oscillator = this.audioContext.createOscillator();
@@ -109,6 +93,18 @@ export default class App extends Component {
         alerts: alerts.concat([{ title, description, details, isOpen: true }]),
       };
     });
+  }
+
+  handleError(error) {
+    if (error instanceof AppError) {
+      this.handleAlertOpen('Error', error.message, error.details);
+    } else {
+      this.handleAlertOpen(
+        'Error',
+        'An unexpected error occurred.',
+        String(error)
+      );
+    }
   }
 
   handleNoteSelect(note) {
@@ -169,57 +165,37 @@ export default class App extends Component {
     this.setState({ areSettingsOpen: true });
   }
 
-  handleTemperamentSelect(temperament) {
+  handleTemperamentAdd(temperament) {
+    // We aren't allowed to have a temperament with the same name as some
+    // other temperament, or it would cause confusion.
+    let sameName = t => t.name === temperament.name;
+    if (this.state.temperaments.some(sameName)) {
+      this.handleAlertOpen(
+        'Error',
+        `A temperament with the name '${temperament.name}' already exists.`
+      );
+      return;
+    }
+
     this.setState(
-      {
-        temperament,
-        selectedNote: temperament.getReferenceName(),
-        selectedOctave: temperament.getReferenceOctave(),
-      },
-      () => this.soundUpdate()
+      state => ({ temperaments: [...state.temperaments, temperament] }),
+      () => this.handleTemperamentSelect(temperament)
     );
   }
 
-  handleTemperamentFileSelect(file) {
-    fetch(URL.createObjectURL(file))
-      .then(response => {
-        return response.json();
-      })
-      .then(json => {
-        let temperament;
-        try {
-          temperament = new Temperament(json);
-        } catch (err) {
-          this.handleAlertOpen(
-            'Error',
-            'Invalid temperament input.',
-            String(err)
-          );
-          return;
-        }
-        // We aren't allowed to have a temperament with the same name as some
-        // other temperament, or it would cause confusion.
-        let sameName = t => t.name === temperament.name;
-        if (
-          builtInTemperaments.some(sameName) ||
-          userTemperaments.some(sameName)
-        ) {
-          this.handleAlertOpen(
-            'Error',
-            `A temperament with the name '${temperament.name}' already exists.`
-          );
-          return;
-        }
-        userTemperaments.push(temperament);
-        this.handleTemperamentSelect(temperament);
-      })
-      .catch(err => {
-        this.handleAlertOpen(
-          'Error',
-          'Could not process input file.  Please ensure that you selected the correct file and try again.',
-          String(err)
-        );
-      });
+  handleTemperamentSelect(temperament) {
+    this.setState(
+      state => ({
+        selectedTemperament: temperament,
+        // Reuse the current selected note (if possible) and octave
+        selectedNote: temperament
+          .getNoteNames()
+          .some(note => note === state.selectedNote)
+          ? state.selectedNote
+          : temperament.getReferenceName(),
+      }),
+      () => this.soundUpdate()
+    );
   }
 
   handleViewFlip() {
@@ -275,7 +251,9 @@ export default class App extends Component {
       this.setState({ detectedNote: null, detectedOffset: 0 });
       return;
     }
-    let [note, offset] = this.state.temperament.getNoteNameFromPitch(pitch);
+    let [note, offset] = this.state.selectedTemperament.getNoteNameFromPitch(
+      pitch
+    );
 
     this.setState({ detectedNote: note, detectedOffset: offset });
   }
@@ -303,7 +281,7 @@ export default class App extends Component {
 
   /** Update the frequency of the tuning pitch. */
   soundUpdate() {
-    let pitch = this.state.temperament.getPitch(
+    let pitch = this.state.selectedTemperament.getPitch(
       this.state.selectedNote,
       this.state.selectedOctave
     );
@@ -351,7 +329,7 @@ export default class App extends Component {
                 onViewFlip={() => this.handleViewFlip()}
                 selectedNote={this.state.selectedNote}
                 selectedOctave={this.state.selectedOctave}
-                temperament={this.state.temperament}
+                temperament={this.state.selectedTemperament}
               />
             </div>
             <div className="App-back" aria-hidden={this.state.isFrontPanel}>
@@ -362,91 +340,23 @@ export default class App extends Component {
                 onAlertOpen={() => this.handleAlertOpen()}
                 onSettingsOpen={() => this.handleSettingsOpen()}
                 onViewFlip={() => this.handleViewFlip()}
-                temperament={this.state.temperament}
+                temperament={this.state.selectedTemperament}
               />
             </div>
           </div>
-          <Modal
+          <AppSettings
             isOpen={this.state.areSettingsOpen}
-            onRequestClose={() => this.handleSettingsClose()}
-            title="Settings"
-          >
-            <div className="App-settings-container">
-              <SettingsExpanderGroup
-                label={`Temperament: ${this.state.temperament.name}`}
-              >
-                {builtInTemperaments.map(temperamentData => (
-                  <SettingsItem
-                    key={temperamentData.name}
-                    isSelected={
-                      temperamentData.name === this.state.temperament.name
-                    }
-                    onClick={() => {
-                      let temperament = new Temperament(temperamentData);
-                      this.handleTemperamentSelect(temperament);
-                    }}
-                    tabIndex={0}
-                    tooltip={temperamentData.description}
-                  >
-                    {temperamentData.name}
-                  </SettingsItem>
-                ))}
-                {userTemperaments.map(temperament => (
-                  <SettingsItem
-                    key={temperament.name}
-                    isSelected={
-                      temperament.name === this.state.temperament.name
-                    }
-                    onClick={() => this.handleTemperamentSelect(temperament)}
-                    tabIndex={0}
-                    tooltip={temperament.description}
-                  >
-                    {temperament.name}
-                  </SettingsItem>
-                ))}
-                <SettingsFileChooser
-                  label="Choose file"
-                  onFileSelect={file =>
-                    file && this.handleTemperamentFileSelect(file)
-                  }
-                  tooltip="Select your own temperament."
-                />
-              </SettingsExpanderGroup>
-              <SettingsItem>
-                Reference pitch:
-                <input
-                  ref={input => {
-                    this.referencePitchInput = input;
-                  }}
-                  className="App-reference-input"
-                  onBlur={() => this.handleReferencePitchChange()}
-                  onKeyPress={e => {
-                    if (e.key === 'Enter') {
-                      this.handleReferencePitchChange();
-                    }
-                  }}
-                  pattern="[0-9]*"
-                  placeholder={this.state.temperament.getReferencePitch()}
-                  tabIndex={0}
-                  type="text"
-                />
-                Hz
-              </SettingsItem>
-              <SettingsExpanderGroup label="About Temperatune">
-                <p>Version: {VERSION}</p>
-                <p>
-                  Temperatune is hosted on GitHub: you can browse its source
-                  code{' '}
-                  <a href="https://github.com/ianprime0509/temperatune">here</a>
-                  . For more information on defining your own temperaments, see{' '}
-                  <a href="https://github.com/ianprime0509/temperament/blob/master/README.md">
-                    this README
-                  </a>
-                  .
-                </p>
-              </SettingsExpanderGroup>
-            </div>
-          </Modal>
+            onClose={() => this.handleSettingsClose()}
+            onError={e => this.handleError(e)}
+            onTemperamentAdd={temperament =>
+              this.handleTemperamentAdd(temperament)
+            }
+            onTemperamentSelect={temperament =>
+              this.handleTemperamentSelect(temperament)
+            }
+            selectedTemperament={this.state.selectedTemperament}
+            temperaments={this.state.temperaments}
+          />
           {this.state.alerts.map((alert, i) => (
             <Alert
               key={i}

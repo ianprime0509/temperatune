@@ -42,27 +42,3 @@
   top: 0;
   width: 100%;
 }
-
-.App-reference-input {
-  font-size: 1.5rem;
-  margin: 0 0.5rem;
-  text-align: right;
-  width: 5rem;
-}
-
-.App-reference-input:focus {
-  box-shadow: 0 0 8px skyblue;
-}
-
-.App-settings-container {
-  height: calc(100vh - 3rem);
-  max-height: 25rem;
-  max-width: 100%;
-  width: 35rem;
-}
-
-@media (min-height: 30rem) {
-  .App-settings-container {
-    height: 25rem;
-  }
-}
