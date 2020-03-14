@@ -22,8 +22,8 @@ const GROW_RATE = 1;
 
 /** A nice canvas-based, animated background image. */
 export default class Background extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.ripples = [];
   }
 

@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 
 import './Tooltip.css';
 
-export default function Tooltip(props) {
-  let { children, isOpen, ...rest } = props;
-
+export default function Tooltip({ children, isOpen, ...rest }) {
   if (isOpen) {
     return (
       <Popper

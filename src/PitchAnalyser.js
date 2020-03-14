@@ -5,7 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/free-solid-svg-icons';
 import { Temperament } from 'temperament';
@@ -22,31 +22,33 @@ export const BAD_OFFSET = 50;
 /**
  * The component handling the "pitch detection" panel of the tuner.
  */
-export default class PitchAnalyser extends Component {
-  render() {
-    let background = this.props.detectedNote
-      ? `hsl(${getHue(this.props.detectedOffset)}, 70%, 80%)`
-      : '#e7e7e7';
-    let noteName = this.props.detectedNote
-      ? Temperament.prettifyNoteName(this.props.detectedNote)
-      : '-';
-    let offsetString = this.props.detectedNote
-      ? getOffsetString(this.props.detectedOffset)
-      : '';
+export default function PitchAnalyser({
+  detectedNote,
+  detectedOffset,
+  isFocusable,
+  onSettingsOpen,
+  onViewFlip,
+}) {
+  let background = detectedNote
+    ? `hsl(${getHue(detectedOffset)}, 70%, 80%)`
+    : '#e7e7e7';
+  let noteName = detectedNote
+    ? Temperament.prettifyNoteName(detectedNote)
+    : '-';
+  let offsetString = detectedNote ? getOffsetString(detectedOffset) : '';
 
-    return (
-      <div className="PitchAnalyser" style={{ background }}>
-        <span className="PitchAnalyser-note">{noteName}</span>
-        <span className="PitchAnalyser-offset">{offsetString}</span>
-        <SettingsBar
-          isFocusable={this.props.isFocusable}
-          onSettingsOpen={this.props.onSettingsOpen}
-          onViewFlip={this.props.onViewFlip}
-          switchIcon={faMusic}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className="PitchAnalyser" style={{ background }}>
+      <span className="PitchAnalyser-note">{noteName}</span>
+      <span className="PitchAnalyser-offset">{offsetString}</span>
+      <SettingsBar
+        isFocusable={isFocusable}
+        onSettingsOpen={onSettingsOpen}
+        onViewFlip={onViewFlip}
+        switchIcon={faMusic}
+      />
+    </div>
+  );
 }
 
 PitchAnalyser.propTypes = {

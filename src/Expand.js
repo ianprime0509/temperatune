@@ -14,9 +14,9 @@ import AnimateHeight from 'react-animate-height';
 import './Expand.css';
 
 /** A caret used to indicate expanding content. */
-export function Caret(props) {
+export function Caret({ isExpanded }) {
   let className = 'Caret';
-  if (props.isExpanded) {
+  if (isExpanded) {
     className += ' expanded';
   }
 
@@ -34,9 +34,7 @@ Caret.propTypes = {
 };
 
 /** An expanding content box. */
-export function Content(props) {
-  let { children, isExpanded } = props;
-
+export function Content({ children, isExpanded }) {
   return (
     <AnimateHeight aria-hidden={!isExpanded} height={isExpanded ? 'auto' : 0}>
       <div className="Content">

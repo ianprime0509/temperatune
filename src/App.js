@@ -67,7 +67,7 @@ export default class App extends Component {
       isFrontPanel: true,
       /** Whether the tone is being played in the pitch generator. */
       isPlaying: false,
-      settingsAreOpen: false,
+      areSettingsOpen: false,
       temperament: new Temperament(equalTemperament),
     };
     this.state.selectedNote = this.state.temperament.getReferenceName();
@@ -84,6 +84,8 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    // Handle the resize once at the beginning to get the initial size
+    this.handleResize();
     window.addEventListener('resize', () => this.handleResize());
   }
 
@@ -160,11 +162,11 @@ export default class App extends Component {
   }
 
   handleSettingsClose() {
-    this.setState(state => ({ settingsAreOpen: false }));
+    this.setState({ areSettingsOpen: false });
   }
 
   handleSettingsOpen() {
-    this.setState({ settingsAreOpen: true });
+    this.setState({ areSettingsOpen: true });
   }
 
   handleTemperamentSelect(temperament) {
@@ -179,8 +181,7 @@ export default class App extends Component {
   }
 
   handleTemperamentFileSelect(file) {
-    let url = URL.createObjectURL(file);
-    fetch(url)
+    fetch(URL.createObjectURL(file))
       .then(response => {
         return response.json();
       })
@@ -280,17 +281,10 @@ export default class App extends Component {
   }
 
   /** Attempt to get microphone access and set up the source node. */
-  microphoneSourceObtain() {
+  async microphoneSourceObtain() {
     if (!this.microphoneSource) {
-      return navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(stream => {
-          this.microphoneSource = this.audioContext.createMediaStreamSource(
-            stream
-          );
-        });
-    } else {
-      return Promise.resolve();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.microphoneSource = this.audioContext.createMediaStreamSource(stream);
     }
   }
 
@@ -325,7 +319,7 @@ export default class App extends Component {
       flipperClasses += ' flipped';
     }
 
-    let backgroundIsActive =
+    let isBackgroundActive =
       this.state.isPlaying ||
       (!this.state.isFrontPanel && this.state.detectedNote !== null);
     let wobbliness =
@@ -340,7 +334,7 @@ export default class App extends Component {
         <Background
           appHeight={this.state.appHeight}
           appWidth={this.state.appWidth}
-          isActive={backgroundIsActive}
+          isActive={isBackgroundActive}
           wobbliness={wobbliness}
         />
         <div ref={ref => (this.app = ref)} className="App">
@@ -373,7 +367,7 @@ export default class App extends Component {
             </div>
           </div>
           <Modal
-            isOpen={this.state.settingsAreOpen}
+            isOpen={this.state.areSettingsOpen}
             onRequestClose={() => this.handleSettingsClose()}
             title="Settings"
           >

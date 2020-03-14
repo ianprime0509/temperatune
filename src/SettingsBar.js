@@ -16,32 +16,37 @@ import './SettingsBar.css';
  * The bottom part of the interface, showing the settings button and a button hi
  * to change between the pitch generator and analyser.
  */
-export default function SettingsBar(props) {
+export default function SettingsBar({
+  isFocusable,
+  onSettingsOpen,
+  onViewFlip,
+  switchIcon,
+}) {
   return (
     <div className="SettingsBar">
       <FontAwesomeIcon
         className="SettingsBar-icon"
         icon={faCog}
         size="3x"
-        onClick={props.onSettingsOpen}
+        onClick={onSettingsOpen}
         onKeyPress={e => {
           if (e.key === 'Enter' || e.key === ' ') {
-            props.onSettingsOpen();
+            onSettingsOpen();
           }
         }}
-        tabIndex={props.isFocusable ? 0 : -1}
+        tabIndex={isFocusable ? 0 : -1}
       />
       <FontAwesomeIcon
         className="SettingsBar-icon"
-        icon={props.switchIcon}
+        icon={switchIcon}
         size="3x"
-        onClick={props.onViewFlip}
+        onClick={onViewFlip}
         onKeyPress={e => {
           if (e.key === 'Enter' || e.key === ' ') {
-            props.onViewFlip();
+            onViewFlip();
           }
         }}
-        tabIndex={props.isFocusable ? 0 : -1}
+        tabIndex={isFocusable ? 0 : -1}
       />
     </div>
   );

@@ -5,7 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { Component } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Manager as PopperManager,
   Reference as PopperReference,
@@ -21,67 +21,56 @@ import './AppSettings.css';
 /**
  * A item in a settings list with a consistent style.
  */
-export class SettingsItem extends Component {
-  constructor() {
-    super();
-    this.state = {
-      isTooltipOpen: false,
-    };
+export function SettingsItem({
+  children,
+  isSelected,
+  onClick,
+  tooltip,
+  ...rest
+}) {
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  let className = 'SettingsItem';
+  if (isSelected) {
+    className += ' selected';
   }
 
-  handleTooltipClose() {
-    this.setState({ isTooltipOpen: false });
+  const shouldShowTooltip = !!tooltip && isTooltipOpen;
+  const tooltipId = uniqueId('tooltip-');
+  const targetRestProps = {};
+  if (shouldShowTooltip) {
+    targetRestProps['aria-describedby'] = tooltipId;
   }
 
-  handleTooltipOpen() {
-    this.setState({ isTooltipOpen: true });
-  }
-
-  render() {
-    let { children, isSelected, onClick, tooltip, ...rest } = this.props;
-
-    let className = 'SettingsItem';
-    if (isSelected) {
-      className += ' selected';
-    }
-
-    let shouldShowTooltip = !!tooltip && this.state.isTooltipOpen;
-    let tooltipId = uniqueId('tooltip-');
-    let targetRestProps = {};
-    if (shouldShowTooltip) {
-      targetRestProps['aria-describedby'] = tooltipId;
-    }
-
-    return (
-      <PopperManager>
-        <PopperReference>
-          {({ ref }) => (
-            <div
-              ref={ref}
-              className={className}
-              onBlur={() => this.handleTooltipClose()}
-              onClick={onClick}
-              onFocus={() => this.handleTooltipOpen()}
-              onKeyPress={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  onClick && onClick();
-                }
-              }}
-              onMouseEnter={() => this.handleTooltipOpen()}
-              onMouseLeave={() => this.handleTooltipClose()}
-              {...rest}
-              {...targetRestProps}
-            >
-              {children}
-            </div>
-          )}
-        </PopperReference>
-        <Tooltip id={tooltipId} isOpen={shouldShowTooltip}>
-          {tooltip}
-        </Tooltip>
-      </PopperManager>
-    );
-  }
+  return (
+    <PopperManager>
+      <PopperReference>
+        {({ ref }) => (
+          <div
+            ref={ref}
+            className={className}
+            onBlur={() => setIsTooltipOpen(false)}
+            onClick={onClick}
+            onFocus={() => setIsTooltipOpen(true)}
+            onKeyPress={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                onClick && onClick();
+              }
+            }}
+            onMouseEnter={() => setIsTooltipOpen(true)}
+            onMouseLeave={() => setIsTooltipOpen(false)}
+            {...rest}
+            {...targetRestProps}
+          >
+            {children}
+          </div>
+        )}
+      </PopperReference>
+      <Tooltip id={tooltipId} isOpen={shouldShowTooltip}>
+        {tooltip}
+      </Tooltip>
+    </PopperManager>
+  );
 }
 
 SettingsItem.propTypes = {
@@ -94,30 +83,28 @@ SettingsItem.propTypes = {
 /**
  * A settings item that, when clicked, opens a file selection dialog.
  */
-export class SettingsFileChooser extends Component {
-  handleFileSelect() {
-    this.props.onFileSelect && this.props.onFileSelect(this.input.files[0]);
-  }
+export function SettingsFileChooser({ label, onFileSelect, ...rest }) {
+  const inputRef = useRef(null);
 
-  render() {
-    let { label, onFileSelect, ...rest } = this.props;
-    return (
-      <SettingsItem onClick={() => this.input && this.input.click()} {...rest}>
-        <input
-          id="fileInput"
-          ref={ref => (this.input = ref)}
-          onChange={() => {
-            this.handleFileSelect();
-            this.input.value = '';
-          }}
-          style={{ height: 0, opacity: 0, width: 0 }}
-          tabIndex={-1}
-          type="file"
-        />
-        <span>{label}</span>
-      </SettingsItem>
-    );
-  }
+  return (
+    <SettingsItem
+      onClick={() => inputRef.current && inputRef.current.click()}
+      {...rest}
+    >
+      <input
+        id="fileInput"
+        ref={inputRef}
+        onChange={() => {
+          onFileSelect && onFileSelect(inputRef.current.files[0]);
+          inputRef.current.value = '';
+        }}
+        style={{ height: 0, opacity: 0, width: 0 }}
+        tabIndex={-1}
+        type="file"
+      />
+      <span>{label}</span>
+    </SettingsItem>
+  );
 }
 
 SettingsFileChooser.propTypes = {
@@ -136,46 +123,29 @@ SettingsFileChooser.defaultProps = {
 /**
  * A setting which can be clicked/tapped to expand a list of sub-settings.
  */
-export class SettingsExpanderGroup extends Component {
-  constructor() {
-    super();
-    this.state = {
-      isExpanded: false,
-    };
-  }
+export function SettingsExpanderGroup({ children, label, ...rest }) {
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  handleExpandToggle() {
-    this.setState(state => {
-      return { isExpanded: !state.isExpanded };
-    });
-  }
-
-  render() {
-    let { children, label, ...rest } = this.props;
-
-    return (
-      <div>
-        <SettingsItem
-          aria-expanded={this.state.isExpanded}
-          onClick={() => this.handleExpandToggle()}
-          onKeyPress={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              this.handleExpandToggle();
-            }
-          }}
-          {...rest}
-        >
-          <div className="SettingsExpanderGroup-label">
-            <div className="SettingsExpanderGroup-label-text">{label}</div>
-            <Caret isExpanded={this.state.isExpanded} />
-          </div>
-        </SettingsItem>
-        <ExpandingContent isExpanded={this.state.isExpanded}>
-          {children}
-        </ExpandingContent>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <SettingsItem
+        aria-expanded={isExpanded}
+        onClick={() => setIsExpanded(!isExpanded)}
+        onKeyPress={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            setIsExpanded(!isExpanded);
+          }
+        }}
+        {...rest}
+      >
+        <div className="SettingsExpanderGroup-label">
+          <div className="SettingsExpanderGroup-label-text">{label}</div>
+          <Caret isExpanded={isExpanded} />
+        </div>
+      </SettingsItem>
+      <ExpandingContent isExpanded={isExpanded}>{children}</ExpandingContent>
+    </div>
+  );
 }
 
 SettingsExpanderGroup.propTypes = {

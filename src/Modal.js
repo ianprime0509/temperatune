@@ -5,7 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { Component } from 'react';
+import React, { useRef, useState } from 'react';
 import ReactModal from 'react-modal';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,9 +18,7 @@ import { Caret, Content as ExpandingContent } from './Expand';
 import './Modal.css';
 
 /** A modal dialog with a consistent style. */
-export function Modal(props) {
-  let { children, isOpen, onRequestClose, title, ...rest } = props;
-
+export function Modal({ children, isOpen, onRequestClose, title, ...rest }) {
   return (
     <ReactModal
       className={{
@@ -62,77 +60,67 @@ Modal.propTypes = {
 /**
  * An alert popup with a title, description and optional details.
  */
-export class Alert extends Component {
-  constructor() {
-    super();
-    this.state = {
-      areDetailsExpanded: false,
-      descriptionId: uniqueId('alert-description-'),
-    };
-  }
+export function Alert({
+  description,
+  details,
+  handleAlertClose,
+  isOpen,
+  title,
+}) {
+  const [areDetailsExpanded, setAreDetailsExpanded] = useState(false);
+  const descriptionId = uniqueId('alert-description-');
+  const okButtonRef = useRef(null);
 
-  handleAfterOpen() {
-    this.okButton.focus();
-  }
+  let alertDetailsStyle = details ? {} : { display: 'none' };
 
-  handleDetailsClick() {
-    this.setState(state => {
-      return { areDetailsExpanded: !state.areDetailsExpanded };
-    });
-  }
-
-  render() {
-    let { description, details, isOpen, title } = this.props;
-    let alertDetailsStyle = details ? {} : { display: 'none' };
-
-    return (
-      <Modal
-        aria={{ describedby: this.state.descriptionId }}
-        isOpen={isOpen}
-        onAfterOpen={() => this.handleAfterOpen()}
-        onRequestClose={this.props.handleAlertClose}
-        title={title}
-      >
-        <div className="Alert-content">
-          <div className="Alert-description" id={this.state.descriptionId}>
-            <p>{description}</p>
-            <div style={alertDetailsStyle}>
-              <div
-                aria-expanded={this.state.areDetailsExpanded}
-                className="Alert-details-expander"
-                onClick={() => this.handleDetailsClick()}
-                onKeyPress={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    this.handleDetailsClick();
-                  }
-                }}
-                tabIndex={0}
-              >
-                <span className="Alert-details-expander-label">Details</span>
-                <Caret isExpanded={this.state.areDetailsExpanded} />
-              </div>
-              <ExpandingContent isExpanded={this.state.areDetailsExpanded}>
-                <p className="Alert-details-content">{details}</p>
-              </ExpandingContent>
+  return (
+    <Modal
+      aria={{ describedby: descriptionId }}
+      isOpen={isOpen}
+      onAfterOpen={() => okButtonRef.current.focus()}
+      onRequestClose={handleAlertClose}
+      title={title}
+    >
+      <div className="Alert-content">
+        <div className="Alert-description" id={descriptionId}>
+          <p>{description}</p>
+          <div style={alertDetailsStyle}>
+            <div
+              aria-expanded={areDetailsExpanded}
+              className="Alert-details-expander"
+              onClick={() => setAreDetailsExpanded(!areDetailsExpanded)}
+              onKeyPress={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  setAreDetailsExpanded(!areDetailsExpanded);
+                }
+              }}
+              tabIndex={0}
+            >
+              <span className="Alert-details-expander-label">Details</span>
+              <Caret isExpanded={areDetailsExpanded} />
             </div>
+            <ExpandingContent isExpanded={areDetailsExpanded}>
+              <p className="Alert-details-content">{details}</p>
+            </ExpandingContent>
           </div>
-          <Button
-            ref={ref => (this.okButton = ref)}
-            fontSizeRem={1.5}
-            hasBorder={true}
-            label="OK"
-            onClick={this.props.handleAlertClose}
-            tabIndex={0}
-          />
         </div>
-      </Modal>
-    );
-  }
+        <Button
+          ref={okButtonRef}
+          fontSizeRem={1.5}
+          hasBorder={true}
+          label="OK"
+          onClick={handleAlertClose}
+          tabIndex={0}
+        />
+      </div>
+    </Modal>
+  );
 }
 
 Alert.propTypes = {
   description: PropTypes.string.isRequired,
   details: PropTypes.string,
   handleAlertClose: PropTypes.func,
+  isOpen: PropTypes.bool,
   title: PropTypes.string.isRequired,
 };

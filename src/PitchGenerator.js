@@ -5,7 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -22,18 +22,17 @@ import SettingsBar from './SettingsBar';
 import './PitchGenerator.css';
 
 /** The playback control. */
-function PlaybackControl(props) {
-  let { isFocusable, isPlaying, onClick, ...rest } = props;
+function PlaybackControl({ isFocusable, isPlaying, onClick, ...rest }) {
   const icon = isPlaying ? faPause : faPlay;
   return (
     <div className="PlaybackControl">
       <FontAwesomeIcon
         icon={icon}
         className="PlaybackControl-icon"
-        onClick={props.onClick}
+        onClick={onClick}
         onKeyPress={e => {
           if (e.key === 'Enter' || e.key === ' ') {
-            props.onClick && props.onClick();
+            onClick && onClick();
           }
         }}
         tabIndex={isFocusable ? 0 : -1}
@@ -50,120 +49,100 @@ PlaybackControl.propTypes = {
 };
 
 /** The "panel" containing the pitch generator interface. */
-export default class PitchGenerator extends Component {
-  constructor() {
-    super();
-    this.state = {
-      audioContext: new window.AudioContext(),
-      notesModalIsOpen: false,
-      octavesModalIsOpen: false,
-      oscillator: null,
-    };
-  }
+export default function PitchGenerator({
+  isFocusable,
+  isPlaying,
+  onNoteSelect,
+  onOctaveSelect,
+  onPlayToggle,
+  onSettingsOpen,
+  onViewFlip,
+  selectedNote,
+  selectedOctave,
+  temperament,
+}) {
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+  const [isOctavesModalOpen, setIsOctavesModalOpen] = useState(false);
 
-  handleNoteSelect(note) {
-    this.props.onNoteSelect(note);
-    this.handleNotesModalClose();
-  }
+  const handleNoteSelect = note => {
+    onNoteSelect(note);
+    setIsNotesModalOpen(false);
+  };
 
-  handleNotesModalClose() {
-    this.setState({ notesModalIsOpen: false });
-  }
+  const handleOctaveSelect = octave => {
+    onOctaveSelect(octave);
+    setIsOctavesModalOpen(false);
+  };
 
-  handleNotesModalOpen() {
-    this.setState({ notesModalIsOpen: true });
-  }
+  let pitch =
+    Math.round(10 * temperament.getPitch(selectedNote, selectedOctave)) / 10;
 
-  handleOctaveSelect(octave) {
-    this.props.onOctaveSelect(octave);
-    this.handleOctavesModalClose();
-  }
-
-  handleOctavesModalClose() {
-    this.setState({ octavesModalIsOpen: false });
-  }
-
-  handleOctavesModalOpen() {
-    this.setState({ octavesModalIsOpen: true });
-  }
-
-  render() {
-    let pitch =
-      Math.round(
-        10 *
-          this.props.temperament.getPitch(
-            this.props.selectedNote,
-            this.props.selectedOctave
-          )
-      ) / 10;
-
-    return (
-      <div className="PitchGenerator">
-        <div className="PitchGenerator-controls">
-          <Button
-            fontSizeRem={5}
-            isFocusable={this.props.isFocusable}
-            label={Temperament.prettifyNoteName(this.props.selectedNote)}
-            onClick={() => this.handleNotesModalOpen()}
-          />
-          <Button
-            fontSizeRem={5}
-            isFocusable={this.props.isFocusable}
-            label={String(this.props.selectedOctave)}
-            onClick={() => this.handleOctavesModalOpen()}
-          />
-        </div>
-        <PlaybackControl
-          isFocusable={this.props.isFocusable}
-          isPlaying={this.props.isPlaying}
-          onClick={this.props.onPlayToggle}
+  return (
+    <div className="PitchGenerator">
+      <div className="PitchGenerator-controls">
+        <Button
+          fontSizeRem={5}
+          isFocusable={isFocusable}
+          label={Temperament.prettifyNoteName(selectedNote)}
+          onClick={() => setIsNotesModalOpen(true)}
         />
-        <span className="PitchGenerator-pitch">{`${pitch} Hz`}</span>
-        <SettingsBar
-          isFocusable={this.props.isFocusable}
-          switchIcon={faMicrophone}
-          onViewFlip={this.props.onViewFlip}
-          onSettingsOpen={this.props.onSettingsOpen}
+        <Button
+          fontSizeRem={5}
+          isFocusable={isFocusable}
+          label={String(selectedOctave)}
+          onClick={() => setIsOctavesModalOpen(true)}
         />
-        <Modal
-          isOpen={this.state.notesModalIsOpen}
-          onRequestClose={() => this.handleNotesModalClose()}
-          title="Select note"
-        >
-          <div className="PitchGenerator-notes">
-            {this.props.temperament.getNoteNames().map(note => (
-              <Button
-                key={note}
-                fontSizeRem={5}
-                isFocusable={true}
-                isSelected={note === this.props.selectedNote}
-                label={Temperament.prettifyNoteName(note)}
-                onClick={() => this.handleNoteSelect(note)}
-              />
-            ))}
-          </div>
-        </Modal>
-        <Modal
-          isOpen={this.state.octavesModalIsOpen}
-          onRequestClose={() => this.handleOctavesModalClose()}
-          title="Select octave"
-        >
-          <div className="PitchGenerator-octaves">
-            {this.props.temperament.getOctaveRange(2).map(octave => (
-              <Button
-                key={octave}
-                fontSizeRem={5}
-                isFocusable={true}
-                isSelected={octave === this.props.selectedOctave}
-                label={String(octave)}
-                onClick={() => this.handleOctaveSelect(octave)}
-              />
-            ))}
-          </div>
-        </Modal>
       </div>
-    );
-  }
+      <PlaybackControl
+        isFocusable={isFocusable}
+        isPlaying={isPlaying}
+        onClick={onPlayToggle}
+      />
+      <span className="PitchGenerator-pitch">{`${pitch} Hz`}</span>
+      <SettingsBar
+        isFocusable={isFocusable}
+        switchIcon={faMicrophone}
+        onViewFlip={onViewFlip}
+        onSettingsOpen={onSettingsOpen}
+      />
+      <Modal
+        isOpen={isNotesModalOpen}
+        onRequestClose={() => setIsNotesModalOpen(false)}
+        title="Select note"
+      >
+        <div className="PitchGenerator-notes">
+          {temperament.getNoteNames().map(note => (
+            <Button
+              key={note}
+              fontSizeRem={5}
+              isFocusable={true}
+              isSelected={note === selectedNote}
+              label={Temperament.prettifyNoteName(note)}
+              onClick={() => handleNoteSelect(note)}
+            />
+          ))}
+        </div>
+      </Modal>
+      <Modal
+        isOpen={isOctavesModalOpen}
+        onRequestClose={() => setIsOctavesModalOpen(false)}
+        title="Select octave"
+      >
+        <div className="PitchGenerator-octaves">
+          {temperament.getOctaveRange(2).map(octave => (
+            <Button
+              key={octave}
+              fontSizeRem={5}
+              isFocusable={true}
+              isSelected={octave === selectedOctave}
+              label={String(octave)}
+              onClick={() => handleOctaveSelect(octave)}
+            />
+          ))}
+        </div>
+      </Modal>
+    </div>
+  );
 }
 
 PitchGenerator.propTypes = {
