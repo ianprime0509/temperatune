@@ -233,6 +233,9 @@ export default class App extends Component {
           window.clearInterval(this.inputNoteInterval);
           this.inputNoteInterval = null;
           this.microphoneSource.disconnect(this.analyserNode);
+          this.microphoneSource.mediaStream
+            .getTracks()
+            .forEach(track => track.stop());
           this.analyserNode = null;
         }
         return { isFrontPanel: true };
@@ -258,10 +261,8 @@ export default class App extends Component {
 
   /** Attempt to get microphone access and set up the source node. */
   async microphoneSourceObtain() {
-    if (!this.microphoneSource) {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.microphoneSource = this.audioContext.createMediaStreamSource(stream);
-    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    this.microphoneSource = this.audioContext.createMediaStreamSource(stream);
   }
 
   /** Begin playing the tuning pitch. */
