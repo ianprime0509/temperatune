@@ -15,12 +15,16 @@ body {
    */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-  height: 100vh;
+  height: 100%;
+  left: 0;
   margin: 0;
-  max-height: 100vh;
+  max-height: 100%;
   max-width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
   padding: 0;
+  position: fixed;
+  top: 0;
   user-select: none;
   width: 100vw;
 }
