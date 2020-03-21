@@ -60,7 +60,6 @@ export default class App extends Component {
     this.audioContext = new AudioContext();
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.start();
-    this.analyserNode = this.audioContext.createAnalyser();
     this.microphoneSource = null;
     this.inputNoteInterval = null;
 
@@ -210,6 +209,7 @@ export default class App extends Component {
         // note.
         this.microphoneSourceObtain()
           .then(() => {
+            this.analyserNode = this.audioContext.createAnalyser();
             this.microphoneSource.connect(this.analyserNode);
             this.audioContext.resume();
             this.inputNoteInterval = window.setInterval(
@@ -226,14 +226,15 @@ export default class App extends Component {
           );
         return { isFrontPanel: false, isPlaying: false };
       } else {
+        this.audioContext.suspend();
         if (this.inputNoteInterval !== null) {
           // We don't need to be updating the microphone input note if the
           // analyser view isn't open.
           window.clearInterval(this.inputNoteInterval);
           this.inputNoteInterval = null;
           this.microphoneSource.disconnect(this.analyserNode);
+          this.analyserNode = null;
         }
-        this.audioContext.suspend();
         return { isFrontPanel: true };
       }
     });
@@ -241,12 +242,9 @@ export default class App extends Component {
 
   /** Update the input note from the microphone input. */
   inputNoteUpdate() {
-    let ctx = this.audioContext;
-    let analyserNode = this.analyserNode;
-
-    let data = new Float32Array(analyserNode.fftSize);
-    analyserNode.getFloatTimeDomainData(data);
-    let [pitch, clarity] = findPitch(data, ctx.sampleRate);
+    let data = new Float32Array(this.analyserNode.fftSize);
+    this.analyserNode.getFloatTimeDomainData(data);
+    let [pitch, clarity] = findPitch(data, this.audioContext.sampleRate);
     if (clarity < 0.8) {
       this.setState({ detectedNote: null, detectedOffset: 0 });
       return;
@@ -275,8 +273,8 @@ export default class App extends Component {
 
   /** Stop playing the tuning pitch. */
   soundStop() {
-    this.oscillator.disconnect(this.audioContext.destination);
     this.audioContext.suspend();
+    this.oscillator.disconnect(this.audioContext.destination);
   }
 
   /** Update the frequency of the tuning pitch. */
