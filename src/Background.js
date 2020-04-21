@@ -94,7 +94,7 @@ export default class Background extends Component {
 
   updateRipples() {
     this.ripples = this.ripples
-      .map(ripple =>
+      .map((ripple) =>
         Object.assign(ripple, {
           size: ripple.size + GROW_RATE,
           alpha: ripple.alpha - DISAPPEAR_RATE,
@@ -102,11 +102,11 @@ export default class Background extends Component {
           t: ripple.t + 1,
         })
       )
-      .filter(ripple => ripple.alpha > 0);
+      .filter((ripple) => ripple.alpha > 0);
   }
 
   render() {
-    return <canvas ref={ref => (this.canvas = ref)} aria-hidden="true" />;
+    return <canvas ref={(ref) => (this.canvas = ref)} aria-hidden="true" />;
   }
 }
 

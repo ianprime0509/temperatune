@@ -38,7 +38,7 @@ export default function AppSettings({
     <Modal isOpen={isOpen} onRequestClose={onClose} title="Settings">
       <div className="AppSettings-container">
         <ExpanderGroup label={`Temperament: ${selectedTemperament.name}`}>
-          {temperaments.map(temperament => (
+          {temperaments.map((temperament) => (
             <SettingsItem
               key={temperament.name}
               isSelected={temperament.name === selectedTemperament.name}
@@ -113,7 +113,7 @@ function SettingsItem({ children, isSelected, onClick, tooltip, ...rest }) {
             onBlur={() => setIsTooltipOpen(false)}
             onClick={onClick}
             onFocus={() => setIsTooltipOpen(true)}
-            onKeyPress={e => {
+            onKeyPress={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 onClick && onClick();
               }
@@ -165,7 +165,7 @@ function ReferencePitchChooser({
         ref={pitchInputRef}
         className="ReferencePitchChooser-input"
         onBlur={handlePitchChange}
-        onKeyPress={e => {
+        onKeyPress={(e) => {
           if (e.key === 'Enter') {
             handlePitchChange();
           }
@@ -234,10 +234,10 @@ function TemperamentFileChooser({
   return (
     <FileChooser
       label={label}
-      onFileSelect={file =>
+      onFileSelect={(file) =>
         loadTemperament(file)
           .then(onTemperamentSelect)
-          .catch(e => onError && onError(e))
+          .catch((e) => onError && onError(e))
       }
       {...rest}
     />
@@ -279,7 +279,7 @@ function ExpanderGroup({ children, label, ...rest }) {
       <SettingsItem
         aria-expanded={isExpanded}
         onClick={() => setIsExpanded(!isExpanded)}
-        onKeyPress={e => {
+        onKeyPress={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             setIsExpanded(!isExpanded);
           }

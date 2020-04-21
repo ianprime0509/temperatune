@@ -74,7 +74,7 @@ export default class App extends Component {
 
   /** Close the alert on the top of the stack. */
   handleAlertClose() {
-    this.setState(state => {
+    this.setState((state) => {
       // Actually, all we do is set the `isOpen` property of the top-most alert
       // to `false` so that its close animation can play.  The closed alerts
       // will be cleaned up when the next alert is opened.
@@ -85,9 +85,9 @@ export default class App extends Component {
   }
 
   handleAlertOpen(title, description, details) {
-    this.setState(state => {
+    this.setState((state) => {
       // We also clean up any alerts that have been closed already.
-      let alerts = state.alerts.filter(alert => alert.isOpen);
+      let alerts = state.alerts.filter((alert) => alert.isOpen);
       return {
         alerts: alerts.concat([{ title, description, details, isOpen: true }]),
       };
@@ -115,7 +115,7 @@ export default class App extends Component {
   }
 
   handlePlayToggle() {
-    this.setState(state => {
+    this.setState((state) => {
       if (state.isPlaying) {
         this.soundStop();
       } else {
@@ -130,7 +130,7 @@ export default class App extends Component {
 
   handleReferencePitchChange() {
     this.setState(
-      state => {
+      (state) => {
         let temperament;
         let pitchText = this.referencePitchInput.value.trim();
         if (/^[0-9]+$/.test(pitchText)) {
@@ -167,7 +167,7 @@ export default class App extends Component {
   handleTemperamentAdd(temperament) {
     // We aren't allowed to have a temperament with the same name as some
     // other temperament, or it would cause confusion.
-    let sameName = t => t.name === temperament.name;
+    let sameName = (t) => t.name === temperament.name;
     if (this.state.temperaments.some(sameName)) {
       this.handleAlertOpen(
         'Error',
@@ -177,19 +177,19 @@ export default class App extends Component {
     }
 
     this.setState(
-      state => ({ temperaments: [...state.temperaments, temperament] }),
+      (state) => ({ temperaments: [...state.temperaments, temperament] }),
       () => this.handleTemperamentSelect(temperament)
     );
   }
 
   handleTemperamentSelect(temperament) {
     this.setState(
-      state => ({
+      (state) => ({
         selectedTemperament: temperament,
         // Reuse the current selected note (if possible) and octave
         selectedNote: temperament
           .getNoteNames()
-          .some(note => note === state.selectedNote)
+          .some((note) => note === state.selectedNote)
           ? state.selectedNote
           : temperament.getReferenceName(),
       }),
@@ -198,7 +198,7 @@ export default class App extends Component {
   }
 
   handleViewFlip() {
-    this.setState(state => {
+    this.setState((state) => {
       if (state.isFrontPanel) {
         // We don't want the tuning note to keep playing when we switch over to
         // analyser mode.
@@ -217,7 +217,7 @@ export default class App extends Component {
               100
             );
           })
-          .catch(err =>
+          .catch((err) =>
             this.handleAlertOpen(
               'Error',
               'Could not get audio input.',
@@ -235,7 +235,7 @@ export default class App extends Component {
           this.microphoneSource.disconnect(this.analyserNode);
           this.microphoneSource.mediaStream
             .getTracks()
-            .forEach(track => track.stop());
+            .forEach((track) => track.stop());
           this.analyserNode = null;
         }
         return { isFrontPanel: true };
@@ -314,15 +314,15 @@ export default class App extends Component {
           isActive={isBackgroundActive}
           wobbliness={wobbliness}
         />
-        <div ref={ref => (this.app = ref)} className="App">
+        <div ref={(ref) => (this.app = ref)} className="App">
           <div className={flipperClasses} id="App-flipper">
             <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
               <PitchGenerator
                 isFocusable={this.state.isFrontPanel}
                 isPlaying={this.state.isPlaying}
                 onAlertOpen={() => this.handleAlertOpen()}
-                onNoteSelect={note => this.handleNoteSelect(note)}
-                onOctaveSelect={octave => this.handleOctaveSelect(octave)}
+                onNoteSelect={(note) => this.handleNoteSelect(note)}
+                onOctaveSelect={(octave) => this.handleOctaveSelect(octave)}
                 onPlayToggle={() => this.handlePlayToggle()}
                 onSettingsOpen={() => this.handleSettingsOpen()}
                 onViewFlip={() => this.handleViewFlip()}
@@ -346,11 +346,11 @@ export default class App extends Component {
           <AppSettings
             isOpen={this.state.areSettingsOpen}
             onClose={() => this.handleSettingsClose()}
-            onError={e => this.handleError(e)}
-            onTemperamentAdd={temperament =>
+            onError={(e) => this.handleError(e)}
+            onTemperamentAdd={(temperament) =>
               this.handleTemperamentAdd(temperament)
             }
-            onTemperamentSelect={temperament =>
+            onTemperamentSelect={(temperament) =>
               this.handleTemperamentSelect(temperament)
             }
             selectedTemperament={this.state.selectedTemperament}

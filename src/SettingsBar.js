@@ -30,7 +30,7 @@ export default function SettingsBar({
         icon={faCog}
         size="3x"
         onClick={onSettingsOpen}
-        onKeyPress={e => {
+        onKeyPress={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             onSettingsOpen();
           }
@@ -43,7 +43,7 @@ export default function SettingsBar({
         icon={switchIcon}
         size="3x"
         onClick={onViewFlip}
-        onKeyPress={e => {
+        onKeyPress={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             onViewFlip();
           }

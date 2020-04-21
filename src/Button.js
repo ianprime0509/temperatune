@@ -31,7 +31,7 @@ function Button(
       role="button"
       className={className}
       onClick={onClick}
-      onKeyPress={e => {
+      onKeyPress={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           onClick && onClick();
         }

@@ -30,7 +30,7 @@ function PlaybackControl({ isFocusable, isPlaying, onClick, ...rest }) {
         icon={icon}
         className="PlaybackControl-icon"
         onClick={onClick}
-        onKeyPress={e => {
+        onKeyPress={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             onClick && onClick();
           }
@@ -64,12 +64,12 @@ export default function PitchGenerator({
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [isOctavesModalOpen, setIsOctavesModalOpen] = useState(false);
 
-  const handleNoteSelect = note => {
+  const handleNoteSelect = (note) => {
     onNoteSelect(note);
     setIsNotesModalOpen(false);
   };
 
-  const handleOctaveSelect = octave => {
+  const handleOctaveSelect = (octave) => {
     onOctaveSelect(octave);
     setIsOctavesModalOpen(false);
   };
@@ -111,7 +111,7 @@ export default function PitchGenerator({
         title="Select note"
       >
         <div className="PitchGenerator-notes">
-          {temperament.getNoteNames().map(note => (
+          {temperament.getNoteNames().map((note) => (
             <Button
               key={note}
               fontSizeRem={5}
@@ -129,7 +129,7 @@ export default function PitchGenerator({
         title="Select octave"
       >
         <div className="PitchGenerator-octaves">
-          {temperament.getOctaveRange(2).map(octave => (
+          {temperament.getOctaveRange(2).map((octave) => (
             <Button
               key={octave}
               fontSizeRem={5}

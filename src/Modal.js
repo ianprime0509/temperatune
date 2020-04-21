@@ -104,7 +104,7 @@ export function Alert({
               aria-expanded={areDetailsExpanded}
               className="Alert-details-expander"
               onClick={() => setAreDetailsExpanded(!areDetailsExpanded)}
-              onKeyPress={e => {
+              onKeyPress={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   setAreDetailsExpanded(!areDetailsExpanded);
                 }
