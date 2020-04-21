@@ -6,10 +6,7 @@
  * https://opensource.org/licenses/MIT.
  */
 import React, { useRef, useState } from 'react';
-import {
-  Manager as PopperManager,
-  Reference as PopperReference,
-} from 'react-popper';
+import { usePopper } from 'react-popper';
 import PropTypes from 'prop-types';
 import cloneDeep from 'lodash.clonedeep';
 import uniqueId from 'lodash.uniqueid';
@@ -17,7 +14,6 @@ import uniqueId from 'lodash.uniqueid';
 import AppError from './AppError';
 import { Caret, Content as ExpandingContent } from './Expand';
 import { Modal } from './Modal';
-import Tooltip from './Tooltip';
 
 import { version as VERSION } from '../package.json';
 
@@ -103,34 +99,58 @@ function SettingsItem({ children, isSelected, onClick, tooltip, ...rest }) {
     targetRestProps['aria-describedby'] = tooltipId;
   }
 
+  const [referenceElement, setReferenceElement] = useState(null);
+  const [tooltipElement, setTooltipElement] = useState(null);
+  const [arrowElement, setArrowElement] = useState(null);
+  const { styles, attributes } = usePopper(referenceElement, tooltipElement, {
+    placement: 'top',
+    modifiers: [
+      { name: 'arrow', options: { element: arrowElement } },
+      { name: 'preventOverflow' },
+    ],
+  });
+
   return (
-    <PopperManager>
-      <PopperReference>
-        {({ ref }) => (
+    <>
+      <div
+        ref={setReferenceElement}
+        className={className}
+        onBlur={() => setIsTooltipOpen(false)}
+        onClick={onClick}
+        onFocus={() => setIsTooltipOpen(true)}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            onClick && onClick();
+          }
+        }}
+        onMouseEnter={() => setIsTooltipOpen(true)}
+        onMouseLeave={() => setIsTooltipOpen(false)}
+        {...rest}
+        {...targetRestProps}
+      >
+        {children}
+      </div>
+
+      {shouldShowTooltip && (
+        <div
+          ref={setTooltipElement}
+          role="tooltip"
+          className="Tooltip"
+          style={styles.popper}
+          {...attributes.popper}
+          {...rest}
+        >
+          {tooltip}
           <div
-            ref={ref}
-            className={className}
-            onBlur={() => setIsTooltipOpen(false)}
-            onClick={onClick}
-            onFocus={() => setIsTooltipOpen(true)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                onClick && onClick();
-              }
-            }}
-            onMouseEnter={() => setIsTooltipOpen(true)}
-            onMouseLeave={() => setIsTooltipOpen(false)}
-            {...rest}
-            {...targetRestProps}
-          >
-            {children}
-          </div>
-        )}
-      </PopperReference>
-      <Tooltip role="tooltip" id={tooltipId} isOpen={shouldShowTooltip}>
-        {tooltip}
-      </Tooltip>
-    </PopperManager>
+            ref={setArrowElement}
+            aria-hidden="true"
+            className="Tooltip-arrow"
+            style={styles.arrow}
+            {...attributes.arrow}
+          />
+        </div>
+      )}
+    </>
   );
 }
 
