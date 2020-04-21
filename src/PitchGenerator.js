@@ -13,7 +13,7 @@ import {
   faPause,
   faPlay,
 } from '@fortawesome/free-solid-svg-icons';
-import { Temperament } from 'temperament';
+import { Temperament, prettifyNoteName } from 'temperament';
 
 import { Modal } from './Modal';
 import Button from './Button';
@@ -83,7 +83,7 @@ export default function PitchGenerator({
         <Button
           fontSizeRem={5}
           isFocusable={isFocusable}
-          label={Temperament.prettifyNoteName(selectedNote)}
+          label={prettifyNoteName(selectedNote)}
           onClick={() => setIsNotesModalOpen(true)}
         />
         <Button
@@ -111,13 +111,13 @@ export default function PitchGenerator({
         title="Select note"
       >
         <div className="PitchGenerator-notes">
-          {temperament.getNoteNames().map((note) => (
+          {temperament.noteNames.map((note) => (
             <Button
               key={note}
               fontSizeRem={5}
               isFocusable={true}
               isSelected={note === selectedNote}
-              label={Temperament.prettifyNoteName(note)}
+              label={prettifyNoteName(note)}
               onClick={() => handleNoteSelect(note)}
             />
           ))}

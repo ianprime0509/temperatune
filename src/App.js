@@ -8,7 +8,7 @@
 import React, { Component } from 'react';
 import ReactModal from 'react-modal';
 import cloneDeep from 'lodash.clonedeep';
-import { findPitch } from 'pitchy';
+import { PitchDetector } from 'pitchy';
 import { Temperament } from 'temperament';
 
 import AppError from './AppError';
@@ -54,8 +54,8 @@ export default class App extends Component {
         new Temperament(pythagoreanD),
       ],
     };
-    this.state.selectedNote = this.state.selectedTemperament.getReferenceName();
-    this.state.selectedOctave = this.state.selectedTemperament.getReferenceOctave();
+    this.state.selectedNote = this.state.selectedTemperament.referenceName;
+    this.state.selectedOctave = this.state.selectedTemperament.referenceOctave;
 
     this.audioContext = new AudioContext();
     this.oscillator = this.audioContext.createOscillator();
@@ -187,9 +187,9 @@ export default class App extends Component {
       (state) => ({
         selectedTemperament: temperament,
         // Reuse the current selected note (if possible) and octave
-        selectedNote: temperament
-          .getNoteNames()
-          .some((note) => note === state.selectedNote)
+        selectedNote: temperament.noteNames.some(
+          (note) => note === state.selectedNote
+        )
           ? state.selectedNote
           : temperament.getReferenceName(),
       }),
@@ -210,6 +210,10 @@ export default class App extends Component {
         this.microphoneSourceObtain()
           .then(() => {
             this.analyserNode = this.audioContext.createAnalyser();
+            this.analyserBuffer = new Float32Array(this.analyserNode.fftSize);
+            this.pitchDetector = PitchDetector.forFloat32Array(
+              this.analyserBuffer.length
+            );
             this.microphoneSource.connect(this.analyserNode);
             this.audioContext.resume();
             this.inputNoteInterval = window.setInterval(
@@ -245,9 +249,11 @@ export default class App extends Component {
 
   /** Update the input note from the microphone input. */
   inputNoteUpdate() {
-    let data = new Float32Array(this.analyserNode.fftSize);
-    this.analyserNode.getFloatTimeDomainData(data);
-    let [pitch, clarity] = findPitch(data, this.audioContext.sampleRate);
+    this.analyserNode.getFloatTimeDomainData(this.analyserBuffer);
+    let [pitch, clarity] = this.pitchDetector.findPitch(
+      this.analyserBuffer,
+      this.audioContext.sampleRate
+    );
     if (clarity < 0.8) {
       this.setState({ detectedNote: null, detectedOffset: 0 });
       return;

@@ -153,7 +153,7 @@ function ReferencePitchChooser({
     const pitchText = pitchInputRef.current.value.trim();
     if (/^[0-9]+$/.test(pitchText)) {
       const temperament = cloneDeep(selectedTemperament);
-      temperament.setReferencePitch(parseInt(pitchText, 10));
+      temperament.referencePitch = parseInt(pitchText, 10);
       onTemperamentUpdate(temperament);
     }
   };
@@ -171,7 +171,7 @@ function ReferencePitchChooser({
           }
         }}
         pattern="[0-9]*"
-        placeholder={selectedTemperament.getReferencePitch()}
+        placeholder={selectedTemperament.referencePitch}
         tabIndex={0}
         type="text"
         {...rest}

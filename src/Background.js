@@ -45,6 +45,10 @@ export default class Background extends Component {
   }
 
   updateCanvas() {
+    // Just in case the canvas isn't actually there somehow (this has happened
+    // at least in development), bail out if this.canvas is null
+    if (!this.canvas) return;
+
     this.canvas.height = window.innerHeight;
     this.canvas.width = window.innerWidth;
     const ctx = this.canvas.getContext('2d');

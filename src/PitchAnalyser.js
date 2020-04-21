@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { faMusic } from '@fortawesome/free-solid-svg-icons';
-import { Temperament } from 'temperament';
+import { Temperament, prettifyNoteName } from 'temperament';
 
 import SettingsBar from './SettingsBar';
 
@@ -32,9 +32,7 @@ export default function PitchAnalyser({
   let background = detectedNote
     ? `hsl(${getHue(detectedOffset)}, 70%, 80%)`
     : '#e7e7e7';
-  let noteName = detectedNote
-    ? Temperament.prettifyNoteName(detectedNote)
-    : '-';
+  let noteName = detectedNote ? prettifyNoteName(detectedNote) : '-';
   let offsetString = detectedNote ? getOffsetString(detectedOffset) : '';
 
   return (
