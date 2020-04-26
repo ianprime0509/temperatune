@@ -97,7 +97,6 @@ const SettingsItem: FC<SettingsItemProps> = ({
           className="Tooltip"
           style={styles.popper}
           {...attributes.popper}
-          {...rest}
         >
           {tooltip}
           <div
