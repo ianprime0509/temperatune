@@ -14,17 +14,17 @@
 }
 
 .Button:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .Button.bordered:focus {
-  box-shadow: 0 0 12px lightskyblue;
+  box-shadow: 0 0 12px #1e9be9;
 }
 
 .Button:not(.bordered):focus {
-  filter: drop-shadow(0 0 10px lightskyblue);
+  filter: drop-shadow(0 0 6px #1e9be9);
 }
 
 .Button.selected {
-  background: lightskyblue;
+  background: #1e9be9;
 }

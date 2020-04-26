@@ -58,5 +58,5 @@
 }
 
 .PlaybackControl-icon:focus {
-  filter: drop-shadow(0 0 20px lightskyblue);
+  filter: drop-shadow(0 0 20px #1e9be9);
 }

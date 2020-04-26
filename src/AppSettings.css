@@ -19,7 +19,7 @@
 }
 
 .ReferencePitchChooser-input:focus {
-  box-shadow: 0 0 8px skyblue;
+  box-shadow: 0 0 8px #1e9be9;
 }
 
 .SettingsExpanderGroup-label {
@@ -51,11 +51,11 @@
 }
 
 .SettingsItem:focus {
-  border-left: 5px solid lightskyblue;
+  border-left: 5px solid #1e9be9;
 }
 
 .SettingsItem.selected {
-  background: lightskyblue;
+  background: #1e9be9;
 }
 
 .Tooltip {
