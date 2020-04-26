@@ -64,6 +64,7 @@ const SettingsItem: FC<SettingsItemProps> = ({
     modifiers: [
       { name: 'arrow', options: { element: arrowElement } },
       { name: 'preventOverflow' },
+      { name: 'offset', options: { offset: [0, 8] } },
     ],
   });
 
@@ -90,6 +91,7 @@ const SettingsItem: FC<SettingsItemProps> = ({
 
       {shouldShowTooltip && (
         <div
+          id={tooltipId}
           ref={setTooltipElement}
           role="tooltip"
           className="Tooltip"

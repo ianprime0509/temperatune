@@ -62,18 +62,16 @@
   background: hsla(0, 0%, 10%, 0.9);
   border-radius: 5px;
   color: #eee;
-  margin: 0.5rem;
   max-width: 20rem;
   padding: 0.5rem;
 }
 
-/* Arrow styling taken substantially from the react-Tooltip examples. */
+/* Arrow styling taken substantially from the react-tooltip examples. */
 .Tooltip .Tooltip-arrow {
   width: 0;
   height: 0;
   border-style: solid;
   position: absolute;
-  margin: 5px;
 }
 
 .Tooltip[data-popper-placement^='top'] .Tooltip-arrow {
@@ -81,8 +79,6 @@
   border-color: hsla(0, 0%, 10%, 0.9) transparent transparent transparent;
   bottom: -5px;
   left: calc(50% - 5px);
-  margin-top: 0;
-  margin-bottom: 0;
 }
 
 .Tooltip[data-popper-placement^='bottom'] .Tooltip-arrow {
@@ -90,8 +86,6 @@
   border-color: transparent transparent hsla(0, 0%, 10%, 0.9) transparent;
   top: -5px;
   left: calc(50% - 5px);
-  margin-top: 0;
-  margin-bottom: 0;
 }
 
 .Tooltip[data-popper-placement^='right'] .Tooltip-arrow {
@@ -99,8 +93,6 @@
   border-color: transparent hsla(0, 0%, 10%, 0.9) transparent transparent;
   left: -5px;
   top: calc(50% - 5px);
-  margin-left: 0;
-  margin-right: 0;
 }
 
 .Tooltip[data-popper-placement^='left'] .Tooltip-arrow {
@@ -108,6 +100,4 @@
   border-color: transparent transparent transparent hsla(0, 0%, 10%, 0.9);
   right: -5px;
   top: calc(50% - 5px);
-  margin-left: 0;
-  margin-right: 0;
 }
