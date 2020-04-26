@@ -5,16 +5,19 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FC, ReactNode } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import AnimateHeight from 'react-animate-height';
 
 import './Expand.css';
 
+interface CaretProps {
+  isExpanded: boolean;
+}
+
 /** A caret used to indicate expanding content. */
-export function Caret({ isExpanded }) {
+export const Caret: FC<CaretProps> = ({ isExpanded }) => {
   let className = 'Caret';
   if (isExpanded) {
     className += ' expanded';
@@ -27,28 +30,19 @@ export function Caret({ isExpanded }) {
       icon={faCaretRight}
     />
   );
-}
-
-Caret.propTypes = {
-  isExpanded: PropTypes.bool.isRequired,
 };
+
+interface ContentProps {
+  children: ReactNode;
+  isExpanded: boolean;
+}
 
 /** An expanding content box. */
-export function Content({ children, isExpanded }) {
-  return (
-    <AnimateHeight aria-hidden={!isExpanded} height={isExpanded ? 'auto' : 0}>
-      <div className="Content">
-        <div className="Content-bar" />
-        <div className="Content-children">{children}</div>
-      </div>
-    </AnimateHeight>
-  );
-}
-
-Content.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.node,
-    PropTypes.arrayOf(PropTypes.node),
-  ]),
-  isExpanded: PropTypes.bool.isRequired,
-};
+export const Content: FC<ContentProps> = ({ children, isExpanded }) => (
+  <AnimateHeight aria-hidden={!isExpanded} height={isExpanded ? 'auto' : 0}>
+    <div className="Content">
+      <div className="Content-bar" />
+      <div className="Content-children">{children}</div>
+    </div>
+  </AnimateHeight>
+);

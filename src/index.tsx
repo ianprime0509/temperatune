@@ -11,8 +11,14 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+declare global {
+  interface Window {
+    webkitAudioContext: AudioContext;
+  }
+}
+
 // Some browsers use webkitAudioContext instead of plain (unprefixed)
-// AudioContext.
+// AudioContext
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 ReactDOM.render(<App />, document.getElementById('root'));

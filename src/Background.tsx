@@ -6,7 +6,6 @@
  * https://opensource.org/licenses/MIT.
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import './Background.css';
 
@@ -20,10 +19,32 @@ const DISAPPEAR_RATE = 0.025;
 /** The rate (in pixels per frame) at which to make the ripples grow. */
 const GROW_RATE = 1;
 
+interface BackgroundProps {
+  appHeight: number;
+  appWidth: number;
+  isActive: boolean;
+  wobbliness: number;
+}
+
+interface Ripple {
+  size: number;
+  alpha: number;
+  wobbliness: number;
+  t: number;
+}
+
 /** A nice canvas-based, animated background image. */
-export default class Background extends Component {
-  constructor(props) {
+export default class Background extends Component<BackgroundProps> {
+  static defaultProps = {
+    wobbliness: 0,
+  };
+
+  private canvas: HTMLCanvasElement | null;
+  private ripples: Ripple[];
+
+  constructor(props: BackgroundProps) {
     super(props);
+    this.canvas = null;
     this.ripples = [];
   }
 
@@ -32,8 +53,12 @@ export default class Background extends Component {
     window.setInterval(() => this.ripple(), 1000 / RIPPLE_RATE);
   }
 
+  render() {
+    return <canvas ref={(ref) => (this.canvas = ref)} aria-hidden="true" />;
+  }
+
   /** Produce a new ripple. */
-  ripple() {
+  private ripple() {
     if (this.props.isActive) {
       this.ripples.push({
         size: 0,
@@ -44,14 +69,14 @@ export default class Background extends Component {
     }
   }
 
-  updateCanvas() {
+  private updateCanvas() {
     // Just in case the canvas isn't actually there somehow (this has happened
     // at least in development), bail out if this.canvas is null
     if (!this.canvas) return;
 
     this.canvas.height = window.innerHeight;
     this.canvas.width = window.innerWidth;
-    const ctx = this.canvas.getContext('2d');
+    const ctx = this.canvas.getContext('2d')!;
     ctx.clearRect(0, 0, this.canvas.height, this.canvas.width);
     const appWidth = this.props.appWidth;
     const appHeight = this.props.appHeight;
@@ -96,7 +121,7 @@ export default class Background extends Component {
     this.updateRipples();
   }
 
-  updateRipples() {
+  private updateRipples() {
     this.ripples = this.ripples
       .map((ripple) =>
         Object.assign(ripple, {
@@ -108,19 +133,4 @@ export default class Background extends Component {
       )
       .filter((ripple) => ripple.alpha > 0);
   }
-
-  render() {
-    return <canvas ref={(ref) => (this.canvas = ref)} aria-hidden="true" />;
-  }
 }
-
-Background.propTypes = {
-  appHeight: PropTypes.number.isRequired,
-  appWidth: PropTypes.number.isRequired,
-  isActive: PropTypes.bool.isRequired,
-  wobbliness: PropTypes.number,
-};
-
-Background.defaultProps = {
-  wobbliness: 0,
-};

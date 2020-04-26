@@ -5,8 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMicrophone,
@@ -21,8 +20,21 @@ import SettingsBar from './SettingsBar';
 
 import './PitchGenerator.css';
 
+interface PlaybackControlProps {
+  isFocusable?: boolean;
+  isPlaying: boolean;
+  onClick?: () => void;
+
+  [k: string]: any;
+}
+
 /** The playback control. */
-function PlaybackControl({ isFocusable, isPlaying, onClick, ...rest }) {
+const PlaybackControl: FC<PlaybackControlProps> = ({
+  isFocusable,
+  isPlaying,
+  onClick,
+  ...rest
+}) => {
   const icon = isPlaying ? faPause : faPlay;
   return (
     <div className="PlaybackControl">
@@ -40,37 +52,45 @@ function PlaybackControl({ isFocusable, isPlaying, onClick, ...rest }) {
       />
     </div>
   );
-}
-
-PlaybackControl.propTypes = {
-  isFocusable: PropTypes.bool,
-  isPlaying: PropTypes.bool.isRequired,
-  onClick: PropTypes.func,
 };
 
+interface PitchGeneratorProps {
+  isFocusable: boolean;
+  isPlaying: boolean;
+  selectedNote: string;
+  selectedOctave: number;
+  temperament: Temperament;
+
+  onNoteSelect?: (note: string) => void;
+  onOctaveSelect?: (octave: number) => void;
+  onPlayToggle?: () => void;
+  onSettingsOpen?: () => void;
+  onViewFlip?: () => void;
+}
+
 /** The "panel" containing the pitch generator interface. */
-export default function PitchGenerator({
+const PitchGenerator: FC<PitchGeneratorProps> = ({
   isFocusable,
   isPlaying,
+  selectedNote,
+  selectedOctave,
+  temperament,
   onNoteSelect,
   onOctaveSelect,
   onPlayToggle,
   onSettingsOpen,
   onViewFlip,
-  selectedNote,
-  selectedOctave,
-  temperament,
-}) {
+}) => {
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [isOctavesModalOpen, setIsOctavesModalOpen] = useState(false);
 
-  const handleNoteSelect = (note) => {
-    onNoteSelect(note);
+  const handleNoteSelect = (note: string) => {
+    onNoteSelect && onNoteSelect(note);
     setIsNotesModalOpen(false);
   };
 
-  const handleOctaveSelect = (octave) => {
-    onOctaveSelect(octave);
+  const handleOctaveSelect = (octave: number) => {
+    onOctaveSelect && onOctaveSelect(octave);
     setIsOctavesModalOpen(false);
   };
 
@@ -107,8 +127,8 @@ export default function PitchGenerator({
       />
       <Modal
         isOpen={isNotesModalOpen}
-        onRequestClose={() => setIsNotesModalOpen(false)}
         title="Select note"
+        onRequestClose={() => setIsNotesModalOpen(false)}
       >
         <div className="PitchGenerator-notes">
           {temperament.noteNames.map((note) => (
@@ -125,8 +145,8 @@ export default function PitchGenerator({
       </Modal>
       <Modal
         isOpen={isOctavesModalOpen}
-        onRequestClose={() => setIsOctavesModalOpen(false)}
         title="Select octave"
+        onRequestClose={() => setIsOctavesModalOpen(false)}
       >
         <div className="PitchGenerator-octaves">
           {temperament.getOctaveRange(2).map((octave) => (
@@ -143,17 +163,6 @@ export default function PitchGenerator({
       </Modal>
     </div>
   );
-}
-
-PitchGenerator.propTypes = {
-  isFocusable: PropTypes.bool,
-  isPlaying: PropTypes.bool,
-  onNoteSelect: PropTypes.func,
-  onOctaveSelect: PropTypes.func,
-  onPlayToggle: PropTypes.func,
-  onSettingsOpen: PropTypes.func,
-  onViewFlip: PropTypes.func,
-  selectedNote: PropTypes.string,
-  selectedOctave: PropTypes.number,
-  temperament: PropTypes.instanceOf(Temperament),
 };
+
+export default PitchGenerator;
