@@ -23,7 +23,7 @@ interface ButtonProps {
 
 /** A reusable button component with a consistent style. */
 const Button: ForwardRefExoticComponent<
-  ButtonProps & { ref?: Ref<HTMLDivElement> }
+  ButtonProps & { ref?: Ref<HTMLButtonElement> }
 > = forwardRef(
   (
     {
@@ -48,9 +48,8 @@ const Button: ForwardRefExoticComponent<
     }
 
     return (
-      <div
+      <button
         ref={forwardedRef}
-        role="button"
         className={className}
         style={{ fontSize, lineHeight: fontSize }}
         tabIndex={isFocusable ? 0 : -1}
@@ -63,7 +62,7 @@ const Button: ForwardRefExoticComponent<
         {...rest}
       >
         {label}
-      </div>
+      </button>
     );
   }
 );

@@ -91,7 +91,7 @@ export const Alert: FC<AlertProps> = ({
 }) => {
   const [areDetailsExpanded, setAreDetailsExpanded] = useState(false);
   const descriptionId = uniqueId('alert-description-');
-  const okButtonRef = useRef<HTMLDivElement | null>(null);
+  const okButtonRef = useRef<HTMLButtonElement | null>(null);
 
   return (
     <Modal

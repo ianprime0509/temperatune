@@ -1,8 +1,10 @@
 .Button {
   background: transparent;
+  border: none;
+  color: black;
   cursor: pointer;
   margin: 0.5rem;
-  outline: none;
+  outline: none !important;
   padding: 0.5rem;
   text-align: center;
   transition: background 200ms;
@@ -27,4 +29,8 @@
 
 .Button.selected {
   background: #1e9be9;
+}
+
+.Button::-moz-focus-inner {
+  border: none;
 }
