@@ -9,10 +9,10 @@ import React, { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog, IconLookup } from '@fortawesome/free-solid-svg-icons';
 
-import './SettingsBar.css';
+import { Button } from './Button';
+import { PanelRow } from './Panel';
 
 interface SettingsBarProps {
-  isFocusable: boolean;
   /** The icon to show for the switch button. */
   switchIcon: IconLookup;
 
@@ -25,39 +25,18 @@ interface SettingsBarProps {
  * to change between the pitch generator and analyser.
  */
 const SettingsBar: FC<SettingsBarProps> = ({
-  isFocusable,
   switchIcon,
   onSettingsOpen,
   onViewFlip,
 }) => (
-  <div className="SettingsBar">
-    <FontAwesomeIcon
-      role="button"
-      className="SettingsBar-icon"
-      icon={faCog}
-      size="3x"
-      tabIndex={isFocusable ? 0 : -1}
-      onClick={onSettingsOpen}
-      onKeyPress={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onSettingsOpen && onSettingsOpen();
-        }
-      }}
-    />
-    <FontAwesomeIcon
-      role="button"
-      className="SettingsBar-icon"
-      icon={switchIcon}
-      size="3x"
-      tabIndex={isFocusable ? 0 : -1}
-      onClick={onViewFlip}
-      onKeyPress={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onViewFlip && onViewFlip();
-        }
-      }}
-    />
-  </div>
+  <PanelRow>
+    <Button isHoverable={false} onClick={onSettingsOpen}>
+      <FontAwesomeIcon icon={faCog} size="3x" />
+    </Button>
+    <Button isHoverable={false} onClick={onViewFlip}>
+      <FontAwesomeIcon icon={switchIcon} size="3x" />
+    </Button>
+  </PanelRow>
 );
 
 export default SettingsBar;

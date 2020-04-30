@@ -7,14 +7,91 @@
  */
 import React, { useRef, useState, ReactNode, FC } from 'react';
 import ReactModal from 'react-modal';
+import styled, { createGlobalStyle } from 'styled-components/macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import uniqueId from 'lodash.uniqueid';
 
-import Button from './Button';
+import { BorderedButton, ButtonLabel, ListButton } from './Button';
 import { Caret, Content as ExpandingContent } from './Expand';
 
-import './Modal.css';
+const ModalOverlay = createGlobalStyle`
+  .modal-overlay {
+    align-items: center;
+    background: ${({ theme }) => theme.modalOverlayColor};
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+  }
+`;
+
+interface StyledModalProps {
+  className: string;
+  closeTimeoutMS: number;
+  isOpen: boolean;
+
+  [k: string]: any;
+}
+
+const StyledModal = styled(
+  ({ className, isOpen, ...rest }: StyledModalProps) => (
+    <ReactModal
+      isOpen={isOpen}
+      className={{
+        base: className,
+        afterOpen: 'modal-after-open',
+        beforeClose: 'modal-before-close',
+      }}
+      overlayClassName="modal-overlay"
+      {...rest}
+    />
+  )
+)<StyledModalProps>`
+  background: ${({ theme }) => theme.backgroundColor};
+  box-shadow: 8px 8px 16px ${({ theme }) => theme.shadowColor};
+  max-height: 100%;
+  max-width: 100%;
+  opacity: 0;
+  outline: none;
+  overflow-y: auto;
+  padding: 0.5rem;
+
+  &.modal-after-open {
+    opacity: 1;
+    transition: opacity ${({ closeTimeoutMS }) => `${closeTimeoutMS}ms`}
+      ease-in-out;
+  }
+
+  &.modal-before-close {
+    opacity: 0;
+  }
+`;
+
+const ModalTitlebar = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.textColor};
+  height: 2.5rem;
+`;
+
+const ModalTitle = styled.span`
+  font-size: 1.5rem;
+  line-height: 2rem;
+  vertical-align: middle;
+`;
+
+const ModalTitlebarButton = styled(FontAwesomeIcon)`
+  cursor: pointer;
+  float: right;
+  margin-left: 0.5rem;
+`;
+
+const ModalChildren = styled.div`
+  max-height: calc(100% - 3rem);
+  max-width: 100vw;
+`;
 
 interface ModalPropTypes {
   aria?: { [k: string]: string };
@@ -39,36 +116,49 @@ export const Modal: FC<ModalPropTypes> = ({
   const titleId = uniqueId('modal-title-');
 
   return (
-    <ReactModal
+    <StyledModal
       aria={{ ...aria, labelledby: titleId }}
-      className={{
-        base: 'Modal-content',
-        afterOpen: 'Modal-content--after-open',
-        beforeClose: 'Modal-content--before-close',
-      }}
-      overlayClassName="Modal-overlay"
       closeTimeoutMS={200}
       contentLabel={title}
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       {...rest}
     >
-      <div className="Modal-titlebar">
-        <span id={titleId} className="Modal-title">
-          {title}
-        </span>
-        <FontAwesomeIcon
+      <ModalOverlay />
+      <ModalTitlebar>
+        <ModalTitle id={titleId}>{title}</ModalTitle>
+        <ModalTitlebarButton
           role="button"
           icon={faTimes}
           size="2x"
           className="Modal-close"
           onClick={onRequestClose}
         />
-      </div>
-      <div className="Modal-children">{children}</div>
-    </ReactModal>
+      </ModalTitlebar>
+      <ModalChildren>{children}</ModalChildren>
+    </StyledModal>
   );
 };
+
+const AlertContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+`;
+
+const AlertDescription = styled.div`
+  flex-grow: 1;
+  min-height: 5rem;
+  max-width: 25rem;
+  user-select: text;
+  width: 100vw;
+`;
+
+const AlertDetails = styled.p`
+  color: ${({ theme }) => theme.mutedTextColor};
+  user-select: text;
+`;
 
 interface AlertProps {
   description: string;
@@ -102,40 +192,32 @@ export const Alert: FC<AlertProps> = ({
       onAfterOpen={() => okButtonRef.current && okButtonRef.current.focus()}
       onRequestClose={handleAlertClose}
     >
-      <div className="Alert-content">
-        <div className="Alert-description" id={descriptionId}>
+      <AlertContent>
+        <AlertDescription id={descriptionId}>
           <p>{description}</p>
           {details && (
-            <div>
-              <div
+            <>
+              <ListButton
                 aria-expanded={areDetailsExpanded}
-                className="Alert-details-expander"
-                tabIndex={0}
                 onClick={() => setAreDetailsExpanded(!areDetailsExpanded)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    setAreDetailsExpanded(!areDetailsExpanded);
-                  }
-                }}
               >
-                <span className="Alert-details-expander-label">Details</span>
+                <ButtonLabel>Details</ButtonLabel>
                 <Caret isExpanded={areDetailsExpanded} />
-              </div>
+              </ListButton>
               <ExpandingContent isExpanded={areDetailsExpanded}>
-                <p className="Alert-details-content">{details}</p>
+                <AlertDetails>{details}</AlertDetails>
               </ExpandingContent>
-            </div>
+            </>
           )}
-        </div>
-        <Button
+        </AlertDescription>
+        <BorderedButton
           ref={okButtonRef}
           fontSizeRem={1.5}
-          hasBorder={true}
-          label="OK"
-          tabIndex={0}
           onClick={handleAlertClose}
-        />
-      </div>
+        >
+          OK
+        </BorderedButton>
+      </AlertContent>
     </Modal>
   );
 };

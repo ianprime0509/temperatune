@@ -8,19 +8,70 @@
 import React, { Component } from 'react';
 import ReactModal from 'react-modal';
 import { PitchDetector } from 'pitchy';
+import styled, {
+  ThemeProvider,
+  createGlobalStyle,
+} from 'styled-components/macro';
 import { Temperament } from 'temperament';
 
 import AppError from './AppError';
 import AppSettings from './AppSettings';
 import Background from './Background';
+import Flipper from './Flipper';
 import { Alert } from './Modal';
 import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
+import { defaultTheme } from './theme';
 
-import './App.css';
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
 import pythagoreanD from './temperaments/pythagoreanD.json';
+
+const GlobalStyle = createGlobalStyle`
+  *,
+  *:before,
+  *:after {
+    box-sizing: inherit;
+  }
+
+  html {
+    box-sizing: border-box;
+  }
+
+  body {
+    background: ${({ theme }) => theme.backgroundColor};
+    /*
+     * Native font stack:
+     * https://make.wordpress.org/core/2016/07/07/native-fonts-in-4-6/
+     */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    height: 100%;
+    left: 0;
+    margin: 0;
+    max-height: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    user-select: none;
+    width: 100vw;
+  }
+
+  p {
+    user-select: text;
+  }
+
+  #root {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+  }
+`;
 
 /**
  * Get a wobbliness value from the given pitch offset.  Bigger offsets produce
@@ -40,6 +91,16 @@ const getWobbliness = (offset: number): number => {
   }
 };
 
+const AppContainer = styled(Flipper)`
+  height: 100%;
+  width: 100%;
+
+  @media (min-width: 500px) {
+    max-height: 25rem;
+    max-width: 20rem;
+  }
+`;
+
 interface AppAlert {
   title: string;
   description: string;
@@ -53,7 +114,7 @@ interface AppState {
   appWidth: number;
   detectedNote: string;
   detectedOffset: number;
-  isFrontPanel: boolean;
+  isFlipped: boolean;
   isPlaying: boolean;
   areSettingsOpen: boolean;
   selectedTemperament: Temperament;
@@ -90,8 +151,8 @@ export default class App extends Component<{}, AppState> {
       detectedNote: '',
       /** The offset of the current pitch from the detected note. */
       detectedOffset: 0,
-      /** Whether the front panel is being shown. */
-      isFrontPanel: true,
+      /** Whether the back panel is being shown. */
+      isFlipped: false,
       /** Whether the tone is being played in the pitch generator. */
       isPlaying: false,
       areSettingsOpen: false,
@@ -126,81 +187,75 @@ export default class App extends Component<{}, AppState> {
   }
 
   render() {
-    let flipperClasses = 'App-flipper';
-    if (!this.state.isFrontPanel) {
-      flipperClasses += ' flipped';
-    }
-
     let isBackgroundActive =
       this.state.isPlaying ||
-      (!this.state.isFrontPanel && this.state.detectedNote !== null);
+      (this.state.isFlipped && this.state.detectedNote !== null);
     let wobbliness =
-      !this.state.isFrontPanel && this.state.detectedNote
+      this.state.isFlipped && this.state.detectedNote
         ? getWobbliness(this.state.detectedOffset)
         : 0;
 
     return (
       // Using a variant of https://davidwalsh.name/css-flip for the flip
       // animation
-      <>
+      <ThemeProvider theme={defaultTheme}>
+        <GlobalStyle />
         <Background
           appHeight={this.state.appHeight}
           appWidth={this.state.appWidth}
           isActive={isBackgroundActive}
           wobbliness={wobbliness}
         />
-        <div ref={(ref) => (this.app = ref)} className="App">
-          <div className={flipperClasses} id="App-flipper">
-            <div className="App-front" aria-hidden={!this.state.isFrontPanel}>
-              <PitchGenerator
-                isFocusable={this.state.isFrontPanel}
-                isPlaying={this.state.isPlaying}
-                onNoteSelect={(note) => this.handleNoteSelect(note)}
-                onOctaveSelect={(octave) => this.handleOctaveSelect(octave)}
-                onPlayToggle={() => this.handlePlayToggle()}
-                onSettingsOpen={() => this.handleSettingsOpen()}
-                onViewFlip={() => this.handleViewFlip()}
-                selectedNote={this.state.selectedNote}
-                selectedOctave={this.state.selectedOctave}
-                temperament={this.state.selectedTemperament}
-              />
-            </div>
-            <div className="App-back" aria-hidden={this.state.isFrontPanel}>
-              <PitchAnalyser
-                detectedNote={this.state.detectedNote}
-                detectedOffset={this.state.detectedOffset}
-                isFocusable={!this.state.isFrontPanel}
-                onSettingsOpen={() => this.handleSettingsOpen()}
-                onViewFlip={() => this.handleViewFlip()}
-                temperament={this.state.selectedTemperament}
-              />
-            </div>
-          </div>
-          <AppSettings
-            isOpen={this.state.areSettingsOpen}
-            onClose={() => this.handleSettingsClose()}
-            onError={(e) => this.handleError(e)}
-            onTemperamentAdd={(temperament) =>
-              this.handleTemperamentAdd(temperament)
-            }
-            onTemperamentSelect={(temperament) =>
-              this.handleTemperamentSelect(temperament)
-            }
-            selectedTemperament={this.state.selectedTemperament}
-            temperaments={this.state.temperaments}
-          />
-          {this.state.alerts.map((alert, i) => (
-            <Alert
-              key={i}
-              description={alert.description}
-              details={alert.details}
-              handleAlertClose={() => this.handleAlertClose()}
-              isOpen={alert.isOpen}
-              title={alert.title}
+        <AppContainer
+          ref={(ref) => (this.app = ref)}
+          isFlipped={this.state.isFlipped}
+          front={
+            <PitchGenerator
+              isPlaying={this.state.isPlaying}
+              onNoteSelect={(note) => this.handleNoteSelect(note)}
+              onOctaveSelect={(octave) => this.handleOctaveSelect(octave)}
+              onPlayToggle={() => this.handlePlayToggle()}
+              onSettingsOpen={() => this.handleSettingsOpen()}
+              onViewFlip={() => this.handleViewFlip()}
+              selectedNote={this.state.selectedNote}
+              selectedOctave={this.state.selectedOctave}
+              temperament={this.state.selectedTemperament}
             />
-          ))}
-        </div>
-      </>
+          }
+          back={
+            <PitchAnalyser
+              detectedNote={this.state.detectedNote}
+              detectedOffset={this.state.detectedOffset}
+              onSettingsOpen={() => this.handleSettingsOpen()}
+              onViewFlip={() => this.handleViewFlip()}
+              temperament={this.state.selectedTemperament}
+            />
+          }
+        />
+        <AppSettings
+          isOpen={this.state.areSettingsOpen}
+          onClose={() => this.handleSettingsClose()}
+          onError={(e) => this.handleError(e)}
+          onTemperamentAdd={(temperament) =>
+            this.handleTemperamentAdd(temperament)
+          }
+          onTemperamentSelect={(temperament) =>
+            this.handleTemperamentSelect(temperament)
+          }
+          selectedTemperament={this.state.selectedTemperament}
+          temperaments={this.state.temperaments}
+        />
+        {this.state.alerts.map((alert, i) => (
+          <Alert
+            key={i}
+            description={alert.description}
+            details={alert.details}
+            handleAlertClose={() => this.handleAlertClose()}
+            isOpen={alert.isOpen}
+            title={alert.title}
+          />
+        ))}
+      </ThemeProvider>
     );
   }
 
@@ -317,11 +372,29 @@ export default class App extends Component<{}, AppState> {
   }
 
   private handleViewFlip() {
-    this.setState((state) => {
-      if (state.isFrontPanel) {
+    this.setState(({ isFlipped, isPlaying }) => {
+      if (isFlipped) {
+        this.audioContext.suspend();
+        if (this.inputNoteInterval !== null) {
+          // We don't need to be updating the microphone input note if the
+          // analyser view isn't open.
+          window.clearInterval(this.inputNoteInterval);
+          this.inputNoteInterval = null;
+          if (this.microphoneSource) {
+            this.analyser && this.microphoneSource.disconnect(this.analyser);
+            // By stopping the microphone source tracks, we signal to the browser
+            // that we won't be using the microphone until later (this seems to
+            // have an impact on the volume type chosen for Android)
+            this.microphoneSource.mediaStream
+              .getTracks()
+              .forEach((track) => track.stop());
+          }
+        }
+        return { isFlipped: false, isPlaying: false };
+      } else {
         // We don't want the tuning note to keep playing when we switch over to
         // analyser mode.
-        if (state.isPlaying) {
+        if (isPlaying) {
           this.soundStop();
         }
         // Try to obtain the microphone source and start updating the input
@@ -348,25 +421,7 @@ export default class App extends Component<{}, AppState> {
               String(err)
             )
           );
-        return { isFrontPanel: false, isPlaying: false };
-      } else {
-        this.audioContext.suspend();
-        if (this.inputNoteInterval !== null) {
-          // We don't need to be updating the microphone input note if the
-          // analyser view isn't open.
-          window.clearInterval(this.inputNoteInterval);
-          this.inputNoteInterval = null;
-          if (this.microphoneSource) {
-            this.analyser && this.microphoneSource.disconnect(this.analyser);
-            // By stopping the microphone source tracks, we signal to the browser
-            // that we won't be using the microphone until later (this seems to
-            // have an impact on the volume type chosen for Android)
-            this.microphoneSource.mediaStream
-              .getTracks()
-              .forEach((track) => track.stop());
-          }
-        }
-        return { isFrontPanel: true, isPlaying: false };
+        return { isFlipped: true, isPlaying: false };
       }
     });
   }
