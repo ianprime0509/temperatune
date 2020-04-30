@@ -6,8 +6,7 @@
  * https://opensource.org/licenses/MIT.
  */
 import React, { Component } from 'react';
-
-import './Background.css';
+import styled from 'styled-components/macro';
 
 /** The FPS to use with the background animation. */
 const FPS = 20;
@@ -18,6 +17,22 @@ const RIPPLE_RATE = 1;
 const DISAPPEAR_RATE = 0.025;
 /** The rate (in pixels per frame) at which to make the ripples grow. */
 const GROW_RATE = 1;
+
+const Canvas = styled.canvas`
+  /*
+   * Don't show the canvas background on small screens where it won't be
+   * visible.
+   */
+  display: none;
+  left: 0;
+  position: fixed;
+  top: 0;
+  z-index: -100;
+
+  @media (min-width: 500px) {
+    display: block;
+  }
+`;
 
 interface BackgroundProps {
   appHeight: number;
@@ -54,7 +69,7 @@ export default class Background extends Component<BackgroundProps> {
   }
 
   render() {
-    return <canvas ref={(ref) => (this.canvas = ref)} aria-hidden="true" />;
+    return <Canvas ref={(ref) => (this.canvas = ref)} aria-hidden="true" />;
   }
 
   /** Produce a new ripple. */

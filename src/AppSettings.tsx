@@ -7,17 +7,57 @@
  */
 import React, { useRef, useState, FC, ReactNode } from 'react';
 import { usePopper } from 'react-popper';
+import styled from 'styled-components/macro';
 import cloneDeep from 'lodash.clonedeep';
 import uniqueId from 'lodash.uniqueid';
+import { Temperament } from 'temperament';
 
 import AppError from './AppError';
+import { ButtonLabel, ListButton } from './Button';
 import { Caret, Content as ExpandingContent } from './Expand';
 import { Modal } from './Modal';
 
 import { version as VERSION } from '../package.json';
 
-import './AppSettings.css';
-import { Temperament } from 'temperament';
+const Tooltip = styled.div`
+  background: #111;
+  border-radius: 5px;
+  color: #eee;
+  max-width: 20rem;
+  padding: 0.5rem;
+`;
+
+const TooltipArrow = styled.div`
+  &,
+  &::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    z-index: -1;
+  }
+
+  &::before {
+    content: '';
+    transform: rotate(45deg);
+    background: #111;
+  }
+
+  ${Tooltip}[data-popper-placement='top'] > & {
+    bottom: -4px;
+  }
+
+  ${Tooltip}[data-popper-placement='bottom'] > & {
+    top: -4px;
+  }
+
+  ${Tooltip}[data-popper-placement='left'] > & {
+    right: -4px;
+  }
+
+  ${Tooltip}[data-popper-placement='right'] > & {
+    left: -4px;
+  }
+`;
 
 interface SettingsItemProps {
   children: ReactNode;
@@ -38,11 +78,6 @@ const SettingsItem: FC<SettingsItemProps> = ({
   ...rest
 }) => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-
-  let className = 'SettingsItem';
-  if (isSelected) {
-    className += ' selected';
-  }
 
   const shouldShowTooltip = tooltip && isTooltipOpen;
   const tooltipId = uniqueId('tooltip-');
@@ -70,47 +105,55 @@ const SettingsItem: FC<SettingsItemProps> = ({
 
   return (
     <>
-      <div
+      <ListButton
         ref={setReferenceElement}
-        className={className}
+        fontSizeRem={1.5}
+        isSelected={isSelected}
         onBlur={() => setIsTooltipOpen(false)}
         onClick={onClick}
         onFocus={() => setIsTooltipOpen(true)}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            onClick && onClick();
-          }
-        }}
         onMouseEnter={() => setIsTooltipOpen(true)}
         onMouseLeave={() => setIsTooltipOpen(false)}
         {...rest}
         {...targetRestProps}
       >
         {children}
-      </div>
+      </ListButton>
 
       {shouldShowTooltip && (
-        <div
+        <Tooltip
           id={tooltipId}
           ref={setTooltipElement}
           role="tooltip"
-          className="Tooltip"
           style={styles.popper}
           {...attributes.popper}
         >
           {tooltip}
-          <div
+          <TooltipArrow
             ref={setArrowElement}
             aria-hidden="true"
-            className="Tooltip-arrow"
             style={styles.arrow}
             {...attributes.arrow}
           />
-        </div>
+        </Tooltip>
       )}
     </>
   );
 };
+
+const PitchInput = styled.input.attrs({
+  type: 'text',
+  pattern: '[0-9]*',
+})`
+  font-size: 1.5rem;
+  margin: 0 0.5rem;
+  text-align: right;
+  width: 5rem;
+
+  &:focus {
+    box-shadow: 0 0 8px #1e9be9;
+  }
+`;
 
 interface ReferencePitchChooserProps {
   selectedTemperament: Temperament;
@@ -141,15 +184,11 @@ const ReferencePitchChooser: FC<ReferencePitchChooserProps> = ({
   };
 
   return (
-    <SettingsItem>
+    <SettingsItem as="div">
       Reference pitch:
-      <input
+      <PitchInput
         ref={pitchInputRef}
-        className="ReferencePitchChooser-input"
-        pattern="[0-9]*"
         placeholder={selectedTemperament.referencePitch.toString()}
-        tabIndex={0}
-        type="text"
         onBlur={handlePitchChange}
         onKeyPress={(e) => {
           if (e.key === 'Enter') {
@@ -176,6 +215,12 @@ interface FileChooserProps {
   [k: string]: any;
 }
 
+const HiddenFileInput = styled.input.attrs({ tabIndex: -1, type: 'file' })`
+  height: 0;
+  opacity: 0;
+  width: 0;
+`;
+
 /** A settings item that, when clicked, opens a file selection dialog. */
 const FileChooser: FC<FileChooserProps> = ({
   label,
@@ -184,6 +229,7 @@ const FileChooser: FC<FileChooserProps> = ({
   ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputId = uniqueId('file-input-');
 
   return (
     <SettingsItem
@@ -191,12 +237,9 @@ const FileChooser: FC<FileChooserProps> = ({
       onClick={() => inputRef.current && inputRef.current.click()}
       {...rest}
     >
-      <input
-        id="fileInput"
+      <HiddenFileInput
+        id={inputId}
         ref={inputRef}
-        style={{ height: 0, opacity: 0, width: 0 }}
-        tabIndex={-1}
-        type="file"
         onChange={() => {
           if (!inputRef.current) return;
 
@@ -207,7 +250,7 @@ const FileChooser: FC<FileChooserProps> = ({
           inputRef.current.value = '';
         }}
       />
-      <span>{label}</span>
+      <label htmlFor={inputId}>{label}</label>
     </SettingsItem>
   );
 };
@@ -275,22 +318,31 @@ const ExpanderGroup: FC<ExpanderGroupProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div>
+    <>
       <SettingsItem
         aria-expanded={isExpanded}
         tabIndex={tabIndex}
         onClick={() => setIsExpanded(!isExpanded)}
         {...rest}
       >
-        <div className="SettingsExpanderGroup-label">
-          <div className="SettingsExpanderGroup-label-text">{label}</div>
-          <Caret isExpanded={isExpanded} />
-        </div>
+        <ButtonLabel>{label}</ButtonLabel>
+        <Caret isExpanded={isExpanded} />
       </SettingsItem>
       <ExpandingContent isExpanded={isExpanded}>{children}</ExpandingContent>
-    </div>
+    </>
   );
 };
+
+const SettingsContainer = styled.div`
+  height: calc(100% - 3rem);
+  max-height: 25rem;
+  max-width: 100%;
+  width: 35rem;
+
+  @media (min-height: 30rem) {
+    height: 25rem;
+  }
+`;
 
 interface AppSettingsProps {
   isOpen: boolean;
@@ -314,7 +366,7 @@ const AppSettings: FC<AppSettingsProps> = ({
   temperaments,
 }) => (
   <Modal isOpen={isOpen} onRequestClose={onClose} title="Settings">
-    <div className="AppSettings-container">
+    <SettingsContainer>
       <ExpanderGroup label={`Temperament: ${selectedTemperament.name}`}>
         {temperaments.map((temperament) => (
           <SettingsItem
@@ -350,7 +402,7 @@ const AppSettings: FC<AppSettingsProps> = ({
           .
         </p>
       </ExpanderGroup>
-    </div>
+    </SettingsContainer>
   </Modal>
 );
 

@@ -5,66 +5,99 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { ForwardRefExoticComponent, forwardRef, Ref } from 'react';
-
-import './Button.css';
+import styled, { css } from 'styled-components/macro';
 
 interface ButtonProps {
-  fontSizeRem?: number;
-  hasBorder?: boolean;
-  isFocusable?: boolean;
-  isSelected?: boolean;
-  label: string;
+  fontSizeRem: number;
+  isHoverable: boolean;
+  isSelected: boolean;
 
   onClick?: () => void;
 
   [k: string]: any;
 }
 
-/** A reusable button component with a consistent style. */
-const Button: ForwardRefExoticComponent<
-  ButtonProps & { ref?: Ref<HTMLButtonElement> }
-> = forwardRef(
-  (
-    {
-      fontSizeRem = 1,
-      hasBorder = false,
-      isFocusable = true,
-      isSelected = false,
-      label,
-      onClick,
-      ...rest
-    },
-    forwardedRef
-  ) => {
-    let fontSize = String(fontSizeRem) + 'rem';
+const buttonDefaultProps = {
+  fontSizeRem: 1,
+  isHoverable: true,
+  isSelected: false,
+};
 
-    let className = 'Button';
-    if (hasBorder) {
-      className += ' bordered';
-    }
-    if (isSelected) {
-      className += ' selected';
-    }
-
-    return (
-      <button
-        ref={forwardedRef}
-        className={className}
-        style={{ fontSize, lineHeight: fontSize }}
-        tabIndex={isFocusable ? 0 : -1}
-        onClick={onClick}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            onClick && onClick();
-          }
-        }}
-        {...rest}
-      >
-        {label}
-      </button>
-    );
+const hoverStyle = css<{ isSelected: boolean }>`
+  &:hover {
+    background: ${({ isSelected, theme }) =>
+      isSelected ? theme.accentColor : theme.shadowColor};
   }
-);
+`;
 
-export default Button;
+/** The base button component without any border or focus settings. */
+const BaseButton = styled.button<ButtonProps>`
+  align-items: center;
+  background: ${({ isSelected, theme }) =>
+    isSelected ? theme.accentColor : 'transparent'};
+  color: ${({ theme }) => theme.textColor};
+  cursor: pointer;
+  display: flex;
+  font-size: ${({ fontSizeRem }) => `${fontSizeRem}rem`};
+  justify-content: center;
+  line-height: ${({ fontSizeRem }) => `${fontSizeRem}rem`};
+  margin: 0;
+  outline: none;
+  padding: 0;
+  transition: background 200ms;
+
+  ${({ isHoverable }) => isHoverable && hoverStyle}
+
+  &::-moz-focus-inner {
+    border: none;
+  }
+`;
+
+BaseButton.defaultProps = buttonDefaultProps;
+
+/**
+ * A button label, for situations where there are other elements within the
+ * button besides just the label.
+ */
+export const ButtonLabel = styled.div`
+  flex: 1 1;
+`;
+
+/** An unbordered button. */
+export const Button = styled(BaseButton)<ButtonProps>`
+  border: none;
+
+  &:focus {
+    filter: drop-shadow(0 0 6px ${({ theme }) => theme.accentColor});
+  }
+`;
+
+Button.defaultProps = buttonDefaultProps;
+
+/** A bordered button. */
+export const BorderedButton = styled(BaseButton)<ButtonProps>`
+  border: 1px solid ${({ theme }) => theme.borderColor};
+  padding: 0.5rem;
+
+  &:focus {
+    box-shadow: 0 0 12px ${({ theme }) => theme.accentColor};
+  }
+`;
+
+BorderedButton.defaultProps = buttonDefaultProps;
+
+/** A button for use in a vertical list. */
+export const ListButton = styled(BaseButton)<ButtonProps>`
+  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  border-left: 5px solid transparent;
+  border-right: none;
+  border-top: none;
+  justify-content: flex-start;
+  padding: 0.5rem 0 0.5rem 0.5rem;
+  text-align: start;
+  width: 100%;
+
+  &:focus {
+    border-left: 5px solid ${({ theme }) => theme.accentColor};
+  }
+`;

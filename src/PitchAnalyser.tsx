@@ -7,11 +7,11 @@
  */
 import React, { FC } from 'react';
 import { faMusic } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components/macro';
 import { Temperament, prettifyNoteName } from 'temperament';
 
+import { Panel } from './Panel';
 import SettingsBar from './SettingsBar';
-
-import './PitchAnalyser.css';
 
 /** The maximum offset that should still be considered perfect. */
 export const PERFECT_OFFSET = 5;
@@ -52,10 +52,42 @@ const getOffsetString = (offset: number): string => {
   return flatOrSharp + ` by ${Math.round(Math.abs(offset))} cents`;
 };
 
+interface PitchAnalyserPanelProps {
+  detectedNote: string;
+  detectedOffset: number;
+}
+
+const PitchAnalyserPanel = styled(Panel)<PitchAnalyserPanelProps>`
+  background: ${({ detectedNote, detectedOffset, theme }) =>
+    detectedNote
+      ? `hsl(${getHue(detectedOffset)}, 70%, 80%)`
+      : theme.panelBackgroundColor};
+`;
+
+const NoteDisplay = styled.div`
+  flex: 1 1;
+  font-size: 13rem;
+  /*
+   * The line height is a little larger than the font size to account for note
+   * names that may vary in height: we don't want the other controls jiggling
+   * around whenever the note changes.
+   */
+  line-height: 15rem;
+  text-align: center;
+  vertical-align: middle;
+`;
+
+const OffsetDisplay = styled.div`
+  font-size: 2rem;
+  height: 4rem;
+  margin: 1rem;
+  min-height: 4rem;
+  text-align: center;
+`;
+
 interface PitchAnalyserProps {
   detectedNote: string;
   detectedOffset: number;
-  isFocusable: boolean;
   temperament: Temperament;
 
   onSettingsOpen?: () => void;
@@ -68,28 +100,25 @@ interface PitchAnalyserProps {
 const PitchAnalyser: FC<PitchAnalyserProps> = ({
   detectedNote,
   detectedOffset,
-  isFocusable,
   onSettingsOpen,
   onViewFlip,
-}) => {
-  const background = detectedNote
-    ? `hsl(${getHue(detectedOffset)}, 70%, 80%)`
-    : '#e7e7e7';
-  const noteName = detectedNote ? prettifyNoteName(detectedNote) : '-';
-  const offsetString = detectedNote ? getOffsetString(detectedOffset) : '';
-
-  return (
-    <div className="PitchAnalyser" style={{ background }}>
-      <span className="PitchAnalyser-note">{noteName}</span>
-      <span className="PitchAnalyser-offset">{offsetString}</span>
-      <SettingsBar
-        isFocusable={isFocusable}
-        switchIcon={faMusic}
-        onSettingsOpen={onSettingsOpen}
-        onViewFlip={onViewFlip}
-      />
-    </div>
-  );
-};
+}) => (
+  <PitchAnalyserPanel
+    detectedNote={detectedNote}
+    detectedOffset={detectedOffset}
+  >
+    <NoteDisplay>
+      {detectedNote ? prettifyNoteName(detectedNote) : '-'}
+    </NoteDisplay>
+    <OffsetDisplay>
+      {detectedNote ? getOffsetString(detectedOffset) : ''}
+    </OffsetDisplay>
+    <SettingsBar
+      switchIcon={faMusic}
+      onSettingsOpen={onSettingsOpen}
+      onViewFlip={onViewFlip}
+    />
+  </PitchAnalyserPanel>
+);
 
 export default PitchAnalyser;

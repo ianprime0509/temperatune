@@ -7,30 +7,40 @@
  */
 import React, { FC, ReactNode } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { IconLookup, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import AnimateHeight from 'react-animate-height';
-
-import './Expand.css';
+import styled from 'styled-components/macro';
 
 interface CaretProps {
   isExpanded: boolean;
 }
 
 /** A caret used to indicate expanding content. */
-export const Caret: FC<CaretProps> = ({ isExpanded }) => {
-  let className = 'Caret';
-  if (isExpanded) {
-    className += ' expanded';
-  }
+export const Caret = styled(
+  ({ className, icon }: { className?: string; icon: IconLookup }) => (
+    <FontAwesomeIcon className={className} icon={icon} />
+  )
+).attrs({
+  'aria-hidden': true,
+  icon: faCaretRight,
+})<CaretProps>`
+  margin: 0 0.75rem;
+  transform: ${({ isExpanded }) =>
+    isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
+  transition: transform 200ms;
+`;
 
-  return (
-    <FontAwesomeIcon
-      aria-hidden="true"
-      className={className}
-      icon={faCaretRight}
-    />
-  );
-};
+const ContentContainer = styled.div`
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const ContentChildren = styled.div`
+  border-left: 0.2rem solid ${({ theme }) => theme.borderColor};
+  padding-left: 0.5rem;
+  width: 100%;
+`;
 
 interface ContentProps {
   children: ReactNode;
@@ -40,9 +50,8 @@ interface ContentProps {
 /** An expanding content box. */
 export const Content: FC<ContentProps> = ({ children, isExpanded }) => (
   <AnimateHeight aria-hidden={!isExpanded} height={isExpanded ? 'auto' : 0}>
-    <div className="Content">
-      <div className="Content-bar" />
-      <div className="Content-children">{children}</div>
-    </div>
+    <ContentContainer>
+      <ContentChildren>{children}</ContentChildren>
+    </ContentContainer>
   </AnimateHeight>
 );

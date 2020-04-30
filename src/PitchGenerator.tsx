@@ -6,6 +6,7 @@
  * https://opensource.org/licenses/MIT.
  */
 import React, { useState, FC } from 'react';
+import styled from 'styled-components/macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMicrophone,
@@ -15,47 +16,59 @@ import {
 import { Temperament, prettifyNoteName } from 'temperament';
 
 import { Modal } from './Modal';
-import Button from './Button';
+import { Button } from './Button';
+import { Panel, PanelRow, PanelGroup } from './Panel';
 import SettingsBar from './SettingsBar';
 
-import './PitchGenerator.css';
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+`;
+
+const SpacedButton = styled(Button)`
+  margin: 0.5rem;
+  padding: 0.5rem;
+`;
+
+const NoteButton = styled(SpacedButton)`
+  flex: 1 1 20%;
+`;
+
+const OctaveButton = styled(SpacedButton)`
+  flex: 1 1 100%;
+`;
+
+const PitchDisplay = styled.div`
+  font-size: 2rem;
+  height: 2rem;
+  margin: 1rem;
+  min-height: 2rem;
+  text-align: center;
+  user-select: none;
+`;
 
 interface PlaybackControlProps {
-  isFocusable?: boolean;
   isPlaying: boolean;
   onClick?: () => void;
-
-  [k: string]: any;
 }
 
 /** The playback control. */
-const PlaybackControl: FC<PlaybackControlProps> = ({
-  isFocusable,
-  isPlaying,
-  onClick,
-  ...rest
-}) => {
-  const icon = isPlaying ? faPause : faPlay;
-  return (
-    <div className="PlaybackControl">
-      <FontAwesomeIcon
-        icon={icon}
-        className="PlaybackControl-icon"
-        onClick={onClick}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            onClick && onClick();
-          }
-        }}
-        tabIndex={isFocusable ? 0 : -1}
-        {...rest}
-      />
-    </div>
-  );
-};
+const PlaybackControl: FC<PlaybackControlProps> = ({ isPlaying, onClick }) => (
+  <Button
+    isHoverable={false}
+    onClick={onClick}
+    onKeyPress={(e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        onClick && onClick();
+      }
+    }}
+  >
+    <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size="7x" />
+  </Button>
+);
 
 interface PitchGeneratorProps {
-  isFocusable: boolean;
   isPlaying: boolean;
   selectedNote: string;
   selectedOctave: number;
@@ -68,9 +81,8 @@ interface PitchGeneratorProps {
   onViewFlip?: () => void;
 }
 
-/** The "panel" containing the pitch generator interface. */
+/** The panel containing the pitch generator interface. */
 const PitchGenerator: FC<PitchGeneratorProps> = ({
-  isFocusable,
   isPlaying,
   selectedNote,
   selectedOctave,
@@ -94,74 +106,73 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
     setIsOctavesModalOpen(false);
   };
 
-  let pitch =
+  const pitch =
     Math.round(10 * temperament.getPitch(selectedNote, selectedOctave)) / 10;
 
   return (
-    <div className="PitchGenerator">
-      <div className="PitchGenerator-controls">
-        <Button
-          fontSizeRem={5}
-          isFocusable={isFocusable}
-          label={prettifyNoteName(selectedNote)}
-          onClick={() => setIsNotesModalOpen(true)}
+    <>
+      <Panel>
+        <PanelRow>
+          <SpacedButton
+            fontSizeRem={5}
+            onClick={() => setIsNotesModalOpen(true)}
+          >
+            {prettifyNoteName(selectedNote)}
+          </SpacedButton>
+          <SpacedButton
+            fontSizeRem={5}
+            onClick={() => setIsOctavesModalOpen(true)}
+          >
+            {selectedOctave}
+          </SpacedButton>
+        </PanelRow>
+        <PanelGroup>
+          <PlaybackControl isPlaying={isPlaying} onClick={onPlayToggle} />
+          <PitchDisplay>{`${pitch} Hz`}</PitchDisplay>
+        </PanelGroup>
+        <SettingsBar
+          switchIcon={faMicrophone}
+          onViewFlip={onViewFlip}
+          onSettingsOpen={onSettingsOpen}
         />
-        <Button
-          fontSizeRem={5}
-          isFocusable={isFocusable}
-          label={String(selectedOctave)}
-          onClick={() => setIsOctavesModalOpen(true)}
-        />
-      </div>
-      <PlaybackControl
-        isFocusable={isFocusable}
-        isPlaying={isPlaying}
-        onClick={onPlayToggle}
-      />
-      <span className="PitchGenerator-pitch">{`${pitch} Hz`}</span>
-      <SettingsBar
-        isFocusable={isFocusable}
-        switchIcon={faMicrophone}
-        onViewFlip={onViewFlip}
-        onSettingsOpen={onSettingsOpen}
-      />
+      </Panel>
       <Modal
         isOpen={isNotesModalOpen}
         title="Select note"
         onRequestClose={() => setIsNotesModalOpen(false)}
       >
-        <div className="PitchGenerator-notes">
+        <ButtonGroup>
           {temperament.noteNames.map((note) => (
-            <Button
+            <NoteButton
               key={note}
               fontSizeRem={5}
-              isFocusable={true}
               isSelected={note === selectedNote}
-              label={prettifyNoteName(note)}
               onClick={() => handleNoteSelect(note)}
-            />
+            >
+              {prettifyNoteName(note)}
+            </NoteButton>
           ))}
-        </div>
+        </ButtonGroup>
       </Modal>
       <Modal
         isOpen={isOctavesModalOpen}
         title="Select octave"
         onRequestClose={() => setIsOctavesModalOpen(false)}
       >
-        <div className="PitchGenerator-octaves">
+        <ButtonGroup>
           {temperament.getOctaveRange(2).map((octave) => (
-            <Button
+            <OctaveButton
               key={octave}
               fontSizeRem={5}
-              isFocusable={true}
               isSelected={octave === selectedOctave}
-              label={String(octave)}
               onClick={() => handleOctaveSelect(octave)}
-            />
+            >
+              {octave}
+            </OctaveButton>
           ))}
-        </div>
+        </ButtonGroup>
       </Modal>
-    </div>
+    </>
   );
 };
 
