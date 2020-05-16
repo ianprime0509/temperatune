@@ -5,8 +5,8 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import React, { Component } from "react";
+import styled from "styled-components/macro";
 
 /** The FPS to use with the background animation. */
 const FPS = 20;
@@ -91,7 +91,7 @@ export default class Background extends Component<BackgroundProps> {
 
     this.canvas.height = window.innerHeight;
     this.canvas.width = window.innerWidth;
-    const ctx = this.canvas.getContext('2d')!;
+    const ctx = this.canvas.getContext("2d")!;
     ctx.clearRect(0, 0, this.canvas.height, this.canvas.width);
     const appWidth = this.props.appWidth;
     const appHeight = this.props.appHeight;

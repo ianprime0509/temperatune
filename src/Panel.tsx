@@ -5,7 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import styled from 'styled-components/macro';
+import styled from "styled-components/macro";
 
 export const PanelGroup = styled.div`
   display: flex;

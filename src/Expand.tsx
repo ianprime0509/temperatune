@@ -5,11 +5,11 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { FC, ReactNode } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconLookup, faCaretRight } from '@fortawesome/free-solid-svg-icons';
-import AnimateHeight from 'react-animate-height';
-import styled from 'styled-components/macro';
+import React, { FC, ReactNode } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconLookup, faCaretRight } from "@fortawesome/free-solid-svg-icons";
+import AnimateHeight from "react-animate-height";
+import styled from "styled-components/macro";
 
 interface CaretProps {
   isExpanded: boolean;
@@ -21,12 +21,12 @@ export const Caret = styled(
     <FontAwesomeIcon className={className} icon={icon} />
   )
 ).attrs({
-  'aria-hidden': true,
+  "aria-hidden": true,
   icon: faCaretRight,
 })<CaretProps>`
   margin: 0 0.75rem;
   transform: ${({ isExpanded }) =>
-    isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
+    isExpanded ? "rotate(90deg)" : "rotate(0deg)"};
   transition: transform 200ms;
 `;
 
@@ -49,7 +49,7 @@ interface ContentProps {
 
 /** An expanding content box. */
 export const Content: FC<ContentProps> = ({ children, isExpanded }) => (
-  <AnimateHeight aria-hidden={!isExpanded} height={isExpanded ? 'auto' : 0}>
+  <AnimateHeight aria-hidden={!isExpanded} height={isExpanded ? "auto" : 0}>
     <ContentContainer>
       <ContentChildren>{children}</ContentChildren>
     </ContentContainer>

@@ -5,20 +5,20 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { useRef, useState, FC, ReactNode } from 'react';
-import { usePopper } from 'react-popper';
-import styled from 'styled-components/macro';
-import cloneDeep from 'lodash.clonedeep';
-import uniqueId from 'lodash.uniqueid';
-import { Temperament } from 'temperament';
+import React, { useRef, useState, FC, ReactNode } from "react";
+import { usePopper } from "react-popper";
+import styled from "styled-components/macro";
+import cloneDeep from "lodash.clonedeep";
+import uniqueId from "lodash.uniqueid";
+import { Temperament } from "temperament";
 
-import AppError from './AppError';
-import { ButtonLabel, ListButton } from './Button';
-import { Caret, Content as ExpandingContent } from './Expand';
-import { Modal } from './Modal';
-import { Theme } from './theme';
+import AppError from "./AppError";
+import { ButtonLabel, ListButton } from "./Button";
+import { Caret, Content as ExpandingContent } from "./Expand";
+import { Modal } from "./Modal";
+import { Theme } from "./theme";
 
-import { version as VERSION } from '../package.json';
+import { version as VERSION } from "../package.json";
 
 const Tooltip = styled.div`
   background: #111;
@@ -38,7 +38,7 @@ const TooltipArrow = styled.div`
   }
 
   &::before {
-    content: '';
+    content: "";
     transform: rotate(45deg);
     background: #111;
   }
@@ -81,10 +81,10 @@ const SettingsItem: FC<SettingsItemProps> = ({
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const shouldShowTooltip = tooltip && isTooltipOpen;
-  const tooltipId = uniqueId('tooltip-');
+  const tooltipId = uniqueId("tooltip-");
   const targetRestProps: { [k: string]: any } = {};
   if (shouldShowTooltip) {
-    targetRestProps['aria-describedby'] = tooltipId;
+    targetRestProps["aria-describedby"] = tooltipId;
   }
 
   const [
@@ -96,11 +96,11 @@ const SettingsItem: FC<SettingsItemProps> = ({
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
   const { styles, attributes } = usePopper(referenceElement, tooltipElement, {
-    placement: 'top',
+    placement: "top",
     modifiers: [
-      { name: 'arrow', options: { element: arrowElement } },
-      { name: 'preventOverflow' },
-      { name: 'offset', options: { offset: [0, 8] } },
+      { name: "arrow", options: { element: arrowElement } },
+      { name: "preventOverflow" },
+      { name: "offset", options: { offset: [0, 8] } },
     ],
   });
 
@@ -143,8 +143,8 @@ const SettingsItem: FC<SettingsItemProps> = ({
 };
 
 const PitchInput = styled.input.attrs({
-  type: 'text',
-  pattern: '[0-9]*',
+  type: "text",
+  pattern: "[0-9]*",
 })`
   background: ${({ theme }) => theme.backgroundColor};
   border: 2px solid ${({ theme }) => theme.borderColor};
@@ -199,7 +199,7 @@ const ReferencePitchChooser: FC<ReferencePitchChooserProps> = ({
         placeholder={selectedTemperament.referencePitch.toString()}
         onBlur={handlePitchChange}
         onKeyPress={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === "Enter") {
             handlePitchChange();
           }
         }}
@@ -223,7 +223,7 @@ interface FileChooserProps {
   [k: string]: any;
 }
 
-const HiddenFileInput = styled.input.attrs({ tabIndex: -1, type: 'file' })`
+const HiddenFileInput = styled.input.attrs({ tabIndex: -1, type: "file" })`
   height: 0;
   opacity: 0;
   width: 0;
@@ -237,7 +237,7 @@ const FileChooser: FC<FileChooserProps> = ({
   ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const inputId = uniqueId('file-input-');
+  const inputId = uniqueId("file-input-");
 
   return (
     <SettingsItem
@@ -255,7 +255,7 @@ const FileChooser: FC<FileChooserProps> = ({
             const file = inputRef.current.files?.[0];
             file && onFileSelect(file);
           }
-          inputRef.current.value = '';
+          inputRef.current.value = "";
         }}
       />
       <label htmlFor={inputId}>{label}</label>
@@ -271,7 +271,7 @@ const loadTemperament = async (file: File) => {
     json = await response.json();
   } catch (e) {
     throw new AppError(
-      'Could not process input file. Please ensure that you selected the correct file and try again.',
+      "Could not process input file. Please ensure that you selected the correct file and try again.",
       String(e)
     );
   }
@@ -279,7 +279,7 @@ const loadTemperament = async (file: File) => {
   try {
     return new Temperament(json);
   } catch (e) {
-    throw new AppError('Invalid temperament input.', String(e));
+    throw new AppError("Invalid temperament input.", String(e));
   }
 };
 
@@ -417,9 +417,9 @@ const AppSettings: FC<AppSettingsProps> = ({
       <ExpanderGroup label="About Temperatune">
         <p>Version: {VERSION}</p>
         <p>
-          Temperatune is hosted on GitHub: you can browse its source code{' '}
+          Temperatune is hosted on GitHub: you can browse its source code{" "}
           <a href="https://github.com/ianprime0509/temperatune">here</a>. For
-          more information on defining your own temperaments, see{' '}
+          more information on defining your own temperaments, see{" "}
           <a href="https://github.com/ianprime0509/temperament/blob/master/README.md">
             this README
           </a>

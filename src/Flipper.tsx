@@ -5,8 +5,8 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { ReactNode, forwardRef } from 'react';
-import styled from 'styled-components/macro';
+import React, { ReactNode, forwardRef } from "react";
+import styled from "styled-components/macro";
 
 interface FlipperProps {
   isFlipped: boolean;
@@ -31,7 +31,7 @@ const InnerContainer = styled.div<FlipperProps>`
   transition: transform 0.6s;
   width: 100%;
 
-  ${({ isFlipped }) => isFlipped && 'transform: rotateY(180deg);'}
+  ${({ isFlipped }) => isFlipped && "transform: rotateY(180deg);"}
 `;
 
 const Face = styled.div`
@@ -44,14 +44,14 @@ const Face = styled.div`
 `;
 
 const Front = styled(Face).attrs(({ isFlipped }: FlipperProps) => ({
-  'aria-hidden': isFlipped,
+  "aria-hidden": isFlipped,
 }))<FlipperProps>`
   transform: rotateY(0deg);
   z-index: 2;
 `;
 
 const Back = styled(Face).attrs(({ isFlipped }: FlipperProps) => ({
-  'aria-hidden': !isFlipped,
+  "aria-hidden": !isFlipped,
 }))<FlipperProps>`
   transform: rotateY(180deg);
 `;

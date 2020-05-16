@@ -5,13 +5,13 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { FC } from 'react';
-import { faMusic } from '@fortawesome/free-solid-svg-icons';
-import styled from 'styled-components/macro';
-import { Temperament, prettifyNoteName } from 'temperament';
+import React, { FC } from "react";
+import { faMusic } from "@fortawesome/free-solid-svg-icons";
+import styled from "styled-components/macro";
+import { Temperament, prettifyNoteName } from "temperament";
 
-import { Panel } from './Panel';
-import SettingsBar from './SettingsBar';
+import { Panel } from "./Panel";
+import SettingsBar from "./SettingsBar";
 
 /** The maximum offset that should still be considered perfect. */
 export const PERFECT_OFFSET = 5;
@@ -43,10 +43,10 @@ const getHue = (offset: number): number => {
  */
 const getOffsetString = (offset: number): string => {
   if (Math.abs(offset) < PERFECT_OFFSET) {
-    return 'In tune';
+    return "In tune";
   }
 
-  let flatOrSharp = offset < 0 ? 'Flat' : 'Sharp';
+  let flatOrSharp = offset < 0 ? "Flat" : "Sharp";
   // I'm trusting that PERFECT_OFFSET will always be bigger than 1, so we don't
   // have to worry about 'cents' vs 'cent'.
   return flatOrSharp + ` by ${Math.round(Math.abs(offset))} cents`;
@@ -108,10 +108,10 @@ const PitchAnalyser: FC<PitchAnalyserProps> = ({
     detectedOffset={detectedOffset}
   >
     <NoteDisplay>
-      {detectedNote ? prettifyNoteName(detectedNote) : '-'}
+      {detectedNote ? prettifyNoteName(detectedNote) : "-"}
     </NoteDisplay>
     <OffsetDisplay>
-      {detectedNote ? getOffsetString(detectedOffset) : ''}
+      {detectedNote ? getOffsetString(detectedOffset) : ""}
     </OffsetDisplay>
     <SettingsBar
       switchIcon={faMusic}

@@ -5,15 +5,15 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { useRef, useState, ReactNode, FC } from 'react';
-import ReactModal from 'react-modal';
-import styled, { createGlobalStyle } from 'styled-components/macro';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import uniqueId from 'lodash.uniqueid';
+import React, { useRef, useState, ReactNode, FC } from "react";
+import ReactModal from "react-modal";
+import styled, { createGlobalStyle } from "styled-components/macro";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import uniqueId from "lodash.uniqueid";
 
-import { BorderedButton, ButtonLabel, ListButton } from './Button';
-import { Caret, Content as ExpandingContent } from './Expand';
+import { BorderedButton, ButtonLabel, ListButton } from "./Button";
+import { Caret, Content as ExpandingContent } from "./Expand";
 
 const ModalOverlay = createGlobalStyle`
   .modal-overlay {
@@ -43,8 +43,8 @@ const StyledModal = styled(
       isOpen={isOpen}
       className={{
         base: className,
-        afterOpen: 'modal-after-open',
-        beforeClose: 'modal-before-close',
+        afterOpen: "modal-after-open",
+        beforeClose: "modal-before-close",
       }}
       overlayClassName="modal-overlay"
       {...rest}
@@ -113,7 +113,7 @@ export const Modal: FC<ModalPropTypes> = ({
   title,
   ...rest
 }) => {
-  const titleId = uniqueId('modal-title-');
+  const titleId = uniqueId("modal-title-");
 
   return (
     <StyledModal
@@ -180,7 +180,7 @@ export const Alert: FC<AlertProps> = ({
   title,
 }) => {
   const [areDetailsExpanded, setAreDetailsExpanded] = useState(false);
-  const descriptionId = uniqueId('alert-description-');
+  const descriptionId = uniqueId("alert-description-");
   const okButtonRef = useRef<HTMLButtonElement | null>(null);
 
   return (

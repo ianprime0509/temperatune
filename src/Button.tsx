@@ -5,7 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import styled, { css } from 'styled-components/macro';
+import styled, { css } from "styled-components/macro";
 
 interface ButtonProps {
   fontSizeRem: number;
@@ -34,7 +34,7 @@ const hoverStyle = css<{ isSelected: boolean }>`
 const BaseButton = styled.button<ButtonProps>`
   align-items: center;
   background: ${({ isSelected, theme }) =>
-    isSelected ? theme.accentColor : 'transparent'};
+    isSelected ? theme.accentColor : "transparent"};
   color: ${({ theme }) => theme.textColor};
   cursor: pointer;
   display: flex;

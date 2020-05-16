@@ -5,29 +5,29 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { Component } from 'react';
-import ReactModal from 'react-modal';
-import { PitchDetector } from 'pitchy';
+import React, { Component } from "react";
+import ReactModal from "react-modal";
+import { PitchDetector } from "pitchy";
 import styled, {
   ThemeProvider,
   createGlobalStyle,
-} from 'styled-components/macro';
-import { Temperament } from 'temperament';
+} from "styled-components/macro";
+import { Temperament } from "temperament";
 
-import AppError from './AppError';
-import AppSettings from './AppSettings';
-import Background from './Background';
-import Flipper from './Flipper';
-import { Alert } from './Modal';
-import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from './PitchAnalyser';
-import PitchGenerator from './PitchGenerator';
-import { themes, Theme } from './theme';
+import AppError from "./AppError";
+import AppSettings from "./AppSettings";
+import Background from "./Background";
+import Flipper from "./Flipper";
+import { Alert } from "./Modal";
+import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from "./PitchAnalyser";
+import PitchGenerator from "./PitchGenerator";
+import { themes, Theme } from "./theme";
 
-import equalTemperament from './temperaments/equal.json';
-import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
-import pythagoreanD from './temperaments/pythagoreanD.json';
+import equalTemperament from "./temperaments/equal.json";
+import quarterCommaMeantone from "./temperaments/quarterCommaMeantone.json";
+import pythagoreanD from "./temperaments/pythagoreanD.json";
 
-const THEME_STORAGE_KEY = 'selectedTheme';
+const THEME_STORAGE_KEY = "selectedTheme";
 
 const GlobalStyle = createGlobalStyle`
   *,
@@ -160,7 +160,7 @@ export default class App extends Component<{}, AppState> {
       appHeight: 0,
       appWidth: 0,
       /** The current detected note. */
-      detectedNote: '',
+      detectedNote: "",
       /** The offset of the current pitch from the detected note. */
       detectedOffset: 0,
       /** Whether the back panel is being shown. */
@@ -194,13 +194,13 @@ export default class App extends Component<{}, AppState> {
     this.microphoneSource = null;
     this.inputNoteInterval = null;
 
-    ReactModal.setAppElement('#root');
+    ReactModal.setAppElement("#root");
   }
 
   componentDidMount() {
     // Handle the resize once at the beginning to get the initial size
     this.handleResize();
-    window.addEventListener('resize', () => this.handleResize());
+    window.addEventListener("resize", () => this.handleResize());
   }
 
   render() {
@@ -307,11 +307,11 @@ export default class App extends Component<{}, AppState> {
 
   private handleError(error: Error) {
     if (error instanceof AppError) {
-      this.handleAlertOpen('Error', error.message, error.details);
+      this.handleAlertOpen("Error", error.message, error.details);
     } else {
       this.handleAlertOpen(
-        'Error',
-        'An unexpected error occurred.',
+        "Error",
+        "An unexpected error occurred.",
         error.toString()
       );
     }
@@ -364,7 +364,7 @@ export default class App extends Component<{}, AppState> {
     let sameName = (t: Temperament) => t.name === temperament.name;
     if (this.state.temperaments.some(sameName)) {
       this.handleAlertOpen(
-        'Error',
+        "Error",
         `A temperament with the name '${temperament.name}' already exists.`
       );
       return;
@@ -441,8 +441,8 @@ export default class App extends Component<{}, AppState> {
           })
           .catch((err) =>
             this.handleAlertOpen(
-              'Error',
-              'Could not get audio input.',
+              "Error",
+              "Could not get audio input.",
               String(err)
             )
           );
@@ -461,7 +461,7 @@ export default class App extends Component<{}, AppState> {
       this.audioContext.sampleRate
     );
     if (clarity < 0.8) {
-      this.setState({ detectedNote: '', detectedOffset: 0 });
+      this.setState({ detectedNote: "", detectedOffset: 0 });
       return;
     }
     let [note, offset] = this.state.selectedTemperament.getNoteNameFromPitch(

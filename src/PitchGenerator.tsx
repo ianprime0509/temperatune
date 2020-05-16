@@ -5,20 +5,20 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { useState, FC } from 'react';
-import styled from 'styled-components/macro';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState, FC } from "react";
+import styled from "styled-components/macro";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMicrophone,
   faPause,
   faPlay,
-} from '@fortawesome/free-solid-svg-icons';
-import { Temperament, prettifyNoteName } from 'temperament';
+} from "@fortawesome/free-solid-svg-icons";
+import { Temperament, prettifyNoteName } from "temperament";
 
-import { Modal } from './Modal';
-import { Button } from './Button';
-import { Panel, PanelRow, PanelGroup } from './Panel';
-import SettingsBar from './SettingsBar';
+import { Modal } from "./Modal";
+import { Button } from "./Button";
+import { Panel, PanelRow, PanelGroup } from "./Panel";
+import SettingsBar from "./SettingsBar";
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -59,7 +59,7 @@ const PlaybackControl: FC<PlaybackControlProps> = ({ isPlaying, onClick }) => (
     isHoverable={false}
     onClick={onClick}
     onKeyPress={(e: KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === "Enter" || e.key === " ") {
         onClick && onClick();
       }
     }}

@@ -5,12 +5,12 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { FC } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, IconLookup } from '@fortawesome/free-solid-svg-icons';
+import React, { FC } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog, IconLookup } from "@fortawesome/free-solid-svg-icons";
 
-import { Button } from './Button';
-import { PanelRow } from './Panel';
+import { Button } from "./Button";
+import { PanelRow } from "./Panel";
 
 interface SettingsBarProps {
   /** The icon to show for the switch button. */
