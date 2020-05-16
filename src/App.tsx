@@ -27,6 +27,8 @@ import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
 import pythagoreanD from './temperaments/pythagoreanD.json';
 
+const THEME_STORAGE_KEY = 'selectedTheme';
+
 const GlobalStyle = createGlobalStyle`
   *,
   *:before,
@@ -175,7 +177,11 @@ export default class App extends Component<{}, AppState> {
       ],
       selectedNote: equal.referenceName,
       selectedOctave: equal.referenceOctave,
-      selectedTheme: themes[0],
+      selectedTheme:
+        themes.find(
+          (theme) =>
+            theme.name === window.localStorage.getItem(THEME_STORAGE_KEY)
+        ) ?? themes[0],
     };
 
     this.app = null;
@@ -257,7 +263,7 @@ export default class App extends Component<{}, AppState> {
           onTemperamentSelect={(temperament) =>
             this.handleTemperamentSelect(temperament)
           }
-          onThemeSelect={(theme) => this.setState({ selectedTheme: theme })}
+          onThemeSelect={(theme) => this.handleThemeSelect(theme)}
         />
         {this.state.alerts.map((alert, i) => (
           <Alert
@@ -383,6 +389,11 @@ export default class App extends Component<{}, AppState> {
       }),
       () => this.soundUpdate()
     );
+  }
+
+  private handleThemeSelect(theme: Theme) {
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme.name);
+    this.setState({ selectedTheme: theme });
   }
 
   private handleViewFlip() {

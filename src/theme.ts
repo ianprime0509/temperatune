@@ -13,7 +13,7 @@ export interface Theme {
 }
 
 export const defaultTheme: Theme = {
-  name: 'Light (default)',
+  name: 'Light',
   theme: {
     accentColor: '#1e9be9',
     backgroundColor: '#f0f0f0',
