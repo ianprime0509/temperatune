@@ -21,7 +21,7 @@ import Flipper from './Flipper';
 import { Alert } from './Modal';
 import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from './PitchAnalyser';
 import PitchGenerator from './PitchGenerator';
-import { defaultTheme } from './theme';
+import { themes, Theme } from './theme';
 
 import equalTemperament from './temperaments/equal.json';
 import quarterCommaMeantone from './temperaments/quarterCommaMeantone.json';
@@ -40,6 +40,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     background: ${({ theme }) => theme.backgroundColor};
+    color: ${({ theme }) => theme.textColor};
     /*
      * Native font stack:
      * https://make.wordpress.org/core/2016/07/07/native-fonts-in-4-6/
@@ -58,6 +59,14 @@ const GlobalStyle = createGlobalStyle`
     top: 0;
     user-select: none;
     width: 100vw;
+  }
+
+  a {
+    color: ${({ theme }) => theme.linkColor};
+
+    &:visited {
+      color: ${({ theme }) => theme.linkVisitedColor};
+    }
   }
 
   p {
@@ -121,6 +130,7 @@ interface AppState {
   temperaments: Temperament[];
   selectedNote: string;
   selectedOctave: number;
+  selectedTheme: Theme;
 }
 
 /** The main application. */
@@ -165,6 +175,7 @@ export default class App extends Component<{}, AppState> {
       ],
       selectedNote: equal.referenceName,
       selectedOctave: equal.referenceOctave,
+      selectedTheme: themes[0],
     };
 
     this.app = null;
@@ -198,7 +209,7 @@ export default class App extends Component<{}, AppState> {
     return (
       // Using a variant of https://davidwalsh.name/css-flip for the flip
       // animation
-      <ThemeProvider theme={defaultTheme}>
+      <ThemeProvider theme={this.state.selectedTheme.theme}>
         <GlobalStyle />
         <Background
           appHeight={this.state.appHeight}
@@ -234,6 +245,10 @@ export default class App extends Component<{}, AppState> {
         />
         <AppSettings
           isOpen={this.state.areSettingsOpen}
+          selectedTemperament={this.state.selectedTemperament}
+          selectedTheme={this.state.selectedTheme}
+          temperaments={this.state.temperaments}
+          themes={themes}
           onClose={() => this.handleSettingsClose()}
           onError={(e) => this.handleError(e)}
           onTemperamentAdd={(temperament) =>
@@ -242,8 +257,7 @@ export default class App extends Component<{}, AppState> {
           onTemperamentSelect={(temperament) =>
             this.handleTemperamentSelect(temperament)
           }
-          selectedTemperament={this.state.selectedTemperament}
-          temperaments={this.state.temperaments}
+          onThemeSelect={(theme) => this.setState({ selectedTheme: theme })}
         />
         {this.state.alerts.map((alert, i) => (
           <Alert

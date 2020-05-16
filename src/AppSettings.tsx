@@ -16,6 +16,7 @@ import AppError from './AppError';
 import { ButtonLabel, ListButton } from './Button';
 import { Caret, Content as ExpandingContent } from './Expand';
 import { Modal } from './Modal';
+import { Theme } from './theme';
 
 import { version as VERSION } from '../package.json';
 
@@ -145,13 +146,20 @@ const PitchInput = styled.input.attrs({
   type: 'text',
   pattern: '[0-9]*',
 })`
+  background: ${({ theme }) => theme.backgroundColor};
+  border: 2px solid ${({ theme }) => theme.borderColor};
+  color: ${({ theme }) => theme.textColor};
   font-size: 1.5rem;
   margin: 0 0.5rem;
   text-align: right;
   width: 5rem;
 
   &:focus {
-    box-shadow: 0 0 8px #1e9be9;
+    box-shadow: 0 0 8px ${({ theme }) => theme.accentColor};
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.mutedTextColor};
   }
 `;
 
@@ -335,35 +343,41 @@ const ExpanderGroup: FC<ExpanderGroupProps> = ({
 
 const SettingsContainer = styled.div`
   height: calc(100% - 3rem);
-  max-height: 25rem;
+  max-height: 100%;
   max-width: 100%;
   width: 35rem;
 
   @media (min-height: 30rem) {
-    height: 25rem;
+    min-height: 25rem;
   }
 `;
 
 interface AppSettingsProps {
   isOpen: boolean;
   selectedTemperament: Temperament;
+  selectedTheme: Theme;
   temperaments: Temperament[];
+  themes: Theme[];
 
   onClose: () => void;
   onError?: (error: Error) => void;
   onTemperamentAdd: (temperament: Temperament) => void;
   onTemperamentSelect: (temperament: Temperament) => void;
+  onThemeSelect: (theme: Theme) => void;
 }
 
 /** The app settings modal. */
 const AppSettings: FC<AppSettingsProps> = ({
   isOpen,
+  selectedTemperament,
+  selectedTheme,
+  temperaments,
+  themes,
   onClose,
   onError,
   onTemperamentAdd,
   onTemperamentSelect,
-  selectedTemperament,
-  temperaments,
+  onThemeSelect,
 }) => (
   <Modal isOpen={isOpen} onRequestClose={onClose} title="Settings">
     <SettingsContainer>
@@ -372,7 +386,6 @@ const AppSettings: FC<AppSettingsProps> = ({
           <SettingsItem
             key={temperament.name}
             isSelected={temperament.name === selectedTemperament.name}
-            tabIndex={0}
             tooltip={temperament.description}
             onClick={() => onTemperamentSelect(temperament)}
           >
@@ -390,6 +403,17 @@ const AppSettings: FC<AppSettingsProps> = ({
         selectedTemperament={selectedTemperament}
         onTemperamentUpdate={onTemperamentSelect}
       />
+      <ExpanderGroup label={`Theme: ${selectedTheme.name}`}>
+        {themes.map((theme) => (
+          <SettingsItem
+            key={theme.name}
+            isSelected={theme.name === selectedTheme.name}
+            onClick={() => onThemeSelect(theme)}
+          >
+            {theme.name}
+          </SettingsItem>
+        ))}
+      </ExpanderGroup>
       <ExpanderGroup label="About Temperatune">
         <p>Version: {VERSION}</p>
         <p>

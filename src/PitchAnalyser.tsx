@@ -60,7 +60,7 @@ interface PitchAnalyserPanelProps {
 const PitchAnalyserPanel = styled(Panel)<PitchAnalyserPanelProps>`
   background: ${({ detectedNote, detectedOffset, theme }) =>
     detectedNote
-      ? `hsl(${getHue(detectedOffset)}, 70%, 80%)`
+      ? `hsl(${getHue(detectedOffset)}, 70%, ${theme.tuneBackgroundLuminosity})`
       : theme.panelBackgroundColor};
 `;
 
