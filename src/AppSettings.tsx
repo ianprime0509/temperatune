@@ -381,7 +381,7 @@ const AppSettings: FC<AppSettingsProps> = ({
 }) => (
   <Modal isOpen={isOpen} onRequestClose={onClose} title="Settings">
     <SettingsContainer>
-      <ExpanderGroup label={`Temperament: ${selectedTemperament.name}`}>
+      <ExpanderGroup label="Temperament">
         {temperaments.map((temperament) => (
           <SettingsItem
             key={temperament.name}
@@ -403,7 +403,7 @@ const AppSettings: FC<AppSettingsProps> = ({
         selectedTemperament={selectedTemperament}
         onTemperamentUpdate={onTemperamentSelect}
       />
-      <ExpanderGroup label={`Theme: ${selectedTheme.name}`}>
+      <ExpanderGroup label="Theme">
         {themes.map((theme) => (
           <SettingsItem
             key={theme.name}
