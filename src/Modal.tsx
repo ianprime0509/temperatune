@@ -53,12 +53,12 @@ const StyledModal = styled(
 )<StyledModalProps>`
   background: ${({ theme }) => theme.backgroundColor};
   box-shadow: 8px 8px 16px ${({ theme }) => theme.shadowColor};
+  contain: content;
   max-height: 100%;
   max-width: 100%;
   min-width: 300px;
   opacity: 0;
   outline: none;
-  overflow-y: auto;
   padding: 0.5rem;
 
   &.modal-after-open {
@@ -90,8 +90,9 @@ const ModalTitlebarButton = styled(FontAwesomeIcon)`
 `;
 
 const ModalChildren = styled.div`
-  max-height: calc(100% - 3rem);
+  max-height: calc(100 * var(--vh) - 3rem);
   max-width: 100vw;
+  overflow-y: auto;
 `;
 
 interface ModalPropTypes {
