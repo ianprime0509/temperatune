@@ -55,6 +55,7 @@ const StyledModal = styled(
   box-shadow: 8px 8px 16px ${({ theme }) => theme.shadowColor};
   max-height: 100%;
   max-width: 100%;
+  min-width: 300px;
   opacity: 0;
   outline: none;
   overflow-y: auto;

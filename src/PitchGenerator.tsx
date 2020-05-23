@@ -5,7 +5,7 @@
  * license can be found in the LICENSE file in the project root, or at
  * https://opensource.org/licenses/MIT.
  */
-import React, { useState, FC } from "react";
+import React, { useRef, useState, FC } from "react";
 import styled from "styled-components/macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,23 +20,35 @@ import { Button } from "./Button";
 import { Panel, PanelRow, PanelGroup } from "./Panel";
 import SettingsBar from "./SettingsBar";
 
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-`;
-
 const SpacedButton = styled(Button)`
   margin: 0.5rem;
   padding: 0.5rem;
 `;
 
-const NoteButton = styled(SpacedButton)`
-  flex: 1 1 20%;
+const ButtonGroup = styled.div`
+  display: grid;
+  justify-items: center;
+
+  ${Button} {
+    width: 100%;
+  }
 `;
 
-const OctaveButton = styled(SpacedButton)`
-  flex: 1 1 100%;
+const GridButtonGroup = styled(ButtonGroup)`
+  @media (min-width: 400px) {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 400px;
+  }
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 600px;
+  }
+
+  @media (min-width: 800px) {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 800px;
+  }
 `;
 
 const PitchDisplay = styled.div`
@@ -95,6 +107,8 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
 }) => {
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [isOctavesModalOpen, setIsOctavesModalOpen] = useState(false);
+  const selectedNoteRef = useRef<HTMLButtonElement | null>(null);
+  const selectedOctaveRef = useRef<HTMLButtonElement | null>(null);
 
   const handleNoteSelect = (note: string) => {
     onNoteSelect && onNoteSelect(note);
@@ -139,36 +153,49 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
       <Modal
         isOpen={isNotesModalOpen}
         title="Select note"
+        onAfterOpen={() =>
+          selectedNoteRef.current && selectedNoteRef.current.scrollIntoView()
+        }
         onRequestClose={() => setIsNotesModalOpen(false)}
       >
-        <ButtonGroup>
+        <GridButtonGroup>
           {temperament.noteNames.map((note) => (
-            <NoteButton
+            <SpacedButton
+              ref={(ref: HTMLButtonElement) => {
+                if (note === selectedNote) selectedNoteRef.current = ref;
+              }}
               key={note}
-              fontSizeRem={5}
+              fontSizeRem={4}
               isSelected={note === selectedNote}
               onClick={() => handleNoteSelect(note)}
             >
               {prettifyNoteName(note)}
-            </NoteButton>
+            </SpacedButton>
           ))}
-        </ButtonGroup>
+        </GridButtonGroup>
       </Modal>
       <Modal
         isOpen={isOctavesModalOpen}
         title="Select octave"
+        onAfterOpen={() =>
+          selectedOctaveRef.current &&
+          selectedOctaveRef.current.scrollIntoView()
+        }
         onRequestClose={() => setIsOctavesModalOpen(false)}
       >
         <ButtonGroup>
           {temperament.getOctaveRange(2).map((octave) => (
-            <OctaveButton
+            <SpacedButton
+              ref={(ref: HTMLButtonElement) => {
+                if (octave === selectedOctave) selectedOctaveRef.current = ref;
+              }}
               key={octave}
-              fontSizeRem={5}
+              fontSizeRem={4}
               isSelected={octave === selectedOctave}
               onClick={() => handleOctaveSelect(octave)}
             >
               {octave}
-            </OctaveButton>
+            </SpacedButton>
           ))}
         </ButtonGroup>
       </Modal>
