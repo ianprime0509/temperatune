@@ -45,6 +45,8 @@ const BaseButton = styled.button<ButtonProps>`
   outline: none;
   padding: 0;
   transition: background 200ms;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   ${({ isHoverable }) => isHoverable && hoverStyle}
 
