@@ -8,7 +8,7 @@
 import React, { FC } from "react";
 import { faMusic } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components/macro";
-import { Temperament, prettifyNoteName } from "temperament";
+import { Temperament } from "temperament";
 
 import { Panel } from "./Panel";
 import SettingsBar from "./SettingsBar";
@@ -107,9 +107,7 @@ const PitchAnalyser: FC<PitchAnalyserProps> = ({
     detectedNote={detectedNote}
     detectedOffset={detectedOffset}
   >
-    <NoteDisplay>
-      {detectedNote ? prettifyNoteName(detectedNote) : "-"}
-    </NoteDisplay>
+    <NoteDisplay>{detectedNote ? detectedNote : "-"}</NoteDisplay>
     <OffsetDisplay>
       {detectedNote ? getOffsetString(detectedOffset) : ""}
     </OffsetDisplay>

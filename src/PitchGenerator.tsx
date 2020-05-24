@@ -13,7 +13,7 @@ import {
   faPause,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
-import { Temperament, prettifyNoteName } from "temperament";
+import { Temperament } from "temperament";
 
 import { Modal } from "./Modal";
 import { Button } from "./Button";
@@ -131,7 +131,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
             fontSizeRem={5}
             onClick={() => setIsNotesModalOpen(true)}
           >
-            {prettifyNoteName(selectedNote)}
+            {selectedNote}
           </SpacedButton>
           <SpacedButton
             fontSizeRem={5}
@@ -169,7 +169,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
               isSelected={note === selectedNote}
               onClick={() => handleNoteSelect(note)}
             >
-              {prettifyNoteName(note)}
+              {note}
             </SpacedButton>
           ))}
         </GridButtonGroup>
