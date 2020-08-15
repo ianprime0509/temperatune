@@ -64,25 +64,28 @@ const PitchAnalyserPanel = styled(Panel)<PitchAnalyserPanelProps>`
       : theme.panelBackgroundColor};
 `;
 
-const NoteDisplay = styled.div`
+const NoteDisplayContainer = styled.div`
+  align-items: center;
+  display: flex;
   flex: 1 1;
-  font-size: 13rem;
-  /*
-   * The line height is a little larger than the font size to account for note
-   * names that may vary in height: we don't want the other controls jiggling
-   * around whenever the note changes.
-   */
-  line-height: 15rem;
-  text-align: center;
-  vertical-align: middle;
+  justify-content: center;
+  min-height: 11rem;
+`;
+
+const NoteDisplay = styled.div`
+  font-size: 10rem;
+`;
+
+const OffsetDisplayContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 1rem 0;
 `;
 
 const OffsetDisplay = styled.div`
   font-size: 2rem;
-  height: 4rem;
-  margin: 1rem;
-  min-height: 4rem;
-  text-align: center;
 `;
 
 interface PitchAnalyserProps {
@@ -107,10 +110,14 @@ const PitchAnalyser: FC<PitchAnalyserProps> = ({
     detectedNote={detectedNote}
     detectedOffset={detectedOffset}
   >
-    <NoteDisplay>{detectedNote ? detectedNote : "-"}</NoteDisplay>
-    <OffsetDisplay>
-      {detectedNote ? getOffsetString(detectedOffset) : ""}
-    </OffsetDisplay>
+    <NoteDisplayContainer>
+      <NoteDisplay>{detectedNote ? detectedNote : "-"}</NoteDisplay>
+    </NoteDisplayContainer>
+    <OffsetDisplayContainer>
+      <OffsetDisplay>
+        {detectedNote ? getOffsetString(detectedOffset) : ""}
+      </OffsetDisplay>
+    </OffsetDisplayContainer>
     <SettingsBar
       switchIcon={faMusic}
       onSettingsOpen={onSettingsOpen}
