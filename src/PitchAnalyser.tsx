@@ -72,7 +72,6 @@ const OffsetDisplay = styled.div`
 interface PitchAnalyserProps {
   detectedNote: string;
   detectedOffset: number;
-  temperament: Temperament;
 
   onSettingsOpen?: () => void;
   onViewFlip?: () => void;
@@ -92,8 +91,10 @@ const PitchAnalyser: FC<PitchAnalyserProps> = ({
     detectedOffset={detectedOffset}
   >
     <PanelGroup forceDirection={true} grow={1} spaceBetween={false}>
-      <NoteDisplay>{detectedNote ? detectedNote : "-"}</NoteDisplay>
-      <OffsetDisplay>
+      <NoteDisplay data-testid="analyser-note-display">
+        {detectedNote ? detectedNote : "-"}
+      </NoteDisplay>
+      <OffsetDisplay data-testid="analyser-offset-display">
         {detectedNote ? getOffsetString(detectedOffset) : ""}
       </OffsetDisplay>
     </PanelGroup>

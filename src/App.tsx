@@ -239,7 +239,6 @@ export default class App extends Component<{}, AppState> {
               detectedOffset={this.state.detectedOffset}
               onSettingsOpen={() => this.handleSettingsOpen()}
               onViewFlip={() => this.handleViewFlip()}
-              temperament={this.state.selectedTemperament}
             />
           }
         />

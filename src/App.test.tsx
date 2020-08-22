@@ -1,15 +1,25 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
+import { render, unmountComponentAtNode } from "react-dom";
 import "web-audio-test-api";
 
-test("renders without crashing", () => {
+import App from "./App";
+
+let root: HTMLDivElement;
+
+beforeEach(() => {
   // We need to make sure that we give our root element the 'root' id and
   // actually put it in the document body, since react-modal will complain
   // about the app element if we don't.
-  let root = document.createElement("div");
+  root = document.createElement("div");
   root.id = "root";
   document.body.appendChild(root);
-  ReactDOM.render(<App />, root);
-  ReactDOM.unmountComponentAtNode(root);
+});
+
+afterEach(() => {
+  unmountComponentAtNode(root);
+  root.remove();
+});
+
+test("renders without crashing", () => {
+  render(<App />, root);
 });

@@ -60,15 +60,7 @@ interface PlaybackControlProps {
 
 /** The playback control. */
 const PlaybackControl: FC<PlaybackControlProps> = ({ isPlaying, onClick }) => (
-  <Button
-    isHoverable={false}
-    onClick={onClick}
-    onKeyPress={(e: KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") {
-        onClick && onClick();
-      }
-    }}
-  >
+  <Button isHoverable={false} onClick={onClick}>
     <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size="7x" />
   </Button>
 );
@@ -121,12 +113,14 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
       <Panel>
         <PanelGroup direction="row">
           <SpacedButton
+            data-testid="generator-selected-note"
             fontSizeRem={5}
             onClick={() => setIsNotesModalOpen(true)}
           >
             {selectedNote}
           </SpacedButton>
           <SpacedButton
+            data-testid="generator-selected-octave"
             fontSizeRem={5}
             onClick={() => setIsOctavesModalOpen(true)}
           >
@@ -135,7 +129,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
         </PanelGroup>
         <PanelGroup forceDirection={true} spaceBetween={false}>
           <PlaybackControl isPlaying={isPlaying} onClick={onPlayToggle} />
-          <PitchDisplay>{`${pitch} Hz`}</PitchDisplay>
+          <PitchDisplay data-testid="generator-pitch-display">{`${pitch} Hz`}</PitchDisplay>
         </PanelGroup>
         <SettingsBar
           switchIcon={faMicrophone}
@@ -151,7 +145,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
         }
         onRequestClose={() => setIsNotesModalOpen(false)}
       >
-        <GridButtonGroup>
+        <GridButtonGroup data-testid="generator-note-select">
           {temperament.noteNames.map((note) => (
             <SpacedButton
               ref={(ref: HTMLButtonElement) => {
@@ -176,7 +170,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
         }
         onRequestClose={() => setIsOctavesModalOpen(false)}
       >
-        <ButtonGroup>
+        <ButtonGroup data-testid="generator-octave-select">
           {temperament.getOctaveRange(2).map((octave) => (
             <SpacedButton
               ref={(ref: HTMLButtonElement) => {
