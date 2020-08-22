@@ -14,6 +14,7 @@ import Flipper from "./Flipper";
 import { Alert } from "./Modal";
 import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from "./PitchAnalyser";
 import PitchGenerator from "./PitchGenerator";
+import { largeScreen } from "./media";
 import { themes, Theme } from "./theme";
 
 import equalTemperament from "./temperaments/equal.json";
@@ -99,7 +100,7 @@ const AppContainer = styled(Flipper)`
   height: 100%;
   width: 100%;
 
-  @media (min-height: 30rem) and (min-width: 25rem) {
+  @media ${largeScreen} {
     max-height: 25rem;
     max-width: 20rem;
   }

@@ -9,6 +9,7 @@ import AppError from "./AppError";
 import { ButtonLabel, ListButton } from "./Button";
 import { Caret, Content as ExpandingContent } from "./Expand";
 import { Modal } from "./Modal";
+import { largeScreen } from "./media";
 import { Theme } from "./theme";
 
 import { version as VERSION } from "../package.json";

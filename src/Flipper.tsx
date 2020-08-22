@@ -1,6 +1,8 @@
 import React, { ReactNode, forwardRef } from "react";
 import styled from "styled-components/macro";
 
+import { smallLandscape } from "./media";
+
 interface FlipperProps {
   isFlipped: boolean;
 }
@@ -26,7 +28,7 @@ const InnerContainer = styled.div<FlipperProps>`
 
   ${({ isFlipped }) => isFlipped && "transform: rotateY(180deg);"}
 
-  @media (orientation: landscape) and (max-height: 20rem) {
+  @media ${smallLandscape} {
     ${({ isFlipped }) => isFlipped && "transform: rotateX(180deg);"}
   }
 `;
@@ -46,7 +48,7 @@ const Front = styled(Face).attrs(({ isFlipped }: FlipperProps) => ({
   transform: rotateY(0deg);
   z-index: 2;
 
-  @media (orientation: landscape) and (max-height: 20rem) {
+  @media ${smallLandscape} {
     transform: rotateX(0deg);
   }
 `;
@@ -56,7 +58,7 @@ const Back = styled(Face).attrs(({ isFlipped }: FlipperProps) => ({
 }))<FlipperProps>`
   transform: rotateY(180deg);
 
-  @media (orientation: landscape) and (max-height: 20rem) {
+  @media ${smallLandscape} {
     transform: rotateX(180deg);
   }
 `;

@@ -1,5 +1,7 @@
 import styled from "styled-components/macro";
 
+import { largeScreen, smallLandscape } from "./media";
+
 export type Direction = "column" | "row";
 
 const swapDirection = (direction: Direction): Direction =>
@@ -21,7 +23,7 @@ export const PanelGroup = styled.div<PanelGroupProps>`
   justify-content: ${({ spaceBetween = true }) =>
     spaceBetween ? "space-between" : "center"};
 
-  @media (orientation: landscape) and (max-height: 20rem) {
+  @media ${smallLandscape} {
     flex-direction: ${({ direction = "column", forceDirection = false }) =>
       forceDirection ? direction : swapDirection(direction)};
   }
@@ -34,7 +36,7 @@ export const Panel = styled(PanelGroup)`
   padding: 0.5rem;
   width: 100%;
 
-  @media (min-width: 500px) {
+  @media ${largeScreen} {
     box-shadow: 8px 16px 16px ${({ theme }) => theme.shadowColor};
   }
 `;

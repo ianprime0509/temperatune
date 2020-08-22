@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import styled from "styled-components/macro";
 
+import { largeScreen } from "./media";
+
 /** The FPS to use with the background animation. */
 const FPS = 20;
 /** The number of ripples to create each second. */
@@ -22,7 +24,7 @@ const Canvas = styled.canvas`
   top: 0;
   z-index: -100;
 
-  @media (min-width: 500px) {
+  @media ${largeScreen} {
     display: block;
   }
 `;
