@@ -1,24 +1,18 @@
 import styled, { css } from "styled-components/macro";
 
 interface ButtonProps {
-  fontSizeRem: number;
-  isHoverable: boolean;
-  isSelected: boolean;
+  fontSizeRem?: number;
+  isHoverable?: boolean;
+  isSelected?: boolean;
 
   onClick?: () => void;
 
   [k: string]: any;
 }
 
-const buttonDefaultProps = {
-  fontSizeRem: 1,
-  isHoverable: true,
-  isSelected: false,
-};
-
-const hoverStyle = css<{ isSelected: boolean }>`
+const hoverStyle = css<{ isSelected?: boolean }>`
   &:hover {
-    background: ${({ isSelected, theme }) =>
+    background: ${({ isSelected = false, theme }) =>
       isSelected ? theme.accentColor : theme.shadowColor};
   }
 `;
@@ -26,14 +20,14 @@ const hoverStyle = css<{ isSelected: boolean }>`
 /** The base button component without any border or focus settings. */
 const BaseButton = styled.button<ButtonProps>`
   align-items: center;
-  background: ${({ isSelected, theme }) =>
+  background: ${({ isSelected = false, theme }) =>
     isSelected ? theme.accentColor : "transparent"};
   color: ${({ theme }) => theme.textColor};
   cursor: pointer;
   display: flex;
-  font-size: ${({ fontSizeRem }) => `${fontSizeRem}rem`};
+  font-size: ${({ fontSizeRem = 1 }) => `${fontSizeRem}rem`};
   justify-content: center;
-  line-height: ${({ fontSizeRem }) => `${fontSizeRem}rem`};
+  line-height: ${({ fontSizeRem = 1 }) => `${fontSizeRem}rem`};
   margin: 0;
   outline: none;
   padding: 0;
@@ -41,14 +35,12 @@ const BaseButton = styled.button<ButtonProps>`
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
-  ${({ isHoverable }) => isHoverable && hoverStyle}
+  ${({ isHoverable = true }) => isHoverable && hoverStyle}
 
   &::-moz-focus-inner {
     border: none;
   }
 `;
-
-BaseButton.defaultProps = buttonDefaultProps;
 
 /**
  * A button label, for situations where there are other elements within the
@@ -67,8 +59,6 @@ export const Button = styled(BaseButton)<ButtonProps>`
   }
 `;
 
-Button.defaultProps = buttonDefaultProps;
-
 /** A bordered button. */
 export const BorderedButton = styled(BaseButton)<ButtonProps>`
   border: 1px solid ${({ theme }) => theme.borderColor};
@@ -78,8 +68,6 @@ export const BorderedButton = styled(BaseButton)<ButtonProps>`
     box-shadow: 0 0 12px ${({ theme }) => theme.accentColor};
   }
 `;
-
-BorderedButton.defaultProps = buttonDefaultProps;
 
 /** A button for use in a vertical list. */
 export const ListButton = styled(BaseButton)<ButtonProps>`
