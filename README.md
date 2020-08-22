@@ -20,29 +20,15 @@ eventually find ways to test on more browsers.
 ## Installation
 
 To build and run Temperatune on your own machine, you should have
-[Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/en/) or
-[NPM](https://www.npmjs.com/) installed (NPM comes bundled with Node.js).
-Then, to run the development version in a local web browser:
-
-```shell
-$ yarn start
-```
-
-or
+[Node.js](https://nodejs.org/en/) and [NPM](https://www.npmjs.com/) installed
+(NPM comes bundled with Node.js). Then, to run the development version in a
+local web browser:
 
 ```shell
 $ npm start
 ```
 
-depending on whether you use Yarn or NPM.
-
 To build an optimized production version:
-
-```shell
-$ yarn build
-```
-
-or
 
 ```shell
 $ npm run build
@@ -54,12 +40,12 @@ You will find the resulting files in the `build` directory.
 
 The part of Temperatune that handles temperament definitions is actually a
 separate module, called simply
-"[temperament](https://github.com/ianprime0509/temperament)". Please see its
-[README](https://github.com/ianprime0509/temperament/blob/master/README.md) for
-detailed usage on how to write your own temperaments or how to use the same
-backend in your own project. For your reference, the JSON files corresponding
-to the built-in temperaments can be found under the `src/temperaments`
-directory of this project.
+"[temperament](https://git.ianjohnson.xyz/temperament)". Please see its
+[README](https://git.ianjohnson.xyz/temperament/tree/README.md) for detailed
+usage on how to write your own temperaments or how to use the same backend in
+your own project. For your reference, the JSON files corresponding to the
+built-in temperaments can be found under the `src/temperaments` directory of
+this project.
 
 ## License
 

@@ -410,10 +410,10 @@ const AppSettings: FC<AppSettingsProps> = ({
       <ExpanderGroup label="About Temperatune">
         <p>Version: {VERSION}</p>
         <p>
-          Temperatune is hosted on GitHub: you can browse its source code{" "}
-          <a href="https://github.com/ianprime0509/temperatune">here</a>. For
-          more information on defining your own temperaments, see{" "}
-          <a href="https://github.com/ianprime0509/temperament/blob/master/README.md">
+          Temperatune is hosted on my website: you can browse its source code{" "}
+          <a href="https://git.ianjohnson.xyz/temperatune">here</a>. For more
+          information on defining your own temperaments, see{" "}
+          <a href="https://git.ianjohnson.xyz/temperament/tree/README.md">
             this README
           </a>
           .
