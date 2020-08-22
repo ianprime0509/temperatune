@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useRef, FC } from "react";
 import styled from "styled-components/macro";
 
 import { largeScreen } from "./media";
@@ -29,13 +29,6 @@ const Canvas = styled.canvas`
   }
 `;
 
-interface BackgroundProps {
-  appHeight: number;
-  appWidth: number;
-  isActive: boolean;
-  wobbliness: number;
-}
-
 interface Ripple {
   size: number;
   alpha: number;
@@ -43,104 +36,119 @@ interface Ripple {
   t: number;
 }
 
+const updateCanvas = (
+  canvas: HTMLCanvasElement,
+  ripples: Ripple[],
+  appWidth: number,
+  appHeight: number
+) => {
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  const ctx = canvas.getContext("2d")!;
+  ctx.clearRect(0, 0, canvas.height, canvas.width);
+  const x = canvas.width / 2 - appWidth / 2;
+  const y = canvas.height / 2 - appHeight / 2;
+  ctx.translate(x, y);
+
+  for (const ripple of ripples) {
+    const x = -ripple.size;
+    const y = -ripple.size;
+    const width = appWidth + 2 * ripple.size;
+    const height = appHeight + 2 * ripple.size;
+    ctx.strokeStyle = `hsla(0, 0%, 40%, ${ripple.alpha})`;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.quadraticCurveTo(
+      x + width / 2,
+      y + ripple.wobbliness * Math.sin(ripple.t),
+      x + width,
+      y
+    );
+    ctx.quadraticCurveTo(
+      x + width + ripple.wobbliness * Math.sin(ripple.t),
+      y + height / 2,
+      x + width,
+      y + height
+    );
+    ctx.quadraticCurveTo(
+      x + width / 2,
+      y + height - ripple.wobbliness * Math.sin(ripple.t),
+      x,
+      y + height
+    );
+    ctx.quadraticCurveTo(
+      x - ripple.wobbliness * Math.sin(ripple.t),
+      y + height / 2,
+      x,
+      y
+    );
+    ctx.stroke();
+  }
+};
+
+interface BackgroundProps {
+  appHeight: number;
+  appWidth: number;
+  isActive: boolean;
+  wobbliness?: number;
+}
+
 /** A nice canvas-based, animated background image. */
-export default class Background extends Component<BackgroundProps> {
-  static defaultProps = {
-    wobbliness: 0,
-  };
+const Background: FC<BackgroundProps> = ({
+  appHeight,
+  appWidth,
+  isActive,
+  wobbliness = 0,
+}) => {
+  const canvas = useRef<HTMLCanvasElement | null>(null);
+  const ripples = useRef<Ripple[]>([]);
+  // This trick is to prevent the ripple update from having a dependency on the
+  // wobbliness prop, since otherwise in analyser mode it would set and clear
+  // the interval many times per second
+  const latestWobbliness = useRef<number>(wobbliness);
+  useEffect(() => {
+    latestWobbliness.current = wobbliness;
+  });
 
-  private canvas: HTMLCanvasElement | null;
-  private ripples: Ripple[];
+  useEffect(() => {
+    if (!isActive) return;
 
-  constructor(props: BackgroundProps) {
-    super(props);
-    this.canvas = null;
-    this.ripples = [];
-  }
-
-  componentDidMount() {
-    window.setInterval(() => this.updateCanvas(), 1000 / FPS);
-    window.setInterval(() => this.ripple(), 1000 / RIPPLE_RATE);
-  }
-
-  render() {
-    return <Canvas ref={(ref) => (this.canvas = ref)} aria-hidden="true" />;
-  }
-
-  /** Produce a new ripple. */
-  private ripple() {
-    if (this.props.isActive) {
-      this.ripples.push({
+    const interval = window.setInterval(() => {
+      ripples.current.push({
         size: 0,
         alpha: 1,
-        wobbliness: this.props.wobbliness,
+        wobbliness: latestWobbliness.current,
         t: 0,
       });
-    }
-  }
+    }, 1000 / RIPPLE_RATE);
 
-  private updateCanvas() {
-    // Just in case the canvas isn't actually there somehow (this has happened
-    // at least in development), bail out if this.canvas is null
-    if (!this.canvas) return;
+    return () => window.clearInterval(interval);
+  }, [isActive]);
 
-    this.canvas.height = window.innerHeight;
-    this.canvas.width = window.innerWidth;
-    const ctx = this.canvas.getContext("2d")!;
-    ctx.clearRect(0, 0, this.canvas.height, this.canvas.width);
-    const appWidth = this.props.appWidth;
-    const appHeight = this.props.appHeight;
-    const x = this.canvas.width / 2 - appWidth / 2;
-    const y = this.canvas.height / 2 - appHeight / 2;
-    ctx.translate(x, y);
+  useEffect(() => {
+    if (!isActive) return;
 
-    for (const ripple of this.ripples) {
-      const x = -ripple.size;
-      const y = -ripple.size;
-      const width = appWidth + 2 * ripple.size;
-      const height = appHeight + 2 * ripple.size;
-      ctx.strokeStyle = `hsla(0, 0%, 40%, ${ripple.alpha})`;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.quadraticCurveTo(
-        x + width / 2,
-        y + ripple.wobbliness * Math.sin(ripple.t),
-        x + width,
-        y
-      );
-      ctx.quadraticCurveTo(
-        x + width + ripple.wobbliness * Math.sin(ripple.t),
-        y + height / 2,
-        x + width,
-        y + height
-      );
-      ctx.quadraticCurveTo(
-        x + width / 2,
-        y + height - ripple.wobbliness * Math.sin(ripple.t),
-        x,
-        y + height
-      );
-      ctx.quadraticCurveTo(
-        x - ripple.wobbliness * Math.sin(ripple.t),
-        y + height / 2,
-        x,
-        y
-      );
-      ctx.stroke();
-    }
-    this.updateRipples();
-  }
+    const interval = window.setInterval(() => {
+      canvas.current &&
+        updateCanvas(canvas.current, ripples.current, appWidth, appHeight);
 
-  private updateRipples() {
-    this.ripples = this.ripples
-      .map((ripple) =>
-        Object.assign(ripple, {
-          size: ripple.size + GROW_RATE,
-          alpha: ripple.alpha - DISAPPEAR_RATE,
-          wobbliness: ripple.wobbliness / 1.025,
-          t: ripple.t + 1,
-        })
-      )
-      .filter((ripple) => ripple.alpha > 0);
-  }
-}
+      for (let i = ripples.current.length - 1; i >= 0; i--) {
+        const ripple = ripples.current[i];
+        ripple.size += GROW_RATE;
+        ripple.alpha -= DISAPPEAR_RATE;
+        ripple.wobbliness /= 1.025;
+        ripple.t++;
+
+        if (ripple.alpha <= 0) {
+          ripples.current.splice(i, 1);
+        }
+      }
+
+      return () => window.clearInterval(interval);
+    }, 1000 / FPS);
+  }, [isActive, appWidth, appHeight]);
+
+  return <Canvas ref={canvas} aria-hidden="true" />;
+};
+
+export default Background;

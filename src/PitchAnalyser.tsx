@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { faMusic } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components/macro";
-import { Temperament } from "temperament";
 
 import { Panel, PanelGroup } from "./Panel";
 import SettingsBar from "./SettingsBar";
