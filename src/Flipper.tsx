@@ -1,10 +1,3 @@
-/*
- * Copyright 2020 Ian Johnson
- *
- * This is free software, distributed under the MIT license.  A copy of the
- * license can be found in the LICENSE file in the project root, or at
- * https://opensource.org/licenses/MIT.
- */
 import React, { ReactNode, forwardRef } from "react";
 import styled from "styled-components/macro";
 
