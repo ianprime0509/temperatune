@@ -17,7 +17,7 @@ import { Temperament } from "temperament";
 
 import { Modal } from "./Modal";
 import { Button } from "./Button";
-import { Panel, PanelRow, PanelGroup } from "./Panel";
+import { Panel, PanelGroup } from "./Panel";
 import SettingsBar from "./SettingsBar";
 
 const SpacedButton = styled(Button)`
@@ -126,7 +126,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
   return (
     <>
       <Panel>
-        <PanelRow>
+        <PanelGroup direction="row">
           <SpacedButton
             fontSizeRem={5}
             onClick={() => setIsNotesModalOpen(true)}
@@ -139,8 +139,8 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
           >
             {selectedOctave}
           </SpacedButton>
-        </PanelRow>
-        <PanelGroup>
+        </PanelGroup>
+        <PanelGroup forceDirection={true} spaceBetween={false}>
           <PlaybackControl isPlaying={isPlaying} onClick={onPlayToggle} />
           <PitchDisplay>{`${pitch} Hz`}</PitchDisplay>
         </PanelGroup>

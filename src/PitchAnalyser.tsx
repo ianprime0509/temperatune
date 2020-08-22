@@ -10,7 +10,7 @@ import { faMusic } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components/macro";
 import { Temperament } from "temperament";
 
-import { Panel } from "./Panel";
+import { Panel, PanelGroup } from "./Panel";
 import SettingsBar from "./SettingsBar";
 
 /** The maximum offset that should still be considered perfect. */
@@ -64,28 +64,16 @@ const PitchAnalyserPanel = styled(Panel)<PitchAnalyserPanelProps>`
       : theme.panelBackgroundColor};
 `;
 
-const NoteDisplayContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1 1;
-  justify-content: center;
-  min-height: 11rem;
-`;
-
 const NoteDisplay = styled.div`
   font-size: 10rem;
-`;
-
-const OffsetDisplayContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  min-height: 3rem;
-  padding: 1rem 0;
+  min-height: 11rem;
+  text-align: center;
 `;
 
 const OffsetDisplay = styled.div`
   font-size: 2rem;
+  min-height: 3rem;
+  text-align: center;
 `;
 
 interface PitchAnalyserProps {
@@ -110,14 +98,12 @@ const PitchAnalyser: FC<PitchAnalyserProps> = ({
     detectedNote={detectedNote}
     detectedOffset={detectedOffset}
   >
-    <NoteDisplayContainer>
+    <PanelGroup forceDirection={true} grow={1} spaceBetween={false}>
       <NoteDisplay>{detectedNote ? detectedNote : "-"}</NoteDisplay>
-    </NoteDisplayContainer>
-    <OffsetDisplayContainer>
       <OffsetDisplay>
         {detectedNote ? getOffsetString(detectedOffset) : ""}
       </OffsetDisplay>
-    </OffsetDisplayContainer>
+    </PanelGroup>
     <SettingsBar
       switchIcon={faMusic}
       onSettingsOpen={onSettingsOpen}

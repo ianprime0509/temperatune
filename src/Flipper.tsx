@@ -32,6 +32,10 @@ const InnerContainer = styled.div<FlipperProps>`
   width: 100%;
 
   ${({ isFlipped }) => isFlipped && "transform: rotateY(180deg);"}
+
+  @media (orientation: landscape) and (max-height: 20rem) {
+    ${({ isFlipped }) => isFlipped && "transform: rotateX(180deg);"}
+  }
 `;
 
 const Face = styled.div`
@@ -48,12 +52,20 @@ const Front = styled(Face).attrs(({ isFlipped }: FlipperProps) => ({
 }))<FlipperProps>`
   transform: rotateY(0deg);
   z-index: 2;
+
+  @media (orientation: landscape) and (max-height: 20rem) {
+    transform: rotateX(0deg);
+  }
 `;
 
 const Back = styled(Face).attrs(({ isFlipped }: FlipperProps) => ({
   "aria-hidden": !isFlipped,
 }))<FlipperProps>`
   transform: rotateY(180deg);
+
+  @media (orientation: landscape) and (max-height: 20rem) {
+    transform: rotateX(180deg);
+  }
 `;
 
 const Flipper = forwardRef<HTMLDivElement, ContainerProps>(

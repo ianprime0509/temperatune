@@ -62,7 +62,7 @@ BaseButton.defaultProps = buttonDefaultProps;
  * button besides just the label.
  */
 export const ButtonLabel = styled.div`
-  flex: 1 1;
+  flex-grow: 1;
 `;
 
 /** An unbordered button. */

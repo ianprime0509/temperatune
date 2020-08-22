@@ -106,7 +106,7 @@ const AppContainer = styled(Flipper)`
   height: 100%;
   width: 100%;
 
-  @media (min-width: 500px) {
+  @media (min-height: 30rem) and (min-width: 25rem) {
     max-height: 25rem;
     max-width: 20rem;
   }
