@@ -18,13 +18,11 @@ import PitchAnalyser, {
 } from "./PitchAnalyser";
 import PitchGenerator, { usePitchGenerator } from "./PitchGenerator";
 import { largeScreen, useDimensions } from "./media";
-import { themes, Theme } from "./theme";
+import { themes, useTheme } from "./theme";
 
 import equalTemperament from "./temperaments/equal.json";
 import quarterCommaMeantone from "./temperaments/quarterCommaMeantone.json";
 import pythagoreanD from "./temperaments/pythagoreanD.json";
-
-const THEME_STORAGE_KEY = "selectedTheme";
 
 const builtInTemperaments = [
   new Temperament(equalTemperament),
@@ -141,15 +139,7 @@ const App: FC = () => {
     }
   };
 
-  const [selectedTheme, setSelectedTheme] = useState(
-    themes.find(
-      (theme) => theme.name === window.localStorage.getItem(THEME_STORAGE_KEY)
-    ) ?? themes[0]
-  );
-  const handleThemeSelect = (theme: Theme) => {
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme.name);
-    setSelectedTheme(theme);
-  };
+  const [theme, setTheme] = useTheme();
 
   const [temperaments, setTemperaments] = useState(builtInTemperaments);
   const [selectedTemperament, setSelectedTemperament] = useState(
@@ -221,7 +211,7 @@ const App: FC = () => {
   return (
     // Using a variant of https://davidwalsh.name/css-flip for the flip
     // animation
-    <ThemeProvider theme={selectedTheme.theme}>
+    <ThemeProvider theme={theme.theme}>
       <GlobalStyle />
       <Background
         appHeight={appHeight}
@@ -267,14 +257,14 @@ const App: FC = () => {
       <AppSettings
         isOpen={areSettingsOpen}
         selectedTemperament={selectedTemperament}
-        selectedTheme={selectedTheme}
+        selectedTheme={theme}
         temperaments={temperaments}
         themes={themes}
         onClose={() => setSettingsOpen(false)}
         onError={handleError}
         onTemperamentAdd={handleTemperamentAdd}
         onTemperamentSelect={handleTemperamentSelect}
-        onThemeSelect={handleThemeSelect}
+        onThemeSelect={setTheme}
       />
       {alerts}
     </ThemeProvider>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { DefaultTheme } from "styled-components";
 
 export interface Theme {
@@ -40,3 +41,26 @@ export const darkTheme: Theme = {
 };
 
 export const themes = [defaultTheme, darkTheme];
+
+const THEME_STORAGE_KEY = "selectedTheme";
+
+// Temporary workaround for apparent ESLint bug; we shouldn't need a separate
+// type definition for this
+type SetTheme = (theme: Theme) => void;
+
+/** A hook to manage the selected theme and update {@link localStorage}. */
+export const useTheme = (): [Theme, SetTheme] => {
+  const [theme, setTheme] = useState(
+    themes.find(
+      (theme) => theme.name === window.localStorage.getItem(THEME_STORAGE_KEY)
+    ) ?? themes[0]
+  );
+
+  return [
+    theme,
+    (theme: Theme) => {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme.name);
+      setTheme(theme);
+    },
+  ];
+};
