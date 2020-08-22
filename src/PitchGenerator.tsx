@@ -191,3 +191,64 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
 };
 
 export default PitchGenerator;
+
+/** A hook to manage pitch playback using an {@link AudioContext}. */
+export const usePitchGenerator = (
+  audioContext: AudioContext,
+  initialPitch: number
+): {
+  isPlaying: boolean;
+  setPitch: (pitch: number) => void;
+  play: () => void;
+  stop: () => void;
+  togglePlay: () => void;
+} => {
+  const oscillator = useRef<OscillatorNode | null>(null);
+  const [pitch, setPitch] = useState(initialPitch);
+  const [isPlaying, setPlaying] = useState(false);
+
+  const updatePitch = (pitch: number) => {
+    if (!oscillator.current) return;
+
+    oscillator.current.frequency.setValueAtTime(
+      pitch,
+      audioContext.currentTime
+    );
+  };
+  const play = () => {
+    if (!oscillator.current) {
+      oscillator.current = audioContext.createOscillator();
+      oscillator.current.start();
+    }
+    if (!isPlaying) {
+      oscillator.current.connect(audioContext.destination);
+      audioContext.resume();
+      setPlaying(true);
+    }
+    updatePitch(pitch);
+  };
+  const stop = () => {
+    if (oscillator.current && isPlaying) {
+      audioContext.suspend();
+      oscillator.current.disconnect(audioContext.destination);
+      setPlaying(false);
+    }
+  };
+
+  return {
+    isPlaying,
+    setPitch: (pitch: number) => {
+      setPitch(pitch);
+      updatePitch(pitch);
+    },
+    play,
+    stop,
+    togglePlay: () => {
+      if (isPlaying) {
+        stop();
+      } else {
+        play();
+      }
+    },
+  };
+};

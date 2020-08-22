@@ -126,7 +126,7 @@ const Background: FC<BackgroundProps> = ({
   }, [isActive]);
 
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive && ripples.current.length === 0) return;
 
     const interval = window.setInterval(() => {
       canvas.current &&
@@ -143,9 +143,9 @@ const Background: FC<BackgroundProps> = ({
           ripples.current.splice(i, 1);
         }
       }
-
-      return () => window.clearInterval(interval);
     }, 1000 / FPS);
+
+    return () => window.clearInterval(interval);
   }, [isActive, appWidth, appHeight]);
 
   return <Canvas ref={canvas} aria-hidden="true" />;

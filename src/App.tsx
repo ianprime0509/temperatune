@@ -1,6 +1,5 @@
-import React, { Component } from "react";
+import React, { useEffect, useRef, useState, FC } from "react";
 import ReactModal from "react-modal";
-import { PitchDetector } from "pitchy";
 import styled, {
   ThemeProvider,
   createGlobalStyle,
@@ -11,10 +10,14 @@ import AppError from "./AppError";
 import AppSettings from "./AppSettings";
 import Background from "./Background";
 import Flipper from "./Flipper";
-import { Alert } from "./Modal";
-import PitchAnalyser, { PERFECT_OFFSET, BAD_OFFSET } from "./PitchAnalyser";
-import PitchGenerator from "./PitchGenerator";
-import { largeScreen } from "./media";
+import { useAlerts } from "./Modal";
+import PitchAnalyser, {
+  PERFECT_OFFSET,
+  BAD_OFFSET,
+  usePitchAnalyser,
+} from "./PitchAnalyser";
+import PitchGenerator, { usePitchGenerator } from "./PitchGenerator";
+import { largeScreen, useDimensions } from "./media";
 import { themes, Theme } from "./theme";
 
 import equalTemperament from "./temperaments/equal.json";
@@ -22,6 +25,12 @@ import quarterCommaMeantone from "./temperaments/quarterCommaMeantone.json";
 import pythagoreanD from "./temperaments/pythagoreanD.json";
 
 const THEME_STORAGE_KEY = "selectedTheme";
+
+const builtInTemperaments = [
+  new Temperament(equalTemperament),
+  new Temperament(quarterCommaMeantone),
+  new Temperament(pythagoreanD),
+];
 
 const GlobalStyle = createGlobalStyle`
   *,
@@ -106,392 +115,170 @@ const AppContainer = styled(Flipper)`
   }
 `;
 
-interface AppAlert {
-  title: string;
-  description: string;
-  details?: string;
-  isOpen: boolean;
-}
-
-interface AppState {
-  alerts: AppAlert[];
-  appHeight: number;
-  appWidth: number;
-  detectedNote: string;
-  detectedOffset: number;
-  isFlipped: boolean;
-  isPlaying: boolean;
-  areSettingsOpen: boolean;
-  selectedTemperament: Temperament;
-  temperaments: Temperament[];
-  selectedNote: string;
-  selectedOctave: number;
-  selectedTheme: Theme;
-}
-
 /** The main application. */
-export default class App extends Component<{}, AppState> {
-  private app: HTMLDivElement | null;
-  private audioContext: AudioContext;
-  private analyser: AnalyserNode | null;
-  private analyserBuffer: Float32Array | null;
-  private pitchDetector: PitchDetector<Float32Array> | null;
-  private oscillator: OscillatorNode;
-  private microphoneSource: MediaStreamAudioSourceNode | null;
-  private inputNoteInterval: number | null;
+const App: FC = () => {
+  useEffect(() => ReactModal.setAppElement("#root"), []);
 
-  constructor(props: {}) {
-    super(props);
-    const equal = new Temperament(equalTemperament);
-    this.state = {
-      /**
-       * The stack of alert messages currently being shown.  Each alert is an
-       * object with keys `title`, `description` and `isOpen`.  Optionally, the
-       * `details` property can provide more information that isn't
-       * automatically shown to the user.
-       */
-      alerts: [],
-      appHeight: 0,
-      appWidth: 0,
-      /** The current detected note. */
-      detectedNote: "",
-      /** The offset of the current pitch from the detected note. */
-      detectedOffset: 0,
-      /** Whether the back panel is being shown. */
-      isFlipped: false,
-      /** Whether the tone is being played in the pitch generator. */
-      isPlaying: false,
-      areSettingsOpen: false,
-      selectedTemperament: equal,
-      /** The installed temperaments. */
-      temperaments: [
-        equal,
-        new Temperament(quarterCommaMeantone),
-        new Temperament(pythagoreanD),
-      ],
-      selectedNote: equal.referenceName,
-      selectedOctave: equal.referenceOctave,
-      selectedTheme:
-        themes.find(
-          (theme) =>
-            theme.name === window.localStorage.getItem(THEME_STORAGE_KEY)
-        ) ?? themes[0],
-    };
+  const appRef = useRef<HTMLDivElement | null>(null);
+  const { width: appWidth, height: appHeight } = useDimensions(appRef);
+  const [isFlipped, setFlipped] = useState(false);
+  const [areSettingsOpen, setSettingsOpen] = useState(false);
 
-    this.app = null;
-    this.audioContext = new AudioContext();
-    this.analyser = null;
-    this.analyserBuffer = null;
-    this.pitchDetector = null;
-    this.oscillator = this.audioContext.createOscillator();
-    this.oscillator.start();
-    this.microphoneSource = null;
-    this.inputNoteInterval = null;
-
-    ReactModal.setAppElement("#root");
-  }
-
-  componentDidMount() {
-    // Handle the resize once at the beginning to get the initial size
-    this.handleResize();
-    window.addEventListener("resize", () => this.handleResize());
-  }
-
-  render() {
-    let isBackgroundActive =
-      this.state.isPlaying ||
-      (this.state.isFlipped && this.state.detectedNote !== null);
-    let wobbliness =
-      this.state.isFlipped && this.state.detectedNote
-        ? getWobbliness(this.state.detectedOffset)
-        : 0;
-
-    return (
-      // Using a variant of https://davidwalsh.name/css-flip for the flip
-      // animation
-      <ThemeProvider theme={this.state.selectedTheme.theme}>
-        <GlobalStyle />
-        <Background
-          appHeight={this.state.appHeight}
-          appWidth={this.state.appWidth}
-          isActive={isBackgroundActive}
-          wobbliness={wobbliness}
-        />
-        <AppContainer
-          ref={(ref) => (this.app = ref)}
-          isFlipped={this.state.isFlipped}
-          front={
-            <PitchGenerator
-              isPlaying={this.state.isPlaying}
-              onNoteSelect={(note) => this.handleNoteSelect(note)}
-              onOctaveSelect={(octave) => this.handleOctaveSelect(octave)}
-              onPlayToggle={() => this.handlePlayToggle()}
-              onSettingsOpen={() => this.handleSettingsOpen()}
-              onViewFlip={() => this.handleViewFlip()}
-              selectedNote={this.state.selectedNote}
-              selectedOctave={this.state.selectedOctave}
-              temperament={this.state.selectedTemperament}
-            />
-          }
-          back={
-            <PitchAnalyser
-              detectedNote={this.state.detectedNote}
-              detectedOffset={this.state.detectedOffset}
-              onSettingsOpen={() => this.handleSettingsOpen()}
-              onViewFlip={() => this.handleViewFlip()}
-            />
-          }
-        />
-        <AppSettings
-          isOpen={this.state.areSettingsOpen}
-          selectedTemperament={this.state.selectedTemperament}
-          selectedTheme={this.state.selectedTheme}
-          temperaments={this.state.temperaments}
-          themes={themes}
-          onClose={() => this.handleSettingsClose()}
-          onError={(e) => this.handleError(e)}
-          onTemperamentAdd={(temperament) =>
-            this.handleTemperamentAdd(temperament)
-          }
-          onTemperamentSelect={(temperament) =>
-            this.handleTemperamentSelect(temperament)
-          }
-          onThemeSelect={(theme) => this.handleThemeSelect(theme)}
-        />
-        {this.state.alerts.map((alert, i) => (
-          <Alert
-            key={i}
-            description={alert.description}
-            details={alert.details}
-            handleAlertClose={() => this.handleAlertClose()}
-            isOpen={alert.isOpen}
-            title={alert.title}
-          />
-        ))}
-      </ThemeProvider>
-    );
-  }
-
-  /** Close the alert on the top of the stack. */
-  private handleAlertClose() {
-    this.setState((state) => {
-      // Actually, all we do is set the `isOpen` property of the top-most alert
-      // to `false` so that its close animation can play.  The closed alerts
-      // will be cleaned up when the next alert is opened.
-      let alerts = state.alerts.slice();
-      alerts[alerts.length - 1].isOpen = false;
-      return { alerts };
-    });
-  }
-
-  private handleAlertOpen(
-    title: string,
-    description: string,
-    details?: string
-  ) {
-    this.setState((state) => {
-      // We also clean up any alerts that have been closed already.
-      let alerts = state.alerts.filter((alert) => alert.isOpen);
-      return {
-        alerts: alerts.concat([{ title, description, details, isOpen: true }]),
-      };
-    });
-  }
-
-  private handleError(error: Error) {
-    if (error instanceof AppError) {
-      this.handleAlertOpen("Error", error.message, error.details);
+  const { alerts, addAlert } = useAlerts();
+  const handleError = (err: any) => {
+    if (err instanceof AppError) {
+      addAlert({
+        title: "Error",
+        description: err.message,
+        details: err.details,
+      });
     } else {
-      this.handleAlertOpen(
-        "Error",
-        "An unexpected error occurred.",
-        error.toString()
-      );
+      addAlert({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        details: String(err),
+      });
     }
-  }
+  };
 
-  private handleNoteSelect(note: string) {
-    this.setState({ selectedNote: note }, () => this.soundUpdate());
-  }
-
-  private handleOctaveSelect(octave: number) {
-    this.setState({ selectedOctave: octave }, () => this.soundUpdate());
-  }
-
-  private handlePlayToggle() {
-    this.setState((state) => {
-      if (state.isPlaying) {
-        this.soundStop();
-      } else {
-        this.soundPlay();
-      }
-
-      return {
-        isPlaying: !state.isPlaying,
-      };
-    });
-  }
-
-  /** Handle the window (viewport) resizing to update the canvas background. */
-  private handleResize() {
-    if (!this.app) return;
-
-    let appBounds = this.app.getBoundingClientRect();
-    this.setState({
-      appHeight: appBounds.height,
-      appWidth: appBounds.width,
-    });
-  }
-
-  private handleSettingsClose() {
-    this.setState({ areSettingsOpen: false });
-  }
-
-  private handleSettingsOpen() {
-    this.setState({ areSettingsOpen: true });
-  }
-
-  private handleTemperamentAdd(temperament: Temperament) {
-    // We aren't allowed to have a temperament with the same name as some
-    // other temperament, or it would cause confusion.
-    let sameName = (t: Temperament) => t.name === temperament.name;
-    if (this.state.temperaments.some(sameName)) {
-      this.handleAlertOpen(
-        "Error",
-        `A temperament with the name '${temperament.name}' already exists.`
-      );
-      return;
-    }
-
-    this.setState(
-      (state) => ({ temperaments: [...state.temperaments, temperament] }),
-      () => this.handleTemperamentSelect(temperament)
-    );
-  }
-
-  private handleTemperamentSelect(temperament: Temperament) {
-    this.setState(
-      (state) => ({
-        selectedTemperament: temperament,
-        // Reuse the current selected note (if possible) and octave
-        selectedNote: temperament.noteNames.some(
-          (note) => note === state.selectedNote
-        )
-          ? state.selectedNote
-          : temperament.referenceName,
-      }),
-      () => this.soundUpdate()
-    );
-  }
-
-  private handleThemeSelect(theme: Theme) {
+  const [selectedTheme, setSelectedTheme] = useState(
+    themes.find(
+      (theme) => theme.name === window.localStorage.getItem(THEME_STORAGE_KEY)
+    ) ?? themes[0]
+  );
+  const handleThemeSelect = (theme: Theme) => {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme.name);
-    this.setState({ selectedTheme: theme });
-  }
+    setSelectedTheme(theme);
+  };
 
-  private handleViewFlip() {
-    this.setState(({ isFlipped, isPlaying }) => {
-      if (isFlipped) {
-        this.audioContext.suspend();
-        if (this.inputNoteInterval !== null) {
-          // We don't need to be updating the microphone input note if the
-          // analyser view isn't open.
-          window.clearInterval(this.inputNoteInterval);
-          this.inputNoteInterval = null;
-          if (this.microphoneSource) {
-            this.analyser && this.microphoneSource.disconnect(this.analyser);
-            // By stopping the microphone source tracks, we signal to the browser
-            // that we won't be using the microphone until later (this seems to
-            // have an impact on the volume type chosen for Android)
-            this.microphoneSource.mediaStream
-              .getTracks()
-              .forEach((track) => track.stop());
-          }
-        }
-        return { isFlipped: false, isPlaying: false };
-      } else {
-        // We don't want the tuning note to keep playing when we switch over to
-        // analyser mode.
-        if (isPlaying) {
-          this.soundStop();
-        }
-        // Try to obtain the microphone source and start updating the input
-        // note.
-        this.microphoneSourceObtain()
-          .then((microphoneSource) => {
-            this.microphoneSource = microphoneSource;
-            this.analyser = this.audioContext.createAnalyser();
-            this.analyserBuffer = new Float32Array(this.analyser.fftSize);
-            this.pitchDetector = PitchDetector.forFloat32Array(
-              this.analyserBuffer.length
-            );
-            this.microphoneSource.connect(this.analyser);
-            this.audioContext.resume();
-            this.inputNoteInterval = window.setInterval(
-              () => this.inputNoteUpdate(),
-              100
-            );
-          })
-          .catch((err) =>
-            this.handleAlertOpen(
-              "Error",
-              "Could not get audio input.",
-              String(err)
-            )
-          );
-        return { isFlipped: true, isPlaying: false };
-      }
-    });
-  }
-
-  /** Update the input note from the microphone input. */
-  private inputNoteUpdate() {
-    if (!this.analyser || !this.analyserBuffer || !this.pitchDetector) return;
-
-    this.analyser.getFloatTimeDomainData(this.analyserBuffer);
-    let [pitch, clarity] = this.pitchDetector.findPitch(
-      this.analyserBuffer,
-      this.audioContext.sampleRate
-    );
-    if (clarity < 0.8) {
-      this.setState({ detectedNote: "", detectedOffset: 0 });
+  const [temperaments, setTemperaments] = useState(builtInTemperaments);
+  const [selectedTemperament, setSelectedTemperament] = useState(
+    temperaments[0]
+  );
+  const [selectedNote, setSelectedNote] = useState(
+    selectedTemperament.referenceName
+  );
+  const [selectedOctave, setSelectedOctave] = useState(
+    selectedTemperament.referenceOctave
+  );
+  const handleTemperamentSelect = (temperament: Temperament) => {
+    setSelectedTemperament(temperament);
+    const note =
+      temperament.noteNames.find((note) => note === selectedNote) ??
+      temperament.referenceName;
+    setSelectedNote(note);
+    generator.setPitch(temperament.getPitch(note, selectedOctave));
+  };
+  const handleTemperamentAdd = (temperament: Temperament) => {
+    // We aren't allowed to have a temperament with the same name as some other
+    // temperament or it would cause confusion
+    const sameName = (t: Temperament) => t.name === temperament.name;
+    if (temperaments.some(sameName)) {
+      addAlert({
+        title: "Error",
+        description: `A temperament with the name '${temperament.name}' already exists.`,
+      });
       return;
     }
-    let [note, offset] = this.state.selectedTemperament.getNoteNameFromPitch(
-      pitch
-    );
+    setTemperaments([...temperaments, temperament]);
 
-    this.setState({ detectedNote: note, detectedOffset: offset });
-  }
+    handleTemperamentSelect(temperament);
+  };
 
-  /** Attempt to get microphone access and set up the source node. */
-  private async microphoneSourceObtain(): Promise<MediaStreamAudioSourceNode> {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    return this.audioContext.createMediaStreamSource(stream);
-  }
+  const audioContext = useRef(new AudioContext());
+  const generator = usePitchGenerator(
+    audioContext.current,
+    selectedTemperament.getPitch(selectedNote, selectedOctave)
+  );
+  const analyser = usePitchAnalyser(audioContext.current, (err) =>
+    addAlert({
+      title: "Error",
+      description: "Could not get audio input.",
+      details: String(err),
+    })
+  );
+  const [detectedNote, detectedOffset] =
+    analyser.detectedPitch !== null
+      ? selectedTemperament.getNoteNameFromPitch(analyser.detectedPitch)
+      : ["", 0];
 
-  /** Begin playing the tuning pitch. */
-  private soundPlay() {
-    this.soundUpdate();
-    this.oscillator.connect(this.audioContext.destination);
-    this.audioContext.resume();
-  }
+  const flip = () => {
+    if (isFlipped) {
+      analyser.stop();
+      setFlipped(false);
+    } else {
+      generator.stop();
+      analyser.listen();
+      setFlipped(true);
+    }
+  };
 
-  /** Stop playing the tuning pitch. */
-  private soundStop() {
-    this.audioContext.suspend();
-    this.oscillator.disconnect(this.audioContext.destination);
-  }
+  const isBackgroundActive =
+    generator.isPlaying || (isFlipped && detectedNote !== "");
+  const wobbliness =
+    isFlipped && detectedNote ? getWobbliness(detectedOffset) : 0;
 
-  /** Update the frequency of the tuning pitch. */
-  private soundUpdate() {
-    let pitch = this.state.selectedTemperament.getPitch(
-      this.state.selectedNote,
-      this.state.selectedOctave
-    );
-    this.oscillator.frequency.setValueAtTime(
-      pitch,
-      this.audioContext.currentTime
-    );
-  }
-}
+  return (
+    // Using a variant of https://davidwalsh.name/css-flip for the flip
+    // animation
+    <ThemeProvider theme={selectedTheme.theme}>
+      <GlobalStyle />
+      <Background
+        appHeight={appHeight}
+        appWidth={appWidth}
+        isActive={isBackgroundActive}
+        wobbliness={wobbliness}
+      />
+      <AppContainer
+        ref={appRef}
+        isFlipped={isFlipped}
+        front={
+          <PitchGenerator
+            isPlaying={generator.isPlaying}
+            onNoteSelect={(note) => {
+              setSelectedNote(note);
+              generator.setPitch(
+                selectedTemperament.getPitch(note, selectedOctave)
+              );
+            }}
+            onOctaveSelect={(octave) => {
+              setSelectedOctave(octave);
+              generator.setPitch(
+                selectedTemperament.getPitch(selectedNote, octave)
+              );
+            }}
+            onPlayToggle={() => generator.togglePlay()}
+            onSettingsOpen={() => setSettingsOpen(true)}
+            onViewFlip={flip}
+            selectedNote={selectedNote}
+            selectedOctave={selectedOctave}
+            temperament={selectedTemperament}
+          />
+        }
+        back={
+          <PitchAnalyser
+            detectedNote={detectedNote}
+            detectedOffset={detectedOffset}
+            onSettingsOpen={() => setSettingsOpen(true)}
+            onViewFlip={flip}
+          />
+        }
+      />
+      <AppSettings
+        isOpen={areSettingsOpen}
+        selectedTemperament={selectedTemperament}
+        selectedTheme={selectedTheme}
+        temperaments={temperaments}
+        themes={themes}
+        onClose={() => setSettingsOpen(false)}
+        onError={handleError}
+        onTemperamentAdd={handleTemperamentAdd}
+        onTemperamentSelect={handleTemperamentSelect}
+        onThemeSelect={handleThemeSelect}
+      />
+      {alerts}
+    </ThemeProvider>
+  );
+};
+
+export default App;

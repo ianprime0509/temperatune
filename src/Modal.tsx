@@ -3,6 +3,7 @@ import ReactModal from "react-modal";
 import styled, { createGlobalStyle } from "styled-components/macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import cloneDeep from "lodash.clonedeep";
 import uniqueId from "lodash.uniqueid";
 
 import { BorderedButton, ButtonLabel, ListButton } from "./Button";
@@ -155,13 +156,17 @@ const AlertDetails = styled.p`
   user-select: text;
 `;
 
-interface AlertProps {
+/** The contents of an alert. */
+export interface AlertContents {
+  title: string;
   description: string;
   details?: string;
-  isOpen: boolean;
-  title: string;
+}
 
-  handleAlertClose?: () => void;
+export interface AlertProps extends AlertContents {
+  isOpen: boolean;
+
+  onRequestClose?: () => void;
 }
 
 /**
@@ -170,9 +175,9 @@ interface AlertProps {
 export const Alert: FC<AlertProps> = ({
   description,
   details,
-  handleAlertClose,
   isOpen,
   title,
+  onRequestClose,
 }) => {
   const [areDetailsExpanded, setAreDetailsExpanded] = useState(false);
   const descriptionId = uniqueId("alert-description-");
@@ -185,7 +190,7 @@ export const Alert: FC<AlertProps> = ({
       isOpen={isOpen}
       title={title}
       onAfterOpen={() => okButtonRef.current && okButtonRef.current.focus()}
-      onRequestClose={handleAlertClose}
+      onRequestClose={onRequestClose}
     >
       <AlertContent>
         <AlertDescription id={descriptionId}>
@@ -208,11 +213,36 @@ export const Alert: FC<AlertProps> = ({
         <BorderedButton
           ref={okButtonRef}
           fontSizeRem={1.5}
-          onClick={handleAlertClose}
+          onClick={onRequestClose}
         >
           OK
         </BorderedButton>
       </AlertContent>
     </Modal>
   );
+};
+
+/** A hook that manages a stack of alerts within an application. */
+export const useAlerts = (): {
+  alerts: ReactNode[];
+  addAlert: (contents: AlertContents) => void;
+} => {
+  const [alertProps, setAlertProps] = useState<AlertProps[]>([]);
+  const alertClose = () =>
+    setAlertProps((alertProps) => {
+      const newAlertProps = cloneDeep(alertProps);
+      newAlertProps[newAlertProps.length - 1].isOpen = false;
+      return newAlertProps;
+    });
+
+  return {
+    alerts: alertProps.map((props) => <Alert {...props} />),
+    addAlert: (contents: AlertContents) => {
+      setAlertProps((alertProps) =>
+        alertProps
+          .filter((alert) => alert.isOpen)
+          .concat({ ...contents, isOpen: true, onRequestClose: alertClose })
+      );
+    },
+  };
 };
