@@ -59,14 +59,16 @@ const PitchAnalyserPanel = styled(Panel)<PitchAnalyserPanelProps>`
 
 const NoteDisplay = styled.div`
   font-size: 10rem;
-  min-height: 11rem;
+  min-height: 13rem;
   text-align: center;
+  vertical-align: middle;
 `;
 
 const OffsetDisplay = styled.div`
   font-size: 2rem;
   min-height: 3rem;
   text-align: center;
+  vertical-align: middle;
 `;
 
 interface PitchAnalyserProps {
