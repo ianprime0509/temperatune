@@ -161,7 +161,7 @@ export const usePitchAnalyser = (
     if (updateInterval.current !== null) {
       window.clearInterval(updateInterval.current);
     }
-    updateInterval.current = window.setInterval(update, 100);
+    updateInterval.current = window.setInterval(update, 150);
   };
 
   const stop = () => {
