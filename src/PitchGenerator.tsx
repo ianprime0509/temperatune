@@ -1,5 +1,4 @@
 import React, { useRef, useState, FC } from "react";
-import styled from "styled-components/macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMicrophone,
@@ -12,27 +11,7 @@ import { Modal } from "./Modal";
 import { Button, ButtonGroup } from "./Button";
 import { Panel, PanelGroup } from "./Panel";
 import SettingsBar from "./SettingsBar";
-
-const PitchDisplay = styled.div`
-  font-size: 2rem;
-  height: 2rem;
-  margin: 1rem;
-  min-height: 2rem;
-  text-align: center;
-  user-select: none;
-`;
-
-interface PlaybackControlProps {
-  isPlaying: boolean;
-  onClick?: () => void;
-}
-
-/** The playback control. */
-const PlaybackControl: FC<PlaybackControlProps> = ({ isPlaying, onClick }) => (
-  <Button isHoverable={false} onClick={onClick}>
-    <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size="7x" />
-  </Button>
-);
+import TextBlock from "./TextBlock";
 
 interface PitchGeneratorProps {
   isPlaying: boolean;
@@ -83,22 +62,28 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
         <PanelGroup direction="row">
           <Button
             data-testid="generator-selected-note"
-            fontSizeRem={5}
+            fontSize="x-large"
             onClick={() => setIsNotesModalOpen(true)}
           >
             {selectedNote}
           </Button>
           <Button
             data-testid="generator-selected-octave"
-            fontSizeRem={5}
+            fontSize="x-large"
             onClick={() => setIsOctavesModalOpen(true)}
           >
             {selectedOctave}
           </Button>
         </PanelGroup>
-        <PanelGroup forceDirection={true} spaceBetween={false}>
-          <PlaybackControl isPlaying={isPlaying} onClick={onPlayToggle} />
-          <PitchDisplay data-testid="generator-pitch-display">{`${pitch} Hz`}</PitchDisplay>
+        <PanelGroup forceDirection={true} grow={1} spaceBetween={false}>
+          <Button isHoverable={false} fontSize="xx-large" onClick={onPlayToggle}>
+            <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+          </Button>
+          <TextBlock
+            data-testid="generator-pitch-display"
+            fontSize="large"
+            selectable={false}
+          >{`${pitch} Hz`}</TextBlock>
         </PanelGroup>
         <SettingsBar
           switchIcon={faMicrophone}
@@ -121,7 +106,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
                 if (note === selectedNote) selectedNoteRef.current = ref;
               }}
               key={note}
-              fontSizeRem={4}
+              fontSize="x-large"
               isSelected={note === selectedNote}
               onClick={() => handleNoteSelect(note)}
             >
@@ -146,7 +131,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
                 if (octave === selectedOctave) selectedOctaveRef.current = ref;
               }}
               key={octave}
-              fontSizeRem={4}
+              fontSize="x-large"
               isSelected={octave === selectedOctave}
               onClick={() => handleOctaveSelect(octave)}
             >

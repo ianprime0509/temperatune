@@ -8,6 +8,7 @@ import uniqueId from "lodash.uniqueid";
 
 import { Button, ButtonLabel, ListButton } from "./Button";
 import { Caret, Content as ExpandingContent } from "./Expand";
+import TextBlock from "./TextBlock";
 
 const ModalOverlay = createGlobalStyle`
   .modal-overlay {
@@ -66,15 +67,11 @@ const StyledModal = styled(
   }
 `;
 
-const ModalTitlebar = styled.div`
+const ModalTitlebar = styled(TextBlock).attrs({
+  align: "left",
+  fontSize: "large",
+})`
   border-bottom: 1px solid ${({ theme }) => theme.textColor};
-  height: 2.5rem;
-`;
-
-const ModalTitle = styled.span`
-  font-size: 1.5rem;
-  line-height: 2rem;
-  vertical-align: middle;
 `;
 
 const ModalTitlebarButton = styled(FontAwesomeIcon)`
@@ -123,11 +120,10 @@ export const Modal: FC<ModalPropTypes> = ({
     >
       <ModalOverlay />
       <ModalTitlebar>
-        <ModalTitle id={titleId}>{title}</ModalTitle>
+        <span id={titleId}>{title}</span>
         <ModalTitlebarButton
           role="button"
           icon={faTimes}
-          size="2x"
           className="Modal-close"
           onClick={onRequestClose}
         />
@@ -211,7 +207,7 @@ export const Alert: FC<AlertProps> = ({
             </>
           )}
         </AlertDescription>
-        <Button ref={okButtonRef} fontSizeRem={1.5} onClick={onRequestClose}>
+        <Button ref={okButtonRef} fontSize="large" onClick={onRequestClose}>
           OK
         </Button>
       </AlertContent>

@@ -5,6 +5,7 @@ import styled from "styled-components/macro";
 
 import { Panel, PanelGroup } from "./Panel";
 import SettingsBar from "./SettingsBar";
+import TextBlock from "./TextBlock";
 
 /** The maximum offset that should still be considered perfect. */
 export const PERFECT_OFFSET = 5;
@@ -57,20 +58,6 @@ const PitchAnalyserPanel = styled(Panel)<PitchAnalyserPanelProps>`
       : theme.panelBackgroundColor};
 `;
 
-const NoteDisplay = styled.div`
-  font-size: 10rem;
-  min-height: 13rem;
-  text-align: center;
-  vertical-align: middle;
-`;
-
-const OffsetDisplay = styled.div`
-  font-size: 2rem;
-  min-height: 3rem;
-  text-align: center;
-  vertical-align: middle;
-`;
-
 interface PitchAnalyserProps {
   detectedNote: string;
   detectedOffset: number;
@@ -93,12 +80,20 @@ const PitchAnalyser: FC<PitchAnalyserProps> = ({
     detectedOffset={detectedOffset}
   >
     <PanelGroup forceDirection={true} grow={1} spaceBetween={false}>
-      <NoteDisplay data-testid="analyser-note-display">
+      <TextBlock
+        data-testid="analyser-note-display"
+        fontSize="xx-large"
+        selectable={false}
+      >
         {detectedNote ? detectedNote : "-"}
-      </NoteDisplay>
-      <OffsetDisplay data-testid="analyser-offset-display">
+      </TextBlock>
+      <TextBlock
+        data-testid="analyser-offset-display"
+        fontSize="large"
+        selectable={false}
+      >
         {detectedNote ? getOffsetString(detectedOffset) : ""}
-      </OffsetDisplay>
+      </TextBlock>
     </PanelGroup>
     <SettingsBar
       switchIcon={faMusic}

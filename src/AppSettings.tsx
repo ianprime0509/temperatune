@@ -101,7 +101,7 @@ const SettingsItem: FC<SettingsItemProps> = ({
     <>
       <ListButton
         ref={setReferenceElement}
-        fontSizeRem={1.5}
+        fontSize="large"
         isSelected={isSelected}
         onBlur={() => setIsTooltipOpen(false)}
         onClick={onClick}
@@ -142,7 +142,7 @@ const PitchInput = styled.input.attrs({
   background: ${({ theme }) => theme.backgroundColor};
   border: 2px solid ${({ theme }) => theme.borderColor};
   color: ${({ theme }) => theme.textColor};
-  font-size: 1.5rem;
+  font-size: ${({ theme }) => `${theme.fontSizes.large}rem`};
   margin: 0 0.5rem;
   text-align: right;
   width: 5rem;

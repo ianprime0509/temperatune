@@ -51,6 +51,7 @@ const GlobalStyle = createGlobalStyle`
      */
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
       Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    font-size: ${({ theme }) => `${theme.fontSizes.normal}rem`};
     height: 100%;
     left: 0;
     margin: 0;

@@ -1,5 +1,7 @@
 import "styled-components";
 
+import { FontSize } from "./theme";
+
 declare module "styled-components" {
   export interface DefaultTheme {
     accentColor: string;
@@ -13,5 +15,6 @@ declare module "styled-components" {
     shadowColor: string;
     textColor: string;
     tuneBackgroundLuminosity: string;
+    fontSizes: Record<FontSize, number>;
   }
 }

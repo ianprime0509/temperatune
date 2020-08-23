@@ -1,14 +1,26 @@
 import { useState } from "react";
 import { DefaultTheme } from "styled-components";
 
+export type FontSize = "normal" | "large" | "x-large" | "xx-large";
+
 export interface Theme {
   name: string;
   theme: DefaultTheme;
 }
 
+const commonTheme = {
+  fontSizes: {
+    normal: 1,
+    large: 1.5,
+    "x-large": 4,
+    "xx-large": 6,
+  },
+} as const;
+
 export const defaultTheme: Theme = {
   name: "Light",
   theme: {
+    ...commonTheme,
     accentColor: "#1e9be9",
     backgroundColor: "#f0f0f0",
     borderColor: "#ccc",
@@ -26,6 +38,7 @@ export const defaultTheme: Theme = {
 export const darkTheme: Theme = {
   name: "Dark",
   theme: {
+    ...commonTheme,
     accentColor: "#004f9d",
     backgroundColor: "#3f3f3f",
     borderColor: "#444",

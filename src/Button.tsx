@@ -1,7 +1,9 @@
 import styled, { css } from "styled-components/macro";
 
-interface ButtonProps {
-  fontSizeRem?: number;
+import { FontSize } from "./theme";
+
+export interface ButtonProps {
+  fontSize?: FontSize;
   isHoverable?: boolean;
   isSelected?: boolean;
 
@@ -26,9 +28,11 @@ export const Button = styled.button<ButtonProps>`
   color: ${({ theme }) => theme.textColor};
   cursor: pointer;
   display: flex;
-  font-size: ${({ fontSizeRem = 1 }) => `${fontSizeRem}rem`};
+  font-size: ${({ fontSize = "normal", theme }) =>
+    `${theme.fontSizes[fontSize]}rem`};
   justify-content: center;
-  line-height: ${({ fontSizeRem = 1 }) => `${fontSizeRem}rem`};
+  line-height: ${({ fontSize = "normal", theme }) =>
+    `${theme.fontSizes[fontSize]}rem`};
   margin: 0;
   outline: none;
   padding: 0.5rem;
