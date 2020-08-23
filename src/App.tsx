@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, FC } from "react";
 import ReactModal from "react-modal";
+import { useMediaQuery } from "react-responsive";
 import styled, {
   ThemeProvider,
   createGlobalStyle,
@@ -209,17 +210,21 @@ const App: FC = () => {
   const wobbliness =
     isFlipped && detectedNote ? getWobbliness(detectedOffset) : 0;
 
+  const isLargeScreen = useMediaQuery({ query: largeScreen });
+
   return (
     // Using a variant of https://davidwalsh.name/css-flip for the flip
     // animation
     <ThemeProvider theme={theme.theme}>
       <GlobalStyle />
-      <Background
-        appHeight={appHeight}
-        appWidth={appWidth}
-        isActive={isBackgroundActive}
-        wobbliness={wobbliness}
-      />
+      {isLargeScreen && (
+        <Background
+          appHeight={appHeight}
+          appWidth={appWidth}
+          isActive={isBackgroundActive}
+          wobbliness={wobbliness}
+        />
+      )}
       <AppContainer
         ref={appRef}
         isFlipped={isFlipped}

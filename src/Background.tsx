@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, FC } from "react";
 import styled from "styled-components/macro";
 
-import { largeScreen } from "./media";
-
 /** The FPS to use with the background animation. */
 const FPS = 20;
 /** The number of ripples to create each second. */
@@ -14,19 +12,10 @@ const DISAPPEAR_RATE = 0.025;
 const GROW_RATE = 1;
 
 const Canvas = styled.canvas`
-  /*
-   * Don't show the canvas background on small screens where it won't be
-   * visible.
-   */
-  display: none;
   left: 0;
   position: fixed;
   top: 0;
   z-index: -100;
-
-  @media ${largeScreen} {
-    display: block;
-  }
 `;
 
 interface Ripple {
