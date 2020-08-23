@@ -113,6 +113,8 @@ const AppContainer = styled(Flipper)`
   }
 `;
 
+const audioContext = new AudioContext();
+
 /** The main application. */
 const App: FC = () => {
   useEffect(() => ReactModal.setAppElement("#root"), []);
@@ -175,12 +177,11 @@ const App: FC = () => {
     handleTemperamentSelect(temperament);
   };
 
-  const audioContext = useRef(new AudioContext());
   const generator = usePitchGenerator(
-    audioContext.current,
+    audioContext,
     selectedTemperament.getPitch(selectedNote, selectedOctave)
   );
-  const analyser = usePitchAnalyser(audioContext.current, (err) =>
+  const analyser = usePitchAnalyser(audioContext, (err) =>
     addAlert({
       title: "Error",
       description: "Could not get audio input.",
