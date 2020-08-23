@@ -6,7 +6,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import cloneDeep from "lodash.clonedeep";
 import uniqueId from "lodash.uniqueid";
 
-import { BorderedButton, ButtonLabel, ListButton } from "./Button";
+import { Button, ButtonLabel, ListButton } from "./Button";
 import { Caret, Content as ExpandingContent } from "./Expand";
 
 const ModalOverlay = createGlobalStyle`
@@ -87,6 +87,7 @@ const ModalChildren = styled.div`
   max-height: calc(100 * var(--vh) - 3rem);
   max-width: 100vw;
   overflow-y: auto;
+  padding: 0.5rem 0;
 `;
 
 interface ModalPropTypes {
@@ -210,13 +211,9 @@ export const Alert: FC<AlertProps> = ({
             </>
           )}
         </AlertDescription>
-        <BorderedButton
-          ref={okButtonRef}
-          fontSizeRem={1.5}
-          onClick={onRequestClose}
-        >
+        <Button ref={okButtonRef} fontSizeRem={1.5} onClick={onRequestClose}>
           OK
-        </BorderedButton>
+        </Button>
       </AlertContent>
     </Modal>
   );

@@ -9,40 +9,9 @@ import {
 import { Temperament } from "temperament";
 
 import { Modal } from "./Modal";
-import { Button } from "./Button";
+import { Button, ButtonGroup } from "./Button";
 import { Panel, PanelGroup } from "./Panel";
 import SettingsBar from "./SettingsBar";
-
-const SpacedButton = styled(Button)`
-  margin: 0.5rem;
-  padding: 0.5rem;
-`;
-
-const ButtonGroup = styled.div`
-  display: grid;
-  justify-items: center;
-
-  ${Button} {
-    width: 100%;
-  }
-`;
-
-const GridButtonGroup = styled(ButtonGroup)`
-  @media (min-width: 400px) {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 400px;
-  }
-
-  @media (min-width: 600px) {
-    grid-template-columns: repeat(3, 1fr);
-    max-width: 600px;
-  }
-
-  @media (min-width: 800px) {
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 800px;
-  }
-`;
 
 const PitchDisplay = styled.div`
   font-size: 2rem;
@@ -112,20 +81,20 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
     <>
       <Panel>
         <PanelGroup direction="row">
-          <SpacedButton
+          <Button
             data-testid="generator-selected-note"
             fontSizeRem={5}
             onClick={() => setIsNotesModalOpen(true)}
           >
             {selectedNote}
-          </SpacedButton>
-          <SpacedButton
+          </Button>
+          <Button
             data-testid="generator-selected-octave"
             fontSizeRem={5}
             onClick={() => setIsOctavesModalOpen(true)}
           >
             {selectedOctave}
-          </SpacedButton>
+          </Button>
         </PanelGroup>
         <PanelGroup forceDirection={true} spaceBetween={false}>
           <PlaybackControl isPlaying={isPlaying} onClick={onPlayToggle} />
@@ -145,9 +114,9 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
         }
         onRequestClose={() => setIsNotesModalOpen(false)}
       >
-        <GridButtonGroup data-testid="generator-note-select">
+        <ButtonGroup data-testid="generator-note-select">
           {temperament.noteNames.map((note) => (
-            <SpacedButton
+            <Button
               ref={(ref: HTMLButtonElement) => {
                 if (note === selectedNote) selectedNoteRef.current = ref;
               }}
@@ -157,9 +126,9 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
               onClick={() => handleNoteSelect(note)}
             >
               {note}
-            </SpacedButton>
+            </Button>
           ))}
-        </GridButtonGroup>
+        </ButtonGroup>
       </Modal>
       <Modal
         isOpen={isOctavesModalOpen}
@@ -170,9 +139,9 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
         }
         onRequestClose={() => setIsOctavesModalOpen(false)}
       >
-        <ButtonGroup data-testid="generator-octave-select">
+        <ButtonGroup data-testid="generator-octave-select" columns={1}>
           {temperament.getOctaveRange(2).map((octave) => (
-            <SpacedButton
+            <Button
               ref={(ref: HTMLButtonElement) => {
                 if (octave === selectedOctave) selectedOctaveRef.current = ref;
               }}
@@ -182,7 +151,7 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
               onClick={() => handleOctaveSelect(octave)}
             >
               {octave}
-            </SpacedButton>
+            </Button>
           ))}
         </ButtonGroup>
       </Modal>
