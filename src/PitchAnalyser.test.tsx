@@ -1,7 +1,9 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
+import { ThemeProvider } from "styled-components";
 
+import { defaultTheme } from "./theme";
 import PitchAnalyser from "./PitchAnalyser";
 
 let container: HTMLDivElement;
@@ -18,7 +20,12 @@ afterEach(() => {
 
 test("displays the detected note and offset", () => {
   act(() => {
-    render(<PitchAnalyser detectedNote="A" detectedOffset={0} />, container);
+    render(
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchAnalyser detectedNote="A" detectedOffset={0} />
+      </ThemeProvider>,
+      container
+    );
   });
 
   expect(
@@ -31,7 +38,12 @@ test("displays the detected note and offset", () => {
   ).toBe("In tune");
 
   act(() => {
-    render(<PitchAnalyser detectedNote="C♯" detectedOffset={18} />, container);
+    render(
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchAnalyser detectedNote="C♯" detectedOffset={18} />
+      </ThemeProvider>,
+      container
+    );
   });
 
   expect(
@@ -44,7 +56,12 @@ test("displays the detected note and offset", () => {
   ).toBe("Sharp by 18 cents");
 
   act(() => {
-    render(<PitchAnalyser detectedNote="E♭" detectedOffset={-25} />, container);
+    render(
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchAnalyser detectedNote="E♭" detectedOffset={-25} />
+      </ThemeProvider>,
+      container
+    );
   });
 
   expect(
@@ -57,7 +74,12 @@ test("displays the detected note and offset", () => {
   ).toBe("Flat by 25 cents");
 
   act(() => {
-    render(<PitchAnalyser detectedNote="" detectedOffset={0} />, container);
+    render(
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchAnalyser detectedNote="" detectedOffset={0} />
+      </ThemeProvider>,
+      container
+    );
   });
 
   expect(

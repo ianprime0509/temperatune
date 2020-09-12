@@ -1,8 +1,10 @@
 import React, { ReactNode } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
+import { ThemeProvider } from "styled-components";
 import { Temperament } from "temperament";
 
+import { defaultTheme } from "./theme";
 import PitchGenerator from "./PitchGenerator";
 
 import equalTemperament from "./temperaments/equal.json";
@@ -28,12 +30,14 @@ afterEach(() => {
 test("displays the currently selected note, octave and pitch", () => {
   act(() => {
     render(
-      <PitchGenerator
-        isPlaying={false}
-        selectedNote="A"
-        selectedOctave={4}
-        temperament={temperament}
-      />,
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchGenerator
+          isPlaying={false}
+          selectedNote="A"
+          selectedOctave={4}
+          temperament={temperament}
+        />
+      </ThemeProvider>,
       container
     );
   });
@@ -53,12 +57,14 @@ test("displays the currently selected note, octave and pitch", () => {
 
   act(() => {
     render(
-      <PitchGenerator
-        isPlaying={false}
-        selectedNote="C"
-        selectedOctave={5}
-        temperament={temperament}
-      />,
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchGenerator
+          isPlaying={false}
+          selectedNote="C"
+          selectedOctave={5}
+          temperament={temperament}
+        />
+      </ThemeProvider>,
       container
     );
   });
@@ -78,12 +84,14 @@ test("displays the currently selected note, octave and pitch", () => {
 
   act(() => {
     render(
-      <PitchGenerator
-        isPlaying={false}
-        selectedNote="F♯"
-        selectedOctave={3}
-        temperament={temperament}
-      />,
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchGenerator
+          isPlaying={false}
+          selectedNote="F♯"
+          selectedOctave={3}
+          temperament={temperament}
+        />
+      </ThemeProvider>,
       container
     );
   });
@@ -105,12 +113,14 @@ test("displays the currently selected note, octave and pitch", () => {
 test("displays selectable notes and octaves in modals", () => {
   act(() => {
     render(
-      <PitchGenerator
-        isPlaying={false}
-        selectedNote="A"
-        selectedOctave={4}
-        temperament={temperament}
-      />,
+      <ThemeProvider theme={defaultTheme.theme}>
+        <PitchGenerator
+          isPlaying={false}
+          selectedNote="A"
+          selectedOctave={4}
+          temperament={temperament}
+        />
+      </ThemeProvider>,
       container
     );
   });
