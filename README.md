@@ -40,12 +40,11 @@ You will find the resulting files in the `build` directory.
 
 The part of Temperatune that handles temperament definitions is actually a
 separate module, called simply
-"[temperament](https://git.ianjohnson.xyz/temperament)". Please see its
-[README](https://git.ianjohnson.xyz/temperament/tree/README.md) for detailed
-usage on how to write your own temperaments or how to use the same backend in
-your own project. For your reference, the JSON files corresponding to the
-built-in temperaments can be found under the `src/temperaments` directory of
-this project.
+"[temperament](https://git.ianjohnson.xyz/ian/temperament)". Please see its
+README for detailed usage on how to write your own temperaments or how to use
+the same backend in your own project. For your reference, the JSON files
+corresponding to the built-in temperaments can be found under the
+`src/temperaments` directory of this project.
 
 ## License
 
