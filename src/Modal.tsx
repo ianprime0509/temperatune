@@ -65,6 +65,10 @@ const StyledModal = styled(
   &.modal-before-close {
     opacity: 0;
   }
+
+  @media(min-width: 600px) {
+    min-width: 500px;
+  }
 `;
 
 const ModalTitlebar = styled(TextBlock).attrs({

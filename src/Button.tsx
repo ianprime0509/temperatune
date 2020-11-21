@@ -76,7 +76,7 @@ export const ButtonGroup = styled.div<ButtonGroupProps>`
   gap: 1rem;
   grid-template-columns: repeat(
     ${({ columns }) => columns ?? "auto-fill"},
-    minmax(8ch, 1fr)
+    minmax(10ch, 1fr)
   );
-  padding: 0.5rem;
+  padding: 1rem;
 `;
