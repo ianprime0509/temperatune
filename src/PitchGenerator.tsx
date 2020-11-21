@@ -76,7 +76,11 @@ const PitchGenerator: FC<PitchGeneratorProps> = ({
           </Button>
         </PanelGroup>
         <PanelGroup forceDirection={true} grow={1} spaceBetween={false}>
-          <Button isHoverable={false} fontSize="xx-large" onClick={onPlayToggle}>
+          <Button
+            isHoverable={false}
+            fontSize="xx-large"
+            onClick={onPlayToggle}
+          >
             <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
           </Button>
           <TextBlock
