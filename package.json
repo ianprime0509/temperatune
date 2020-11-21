@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "react-scripts build",
+    "deploy": "npm run build && rsync -av -e 'ssh -l www-data' build/ ianjohnson.xyz:/srv/www/temperatune/",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
     "test": "react-scripts test"
