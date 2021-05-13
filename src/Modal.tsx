@@ -66,7 +66,7 @@ const StyledModal = styled(
     opacity: 0;
   }
 
-  @media(min-width: 600px) {
+  @media (min-width: 600px) {
     min-width: 500px;
   }
 `;
