@@ -409,9 +409,9 @@ const AppSettings: FC<AppSettingsProps> = ({
         <p>Version: {VERSION}</p>
         <p>
           Temperatune is hosted on my website: you can browse its source code{" "}
-          <a href="https://git.ianjohnson.xyz/ian/temperatune">here</a>. For
+          <a href="https://github.com/ianprime0509/temperatune">here</a>. For
           more information on defining your own temperaments, see{" "}
-          <a href="https://git.ianjohnson.xyz/ian/temperament">this README</a>.
+          <a href="https://github.com/ianprime0509/temperament">this README</a>.
         </p>
       </ExpanderGroup>
     </SettingsContainer>

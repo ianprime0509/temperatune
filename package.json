@@ -4,21 +4,24 @@
   "private": true,
   "scripts": {
     "build": "react-scripts build",
-    "deploy": "npm run build && rsync -av -e 'ssh -l www-data' build/ ianjohnson.xyz:/srv/www/temperatune/",
+    "deploy": "npm run build && gh-pages -d build",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
     "test": "react-scripts test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://git.ianjohnson.xyz/ian/temperatune"
+    "url": "git+https://github.com/ianprime0509/temperatune"
   },
-  "author": "Ian Johnson <ianprime0509@gmail.com>",
+  "author": {
+    "name": "Ian Johnson",
+    "email": "ian@ianjohnson.xyz"
+  },
   "license": "MIT",
   "bugs": {
     "email": "ianprime0509@gmail.com"
   },
-  "homepage": "https://ianjohnson.xyz/temperatune",
+  "homepage": "https://ianprime0509.github.io/temperatune",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
@@ -49,6 +52,7 @@
     "@types/react-modal": "^3.12.0",
     "@types/react-responsive": "^8.0.2",
     "@types/styled-components": "^5.1.10",
+    "gh-pages": "^3.2.3",
     "prettier": "2.3.2",
     "typescript": "~4.3.4",
     "web-audio-test-api": "^0.5.2"
