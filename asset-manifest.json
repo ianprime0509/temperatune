@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/temperatune/static/js/main.82988972.chunk.js",
-    "main.js.map": "/temperatune/static/js/main.82988972.chunk.js.map",
+    "main.js": "/temperatune/static/js/main.c079bc2a.chunk.js",
+    "main.js.map": "/temperatune/static/js/main.c079bc2a.chunk.js.map",
     "runtime-main.js": "/temperatune/static/js/runtime-main.d5b75380.js",
     "runtime-main.js.map": "/temperatune/static/js/runtime-main.d5b75380.js.map",
     "static/js/2.0be59a57.chunk.js": "/temperatune/static/js/2.0be59a57.chunk.js",
@@ -12,6 +12,6 @@
   "entrypoints": [
     "static/js/runtime-main.d5b75380.js",
     "static/js/2.0be59a57.chunk.js",
-    "static/js/main.82988972.chunk.js"
+    "static/js/main.c079bc2a.chunk.js"
   ]
 }
