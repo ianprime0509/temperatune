@@ -82,8 +82,9 @@ const SettingsItem: FC<SettingsItemProps> = ({
 
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
-  const [tooltipElement, setTooltipElement] =
-    useState<HTMLDivElement | null>(null);
+  const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(
+    null
+  );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
   const { styles, attributes } = usePopper(referenceElement, tooltipElement, {
     placement: "top",
