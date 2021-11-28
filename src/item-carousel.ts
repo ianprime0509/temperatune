@@ -1,53 +1,39 @@
 import { LitElement, css, html } from "lit";
-import type { PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { ref } from "lit/directives/ref.js";
 import { FlingManager } from "./fling";
 
-export class NoteChangeEvent extends Event {
-  readonly note: number;
+export class ItemSelectEvent extends Event {
+  readonly item: number;
 
-  constructor(note: number) {
-    super("notechange", { bubbles: true, composed: true });
-    this.note = note;
+  constructor(item: number) {
+    super("itemselect", { bubbles: true, composed: true });
+    this.item = item;
   }
 }
 
-@customElement("tt-notes")
-export class Notes extends LitElement {
+@customElement("tt-item-carousel")
+export class ItemCarousel extends LitElement {
   static override styles = css`
     :host {
-      flex-grow: 1;
-
-      width: 100%;
-      max-height: 50%;
+      display: block;
     }
 
     canvas {
-      touch-action: none;
+      touch-action: pan-y pinch-zoom;
     }
   `;
 
-  @property({ type: Array }) noteNames = [
-    "A",
-    "B♭",
-    "B",
-    "C",
-    "C♯",
-    "D",
-    "E♭",
-    "F",
-    "F♯",
-    "G",
-    "G♯",
-  ];
-  @property({ type: Number }) noteWidth = 300;
-  @property({ type: Number }) noteHeight = 150;
-  @state() private _pos = 0;
+  @property({ attribute: false }) items!: any[];
+  @property({ type: Boolean }) disabled: boolean = false;
+  @property({ type: Number }) itemWidth = 300;
+  @property({ type: Number }) itemHeight = 150;
+  @property({ type: Number }) min = Number.NEGATIVE_INFINITY;
+  @property({ type: Number }) max = Number.POSITIVE_INFINITY;
+  private __pos = 0;
   @state() private _width = 0;
   @state() private _height = 0;
   private _resizeObserver: ResizeObserver;
-  private _canvas?: HTMLCanvasElement;
   private _flingManager = new FlingManager();
 
   constructor() {
@@ -62,22 +48,14 @@ export class Notes extends LitElement {
     return html`<canvas
       width=${this._width}
       height=${this._height}
-      @pointermove=${this._handleMouseMove}
-      @pointerout=${this._handleMouseOut}
-      @pointerup=${this._handleMouseUp}
+      @pointermove=${this._handlePointerMove}
+      @pointerout=${this._handlePointerOut}
+      @pointerup=${this._handlePointerUp}
       ${ref((canvas) => this._handleCanvas(canvas as HTMLCanvasElement))}
     ></canvas>`;
   }
 
-  override shouldUpdate(changedProperties: PropertyValues): boolean {
-    if (changedProperties.has("note")) {
-      this._handleCanvas(this._canvas);
-      return changedProperties.size > 1;
-    }
-    return true;
-  }
-
-  scrollToNote(target: number, ms = 250): Promise<void> {
+  scrollToItem(target: number, ms = 250): Promise<void> {
     // https://easings.net/#easeInOutQuad
     const ease = (x: number) =>
       x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
@@ -105,8 +83,19 @@ export class Notes extends LitElement {
     });
   }
 
+  @state()
+  private get _pos(): number {
+    return this.__pos;
+  }
+
+  private set _pos(value: number) {
+    const oldValue = this._pos;
+    this.__pos = Math.max(this.min, Math.min(value, this.max));
+    this.requestUpdate("_pos", oldValue);
+  }
+
   private _handleCanvas(canvas?: HTMLCanvasElement) {
-    if (!(this._canvas = canvas)) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -115,14 +104,6 @@ export class Notes extends LitElement {
     const h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    ctx.strokeStyle = "red";
-    ctx.moveTo(w / 2, 0);
-    ctx.lineTo(w / 2, h);
-    ctx.stroke();
-    ctx.moveTo(0, h / 2);
-    ctx.lineTo(w, h / 2);
-    ctx.stroke();
-
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
 
@@ -130,43 +111,48 @@ export class Notes extends LitElement {
     const offset = this._pos - idx;
 
     const y = h / 2;
-    const centerX = w / 2 - this.noteWidth * offset;
+    const centerX = w / 2 - this.itemWidth * offset;
     const text = (i: number) =>
-      this.noteNames[
-        (((i + idx) % this.noteNames.length) + this.noteNames.length) %
-          this.noteNames.length
-      ];
-
-    const startI = -Math.floor((centerX + this.noteWidth) / this.noteWidth);
-    const endI = Math.floor((w - centerX + this.noteWidth) / this.noteWidth);
+      this.items[
+        (((i + idx) % this.items.length) + this.items.length) %
+          this.items.length
+      ].toString();
+    const startI = Math.max(
+      -Math.floor((centerX + this.itemWidth) / this.itemWidth),
+      this.min - idx
+    );
+    const endI = Math.min(
+      Math.floor((w - centerX + this.itemWidth) / this.itemWidth),
+      this.max - idx
+    );
     for (let i = startI; i <= endI; i++) {
-      const x = centerX + i * this.noteWidth;
+      const x = centerX + i * this.itemWidth;
       const scale = Math.exp((-(x - w / 2) * (x - w / 2)) / ((w * w) / 4));
       ctx.fillStyle = `rgba(0, 0, 0, ${scale})`;
-      ctx.font = `${this.noteHeight * scale}px sans-serif`;
-      ctx.fillText(text(i), x, y, this.noteWidth);
+      ctx.font = `${this.itemHeight * scale}px sans-serif`;
+      ctx.fillText(text(i), x, y, this.itemWidth);
     }
   }
 
-  private _handleMouseMove(event: MouseEvent) {
-    if (event.buttons & 1) {
-      this._pos -= event.movementX / this.noteWidth;
+  private _handlePointerMove(event: MouseEvent) {
+    if (!this.disabled && event.buttons & 1) {
+      this._pos -= event.movementX / this.itemWidth;
       this._flingManager.recordPosition(this._pos);
     }
   }
 
-  private _handleMouseOut(event: MouseEvent) {
-    if (event.buttons & 1) {
-      this._snapNote().then(() => this._onNoteChanged(this._pos));
+  private _handlePointerOut(event: MouseEvent) {
+    if (!this.disabled && event.buttons & 1) {
+      this._snapItem().then(() => this._onItemSelect(this._pos));
     }
   }
 
-  private _handleMouseUp(event: MouseEvent) {
-    if (event.button === 0) {
+  private _handlePointerUp(event: MouseEvent) {
+    if (!this.disabled && event.button === 0) {
       this._flingManager
         .fling((diff) => (this._pos += diff))
-        .then(() => this._snapNote())
-        .then(() => this._onNoteChanged(this._pos));
+        .then(() => this._snapItem())
+        .then(() => this._onItemSelect(this._pos));
     }
   }
 
@@ -178,11 +164,11 @@ export class Notes extends LitElement {
     }
   }
 
-  private _onNoteChanged(note: number) {
-    this.dispatchEvent(new NoteChangeEvent(note));
+  private _onItemSelect(item: number) {
+    this.dispatchEvent(new ItemSelectEvent(item));
   }
 
-  private _snapNote(): Promise<void> {
-    return this.scrollToNote(Math.round(this._pos));
+  private _snapItem(): Promise<void> {
+    return this.scrollToItem(Math.round(this._pos));
   }
 }
