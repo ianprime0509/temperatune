@@ -1,5 +1,6 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
+import { createRef, ref } from "lit/directives/ref.js";
 import playIcon from "./play.svg";
 import micIcon from "./mic.svg";
 
@@ -37,13 +38,14 @@ export class PlayButton extends LitElement {
   `;
 
   @property({ type: Boolean }) playing = false;
-  @query("button") private _button!: HTMLButtonElement;
+  private _button = createRef<HTMLButtonElement>();
 
   override render() {
     return html`
       <button
         aria-label=${this.playing ? "Listen for note" : "Play note"}
         @click=${this._handleClick}
+        ${ref(this._button)}
       >
         <img src=${this.playing ? micIcon : playIcon} />
       </button>
@@ -53,7 +55,7 @@ export class PlayButton extends LitElement {
   private _handleClick() {
     this.playing = !this.playing;
     this.dispatchEvent(new PlayToggleEvent(this.playing));
-    this._button.animate(
+    this._button.value?.animate(
       [
         { boxShadow: "none" },
         { boxShadow: "0 0 20px #1e9be9" },

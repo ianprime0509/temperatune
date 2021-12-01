@@ -1,0 +1,25 @@
+{
+  "name": "Quarter-comma meantone",
+  "description":
+    "The most common meantone temperament in the sixteenth and seventeenth centuries.",
+  "source":
+    "https://en.wikipedia.org/wiki/Quarter-comma_meantone#12-tone_scale",
+  "referenceName": "A",
+  "referencePitch": 415,
+  "referenceOctave": 4,
+  "octaveBaseName": "C",
+  "notes": {
+    "E♭": ["D", 117.1],
+    "B♭": ["D", 813.7],
+    "F": ["D", 310.3],
+    "C": ["D", 1006.8],
+    "G": ["D", 503.4],
+    "D": ["D", 0],
+    "A": ["D", 696.6],
+    "E": ["D", 193.2],
+    "B": ["D", 889.7],
+    "F♯": ["D", 386.3],
+    "C♯": ["D", 1082.9],
+    "G♯": ["D", 579.5]
+  }
+}

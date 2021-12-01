@@ -1,6 +1,6 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { ref } from "lit/directives/ref.js";
+import { createRef, ref } from "lit/directives/ref.js";
 import { FlingManager } from "./fling";
 
 export class ItemSelectEvent extends Event {
@@ -33,6 +33,7 @@ export class ItemCarousel extends LitElement {
   private __pos = 0;
   @state() private _width = 0;
   @state() private _height = 0;
+  private _canvas = createRef<HTMLCanvasElement>();
   private _resizeObserver: ResizeObserver;
   private _flingManager = new FlingManager();
 
@@ -51,8 +52,24 @@ export class ItemCarousel extends LitElement {
       @pointermove=${this._handlePointerMove}
       @pointerout=${this._handlePointerOut}
       @pointerup=${this._handlePointerUp}
-      ${ref((canvas) => this._handleCanvas(canvas as HTMLCanvasElement))}
+      ${ref(this._canvas)}
     ></canvas>`;
+  }
+
+  override shouldUpdate(changedProperties: PropertyValues) {
+    if (changedProperties.size === 1 && changedProperties.has("_note")) {
+      this._render();
+      return false;
+    }
+    return true;
+  }
+
+  override updated() {
+    this._render();
+  }
+
+  get selected(): number {
+    return Math.round(this._pos);
   }
 
   scrollToItem(target: number, ms = 250): Promise<void> {
@@ -94,9 +111,8 @@ export class ItemCarousel extends LitElement {
     this.requestUpdate("_pos", oldValue);
   }
 
-  private _handleCanvas(canvas?: HTMLCanvasElement) {
-    if (!canvas) return;
-
+  private _render() {
+    const canvas = this._canvas.value!;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 

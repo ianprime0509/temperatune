@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "serve": "vite --host"
+    "serve": "vite"
   },
   "repository": {
     "type": "git",
