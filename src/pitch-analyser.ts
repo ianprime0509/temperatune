@@ -34,7 +34,6 @@ export class PitchAnalyser extends EventTarget {
         this._buffer,
         this._audioContext.sampleRate
       );
-      console.log(`${pitch} ${clarity}`);
       this.dispatchEvent(new PitchUpdateEvent(pitch, clarity));
     }, 150);
   }

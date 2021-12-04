@@ -1,5 +1,7 @@
 import { LitElement, html, css } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
+
+const IN_TUNE_OFFSET = 5;
 
 @customElement("tt-feedback")
 export class Feedback extends LitElement {
@@ -25,7 +27,19 @@ export class Feedback extends LitElement {
     }
   `;
 
+  @property({ type: Number }) centOffset = 0;
+
   override render() {
-    return html`<div><span>In tune</span></div>`;
+    const rounded = Math.round(this.centOffset);
+    const abs = Math.abs(rounded);
+    let text;
+    if (abs < IN_TUNE_OFFSET) {
+      text = "In tune";
+    } else {
+      text = `${abs} ${abs === 1 ? "cent" : "cents"} ${
+        rounded > 0 ? "sharp" : "flat"
+      }`;
+    }
+    return html`<div><span aria-label="Feedback">${text}</span></div>`;
   }
 }

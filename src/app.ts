@@ -54,7 +54,8 @@ export class App extends LitElement {
     }
   `;
 
-  @state() private _playing: boolean = false;
+  @state() private _playing = false;
+  @state() private _centOffset = 0;
   @state() private _temperament = equalTemperament;
   private _notes = createRef<ItemCarousel>();
   private _octaves = createRef<ItemCarousel>();
@@ -72,6 +73,7 @@ export class App extends LitElement {
     return html`<main>
       <tt-item-carousel
         id="notes"
+        label="Note"
         ?disabled=${!this._playing}
         .items=${this._temperament.noteNames}
         @itemselect=${this._handleNoteItemSelect}
@@ -80,6 +82,7 @@ export class App extends LitElement {
       ${this._playing
         ? html`<tt-item-carousel
             id="octaves"
+            label="Octave"
             .items=${this._temperament.getOctaveRange(OCTAVE_RADIUS)}
             itemHeight="50"
             min="0"
@@ -87,7 +90,7 @@ export class App extends LitElement {
             @itemselect=${this._handleOctaveItemSelect}
             ${ref(this._octaves)}
           ></tt-item-carousel>`
-        : html`<tt-feedback></tt-feedback>`}
+        : html`<tt-feedback centOffset=${this._centOffset}></tt-feedback>`}
       <tt-play-button
         ?playing=${this._playing}
         @toggle=${this._handlePlayToggle}
@@ -101,8 +104,8 @@ export class App extends LitElement {
         this._temperament.referenceName
       );
       const refOctaveItem = OCTAVE_RADIUS;
-      this._notes.value?.scrollToItem(refNoteItem, 0);
-      this._octaves.value?.scrollToItem(refOctaveItem, 0);
+      this._notes.value?.scrollToItem(refNoteItem, 250);
+      this._octaves.value?.scrollToItem(refOctaveItem, 250);
       this._updateGeneratedPitch(refNoteItem, refOctaveItem);
       if (this._playing) {
         this._pitchAnalyser.stop();
@@ -129,9 +132,11 @@ export class App extends LitElement {
       event.pitch
     );
     const noteItem = this._temperament.noteNames.indexOf(noteName);
-    const noteItemOffset =
-      Math.sign(centOffset) * (Math.log2(Math.abs(centOffset)) / 100);
-    this._notes.value?.scrollToItem(noteItem + noteItemOffset, 50);
+    // TODO: should probably take the temperament into account to calculate this
+    // (not necessarily equal)
+    const noteItemOffset = centOffset / 50;
+    this._notes.value?.scrollToItem(noteItem + noteItemOffset, 100);
+    this._centOffset = centOffset;
   }
 
   private _handlePlayToggle(event: PlayToggleEvent) {

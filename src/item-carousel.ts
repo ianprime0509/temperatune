@@ -1,5 +1,6 @@
 import { LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { FlingManager } from "./fling";
 
@@ -28,6 +29,7 @@ export class ItemCarousel extends LitElement {
   @property({ type: Boolean }) disabled: boolean = false;
   @property({ type: Number }) itemWidth = 300;
   @property({ type: Number }) itemHeight = 150;
+  @property() label?: string;
   @property({ type: Number }) min = Number.NEGATIVE_INFINITY;
   @property({ type: Number }) max = Number.POSITIVE_INFINITY;
   private __pos = 0;
@@ -49,11 +51,13 @@ export class ItemCarousel extends LitElement {
     return html`<canvas
       width=${this._width}
       height=${this._height}
+      aria-label=${ifDefined(this.label)}
       @pointermove=${this._handlePointerMove}
       @pointerout=${this._handlePointerOut}
       @pointerup=${this._handlePointerUp}
       ${ref(this._canvas)}
-    ></canvas>`;
+      >${this._item(this.selected)}</canvas
+    >`;
   }
 
   override shouldUpdate(changedProperties: PropertyValues) {
@@ -111,6 +115,12 @@ export class ItemCarousel extends LitElement {
     this.requestUpdate("_pos", oldValue);
   }
 
+  private _item(i: number) {
+    return this.items[
+      ((i % this.items.length) + this.items.length) % this.items.length
+    ];
+  }
+
   private _render() {
     const canvas = this._canvas.value!;
     const ctx = canvas.getContext("2d");
@@ -128,11 +138,6 @@ export class ItemCarousel extends LitElement {
 
     const y = h / 2;
     const centerX = w / 2 - this.itemWidth * offset;
-    const text = (i: number) =>
-      this.items[
-        (((i + idx) % this.items.length) + this.items.length) %
-          this.items.length
-      ].toString();
     const startI = Math.max(
       -Math.floor((centerX + this.itemWidth) / this.itemWidth),
       this.min - idx
@@ -146,7 +151,7 @@ export class ItemCarousel extends LitElement {
       const scale = Math.exp((-(x - w / 2) * (x - w / 2)) / ((w * w) / 4));
       ctx.fillStyle = `rgba(0, 0, 0, ${scale})`;
       ctx.font = `${this.itemHeight * scale}px sans-serif`;
-      ctx.fillText(text(i), x, y, this.itemWidth);
+      ctx.fillText(this._item(i + idx).toString(), x, y, this.itemWidth);
     }
   }
 
