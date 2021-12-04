@@ -133,6 +133,8 @@ export class ItemCarousel extends LitElement {
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
 
+    ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
+
     const idx = Math.round(this._pos);
     const offset = this._pos - idx;
 
@@ -149,6 +151,13 @@ export class ItemCarousel extends LitElement {
     for (let i = startI; i <= endI; i++) {
       const x = centerX + i * this.itemWidth;
       const scale = Math.exp((-(x - w / 2) * (x - w / 2)) / ((w * w) / 4));
+      if (i === 0) {
+        ctx.shadowBlur = 20 * Math.pow(scale, 8);
+        ctx.shadowColor = "#1e9be9";
+      } else {
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = "transparent";
+      }
       ctx.fillStyle = `rgba(0, 0, 0, ${scale})`;
       ctx.font = `${this.itemHeight * scale}px sans-serif`;
       ctx.fillText(this._item(i + idx).toString(), x, y, this.itemWidth);
