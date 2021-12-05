@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
-import "./button";
+import "../button";
+import "./theme";
 
 @customElement("tt-settings")
 export class Settings extends LitElement {
@@ -20,6 +21,11 @@ export class Settings extends LitElement {
       user-select: none;
     }
 
+    svg {
+      height: 4rem;
+      width: auto;
+    }
+
     #container {
       display: flex;
       flex-direction: column;
@@ -29,7 +35,7 @@ export class Settings extends LitElement {
       width: 100%;
       height: 100%;
 
-      background: #eee;
+      background: var(--color-bg);
     }
   `;
 
@@ -40,9 +46,10 @@ export class Settings extends LitElement {
         <h2>Equal temperament</h2>
         <p>Description</p>
       </tt-button>
+
       <h1>Theme</h1>
-      <tt-button>Light</tt-button>
-      <tt-button>Dark</tt-button>
+      <tt-theme-selector></tt-theme-selector>
+
       <h1>About</h1>
       <p>
         Temperatune is free software, released under the

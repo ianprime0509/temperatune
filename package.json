@@ -19,11 +19,13 @@
   },
   "homepage": "https://ianprime0509.github.io/temperatune",
   "dependencies": {
+    "color": "^4.1.0",
     "lit": "^2.0.2",
     "pitchy": "^2.1.0",
     "temperament": "^2.0.1"
   },
   "devDependencies": {
+    "@types/color": "^3.0.2",
     "prettier": "2.5.0",
     "typescript": "^4.5.2",
     "vite": "^2.6.14"

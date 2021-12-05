@@ -1,3 +1,4 @@
+import Color from "color";
 import { LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -126,6 +127,10 @@ export class ItemCarousel extends LitElement {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const textColor = Color(
+      getComputedStyle(this).getPropertyValue("--color-text").trim()
+    );
+
     const w = canvas.width;
     const h = canvas.height;
     ctx.clearRect(0, 0, w, h);
@@ -158,7 +163,7 @@ export class ItemCarousel extends LitElement {
         ctx.shadowBlur = 0;
         ctx.shadowColor = "transparent";
       }
-      ctx.fillStyle = `rgba(0, 0, 0, ${scale})`;
+      ctx.fillStyle = textColor.alpha(scale).toString();
       ctx.font = `${this.itemHeight * scale}px sans-serif`;
       ctx.fillText(this._item(i + idx).toString(), x, y, this.itemWidth);
     }

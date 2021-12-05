@@ -21,6 +21,10 @@ export class Button extends LitElement {
       border: none;
 
       transition: background 200ms;
+
+      color: var(--color-text);
+
+      font-weight: bold;
     }
 
     button.round {
@@ -28,7 +32,7 @@ export class Button extends LitElement {
     }
 
     button:hover {
-      background: #ccc;
+      background: var(--color-hover);
     }
 
     ::slotted(img) {

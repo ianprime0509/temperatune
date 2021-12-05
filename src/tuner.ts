@@ -8,8 +8,6 @@ import "./button";
 import "./feedback";
 import "./item-carousel";
 import { ItemCarousel, ItemSelectEvent } from "./item-carousel";
-import micIcon from "./mic.svg";
-import playIcon from "./play.svg";
 
 const OCTAVE_RADIUS = 2;
 
@@ -30,8 +28,10 @@ export class Tuner extends LitElement {
 
       width: 100%;
       height: 100%;
+    }
 
-      background: #eee;
+    .material-icons-round {
+      color: var(--color-text);
     }
 
     #notes {
@@ -51,9 +51,8 @@ export class Tuner extends LitElement {
       max-height: 20%;
     }
 
-    #play-button {
-      height: 20%;
-      max-height: 20%;
+    #play-button > .material-icons-round {
+      font-size: 8rem;
     }
   `;
 
@@ -73,38 +72,45 @@ export class Tuner extends LitElement {
   }
 
   override render() {
-    return html`<main>
-      <tt-item-carousel
-        id="notes"
-        label="Note"
-        ?disabled=${!this._playing}
-        .items=${this._temperament.noteNames}
-        @itemselect=${this._handleNoteItemSelect}
-        ${ref(this._notes)}
-      ></tt-item-carousel>
-      ${this._playing
-        ? html`<tt-item-carousel
-            id="octaves"
-            label="Octave"
-            .items=${this._temperament.getOctaveRange(OCTAVE_RADIUS)}
-            itemHeight="50"
-            min="0"
-            max="4"
-            @itemselect=${this._handleOctaveItemSelect}
-            ${ref(this._octaves)}
-          ></tt-item-carousel>`
-        : html`<tt-feedback
-            id="feedback"
-            centOffset=${this._centOffset}
-          ></tt-feedback>`}
-      <tt-button
-        pulse
-        round
-        id="play-button"
-        @click=${() => (this._playing = !this._playing)}
-        ><img src=${this._playing ? micIcon : playIcon}
-      /></tt-button>
-    </main>`;
+    return html`<link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+        rel="stylesheet"
+      />
+      <main>
+        <tt-item-carousel
+          id="notes"
+          label="Note"
+          ?disabled=${!this._playing}
+          .items=${this._temperament.noteNames}
+          @itemselect=${this._handleNoteItemSelect}
+          ${ref(this._notes)}
+        ></tt-item-carousel>
+        ${this._playing
+          ? html`<tt-item-carousel
+              id="octaves"
+              label="Octave"
+              .items=${this._temperament.getOctaveRange(OCTAVE_RADIUS)}
+              itemHeight="50"
+              min="0"
+              max="4"
+              @itemselect=${this._handleOctaveItemSelect}
+              ${ref(this._octaves)}
+            ></tt-item-carousel>`
+          : html`<tt-feedback
+              id="feedback"
+              centOffset=${this._centOffset}
+            ></tt-feedback>`}
+        <tt-button
+          pulse
+          round
+          id="play-button"
+          @click=${() => (this._playing = !this._playing)}
+        >
+          <span class="material-icons-round"
+            >${this._playing ? "mic" : "play_arrow"}</span
+          >
+        </tt-button>
+      </main>`;
   }
 
   override updated(changedProperties: PropertyValues) {

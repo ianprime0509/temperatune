@@ -2,10 +2,8 @@ import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import "./button";
-import "./settings";
+import "./settings/index";
 import "./tuner";
-import backIcon from "./back.svg";
-import menuIcon from "./menu.svg";
 
 @customElement("tt-app")
 export class App extends LitElement {
@@ -32,6 +30,10 @@ export class App extends LitElement {
       height: 3rem;
 
       z-index: 2;
+    }
+
+    .material-icons-round {
+      color: var(--color-text);
     }
 
     tt-settings {
@@ -63,18 +65,24 @@ export class App extends LitElement {
   @state() private _settingsOpen = false;
 
   override render() {
-    return html`<div id="container">
-      <tt-button
-        round
-        id="menu-button"
-        @click=${() => (this._settingsOpen = !this._settingsOpen)}
-      >
-        <img src=${this._settingsOpen ? backIcon : menuIcon} />
-      </tt-button>
-      <tt-settings
-        class=${classMap({ open: this._settingsOpen })}
-      ></tt-settings>
-      <tt-tuner></tt-tuner>
-    </div>`;
+    return html`<link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+        rel="stylesheet"
+      />
+      <div id="container">
+        <tt-button
+          round
+          id="menu-button"
+          @click=${() => (this._settingsOpen = !this._settingsOpen)}
+        >
+          <span class="material-icons-round"
+            >${this._settingsOpen ? "arrow_back" : "menu"}</span
+          >
+        </tt-button>
+        <tt-settings
+          class=${classMap({ open: this._settingsOpen })}
+        ></tt-settings>
+        <tt-tuner></tt-tuner>
+      </div>`;
   }
 }
