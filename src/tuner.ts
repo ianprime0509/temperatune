@@ -76,9 +76,8 @@ export class Tuner extends LitElement {
   constructor() {
     super();
 
-    temperamentManager.addEventListener(
-      "temperament-select",
-      (e) => (this._temperament = (e as TemperamentSelectEvent).temperament)
+    temperamentManager.addEventListener("temperament-select", (e) =>
+      this._handleTemperamentSelect(e as TemperamentSelectEvent)
     );
     this._pitchAnalyser.addEventListener("pitch-update", (e) =>
       this._handlePitchUpdate(e as PitchUpdateEvent)
@@ -169,6 +168,11 @@ export class Tuner extends LitElement {
     const noteItemOffset = centOffset / 200;
     this._notes.value?.scrollToItem(noteItem + noteItemOffset, 100);
     this._centOffset = centOffset;
+  }
+
+  private _handleTemperamentSelect(event: TemperamentSelectEvent) {
+    this._temperament = event.temperament;
+    this._resetPitch();
   }
 
   private _resetPitch() {

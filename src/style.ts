@@ -20,7 +20,8 @@ export const commonStyles = css`
   }
 
   a:focus,
-  button:focus {
+  button:focus,
+  input:focus {
     outline: var(--color-outline) dashed thin;
   }
 `;

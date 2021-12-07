@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { createRef, ref } from "lit/directives/ref.js";
 import { Temperament } from "temperament";
 import "../button";
 import { commonStyles } from "../style";
@@ -28,6 +29,11 @@ export class TemperamentManager extends EventTarget {
 
   get temperaments(): Temperament[] {
     return [...this._temperaments];
+  }
+
+  set selectedTemperamentReferencePitch(pitch: number) {
+    this.selectedTemperament.referencePitch = pitch;
+    this.dispatchEvent(new TemperamentSelectEvent(this.selectedTemperament));
   }
 
   select(name: string) {
@@ -86,34 +92,85 @@ export class TemperamentSelector extends LitElement {
         align-items: center;
         justify-content: start;
       }
+
+      #reference-pitch-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 1.5rem;
+      }
+
+      #reference-pitch-input {
+        max-width: 5ch;
+        margin: 0 0.25rem;
+
+        border: none;
+        font-size: 1.5rem;
+      }
     `,
   ];
 
   @state() private _temperaments = temperamentManager.temperaments;
   @state() private _selectedTemperament =
     temperamentManager.selectedTemperament;
+  private _referencePitchInput = createRef<HTMLInputElement>();
 
   constructor() {
     super();
 
-    window.addEventListener("click", (e) => {});
-    temperamentManager.addEventListener(
-      "temperament-select",
-      (e) =>
-        (this._selectedTemperament = (e as TemperamentSelectEvent).temperament)
+    temperamentManager.addEventListener("temperament-select", (e) =>
+      this._handleTemperamentUpdate(e as TemperamentSelectEvent)
     );
   }
 
   override render() {
     return html`<div id="container">
+      ${this._referencePitchSelector()}
       ${this._temperaments.map((temperament) =>
         this._temperamentButton(temperament)
       )}
     </div>`;
   }
 
+  private _handleReferencePitchInput() {
+    const pitch = parseInt(this._referencePitchInput.value!.value, 10);
+    if (pitch > 0) {
+      temperamentManager.selectedTemperamentReferencePitch = pitch;
+    }
+  }
+
   private _handleTemperamentSelect(temperament: Temperament) {
     temperamentManager.select(temperament.name);
+  }
+
+  private _handleTemperamentUpdate(event: TemperamentSelectEvent) {
+    this._selectedTemperament = event.temperament;
+    if (this._referencePitchInput.value) {
+      this._referencePitchInput.value.value =
+        event.temperament.referencePitch.toString();
+    }
+  }
+
+  private _referencePitchSelector() {
+    return html`<div id="reference-pitch-container">
+      <span aria-label="Reference note"
+        >${this._selectedTemperament.referenceName}${this._selectedTemperament
+          .referenceOctave}</span
+      >
+      <span style="margin: 0 0.5rem" aria-hidden="true">=</span>
+      <input
+        id="reference-pitch-input"
+        type="number"
+        min="1"
+        step="1"
+        value=${this._selectedTemperament.referencePitch}
+        aria-label="Reference pitch in Hz"
+        @input=${this._handleReferencePitchInput}
+        ${ref(this._referencePitchInput)}
+      />
+      <span aria-hidden="true">Hz</span>
+    </div>`;
   }
 
   private _temperamentButton(temperament: Temperament) {
