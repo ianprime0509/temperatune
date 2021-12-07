@@ -3,11 +3,15 @@ import { customElement, state } from "lit/decorators.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { PitchAnalyser, PitchUpdateEvent } from "./pitch-analyser";
 import { PitchGenerator } from "./pitch-generator";
-import { equalTemperament } from "./temperaments";
+import {
+  TemperamentSelectEvent,
+  temperamentManager,
+} from "./settings/temperament";
 import "./button";
 import "./feedback";
 import "./item-carousel";
 import { ItemCarousel, ItemSelectEvent } from "./item-carousel";
+import { commonStyles } from "./style";
 
 const OCTAVE_RADIUS = 2;
 
@@ -15,50 +19,55 @@ const audioContext = new AudioContext();
 
 @customElement("tt-tuner")
 export class Tuner extends LitElement {
-  static override styles = css`
-    :host {
-      display: block;
-    }
+  static override styles = [
+    commonStyles,
+    css`
+      :host {
+        display: block;
+      }
 
-    main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
-      width: 100%;
-      height: 100%;
-    }
+        width: 100%;
+        height: 100%;
+      }
 
-    .material-icons-round {
-      color: var(--color-text);
-    }
+      .material-icons-round {
+        color: var(--color-text);
+      }
 
-    #notes {
-      width: 100%;
-      height: 100%;
-      max-height: 40%;
-    }
+      #notes {
+        width: 100%;
+        height: 100%;
+        max-height: 40%;
+      }
 
-    #octaves {
-      width: 100%;
-      height: 100%;
-      max-height: 20%;
-    }
+      #octaves {
+        width: 100%;
+        height: 100%;
+        max-height: 20%;
+      }
 
-    #feedback {
-      height: 20%;
-      max-height: 20%;
-    }
+      #feedback {
+        height: 20%;
+        max-height: 20%;
+      }
 
-    #play-button > .material-icons-round {
-      font-size: 8rem;
-    }
-  `;
+      #play-button > .material-icons-round {
+        font-size: 8rem;
+      }
+    `,
+  ];
 
   @state() private _playing = false;
+  @state() private _pitch =
+    temperamentManager.selectedTemperament.referencePitch;
   @state() private _centOffset = 0;
-  @state() private _temperament = equalTemperament;
+  @state() private _temperament = temperamentManager.selectedTemperament;
   private _notes = createRef<ItemCarousel>();
   private _octaves = createRef<ItemCarousel>();
   private _pitchAnalyser = new PitchAnalyser(audioContext);
@@ -66,7 +75,12 @@ export class Tuner extends LitElement {
 
   constructor() {
     super();
-    this._pitchAnalyser.addEventListener("pitchupdate", (e) =>
+
+    temperamentManager.addEventListener(
+      "temperament-select",
+      (e) => (this._temperament = (e as TemperamentSelectEvent).temperament)
+    );
+    this._pitchAnalyser.addEventListener("pitch-update", (e) =>
       this._handlePitchUpdate(e as PitchUpdateEvent)
     );
   }
@@ -82,9 +96,10 @@ export class Tuner extends LitElement {
           label="Note"
           ?disabled=${!this._playing}
           .items=${this._temperament.noteNames}
-          @itemselect=${this._handleNoteItemSelect}
+          @item-select=${this._handleNoteItemSelect}
           ${ref(this._notes)}
         ></tt-item-carousel>
+
         ${this._playing
           ? html`<tt-item-carousel
               id="octaves"
@@ -93,13 +108,15 @@ export class Tuner extends LitElement {
               itemHeight="50"
               min="0"
               max="4"
-              @itemselect=${this._handleOctaveItemSelect}
+              @item-select=${this._handleOctaveItemSelect}
               ${ref(this._octaves)}
             ></tt-item-carousel>`
           : html`<tt-feedback
               id="feedback"
               centOffset=${this._centOffset}
+              pitch=${this._pitch}
             ></tt-feedback>`}
+
         <tt-button
           pulse
           round
@@ -114,14 +131,14 @@ export class Tuner extends LitElement {
   }
 
   override updated(changedProperties: PropertyValues) {
+    if (
+      changedProperties.has("_playing") ||
+      changedProperties.has("_temperament")
+    ) {
+      this._resetPitch();
+    }
+
     if (changedProperties.has("_playing")) {
-      const refNoteItem = this._temperament.noteNames.indexOf(
-        this._temperament.referenceName
-      );
-      const refOctaveItem = OCTAVE_RADIUS;
-      this._notes.value?.scrollToItem(refNoteItem, 250);
-      this._octaves.value?.scrollToItem(refOctaveItem, 0);
-      this._updateGeneratedPitch(refNoteItem, refOctaveItem);
       if (this._playing) {
         this._pitchAnalyser.stop();
         this._pitchGenerator.play();
@@ -143,6 +160,7 @@ export class Tuner extends LitElement {
   private _handlePitchUpdate(event: PitchUpdateEvent) {
     if (event.clarity < 0.9) return;
 
+    this._pitch = event.pitch;
     const [noteName, centOffset] = this._temperament.getNoteNameFromPitch(
       event.pitch
     );
@@ -153,6 +171,16 @@ export class Tuner extends LitElement {
     this._centOffset = centOffset;
   }
 
+  private _resetPitch() {
+    const refNoteItem = this._temperament.noteNames.indexOf(
+      this._temperament.referenceName
+    );
+    const refOctaveItem = OCTAVE_RADIUS;
+    this._notes.value?.scrollToItem(refNoteItem, 250);
+    this._octaves.value?.scrollToItem(refOctaveItem, 0);
+    this._updateGeneratedPitch(refNoteItem, refOctaveItem);
+  }
+
   private _updateGeneratedPitch(noteItem: number, octaveItem: number) {
     const noteNames = this._temperament.noteNames;
     const noteIndex =
@@ -160,6 +188,6 @@ export class Tuner extends LitElement {
     const octave =
       octaveItem - OCTAVE_RADIUS + this._temperament.referenceOctave;
     const pitch = this._temperament.getPitch(noteNames[noteIndex], octave);
-    this._pitchGenerator.pitch = pitch;
+    this._pitchGenerator.pitch = this._pitch = pitch;
   }
 }

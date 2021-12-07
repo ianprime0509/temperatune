@@ -2,66 +2,90 @@ import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import "../button";
+import { commonStyles } from "../style";
+
+export type ThemeName = "system" | "light" | "dark";
 
 @customElement("tt-theme-selector")
 export class ThemeSelector extends LitElement {
-  static override styles = css`
-    :host {
-      display: block;
-    }
+  static override styles = [
+    commonStyles,
+    css`
+      :host {
+        display: block;
+      }
 
-    svg {
-      width: 4rem;
-      height: 4rem;
-    }
+      svg {
+        width: 4rem;
+        height: 4rem;
+      }
 
-    tt-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      tt-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
-      margin: 0 0.5rem;
-    }
+        margin: 0 0.5rem;
+      }
 
-    tt-button.selected > svg {
-      filter: drop-shadow(0 0 10px var(--color-primary));
-      transition: filter 200ms;
-    }
+      tt-button.selected > svg {
+        filter: drop-shadow(0 0 10px var(--color-primary));
+        transition: filter 200ms;
+      }
 
-    #container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  `;
+      #container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    `,
+  ];
 
-  @state() private _selected = "system";
+  @state() private _selected: ThemeName = "system";
 
   override render() {
     return html`<div id="container">
       <tt-button
         class=${classMap({ selected: this._selected === "system" })}
-        @click=${() => (this._selected = "system")}
+        @click=${() => this._handleThemeSelect("system")}
       >
         ${this._themeIcon("var(--color-bg-light)", "var(--color-bg-dark)")}
         <div>System</div>
       </tt-button>
       <tt-button
         class=${classMap({ selected: this._selected === "light" })}
-        @click=${() => (this._selected = "light")}
+        @click=${() => this._handleThemeSelect("light")}
       >
         ${this._themeIcon("var(--color-bg-light)")}
         <div>Light</div>
       </tt-button>
       <tt-button
         class=${classMap({ selected: this._selected === "dark" })}
-        @click=${() => (this._selected = "dark")}
+        @click=${() => this._handleThemeSelect("dark")}
       >
         ${this._themeIcon("var(--color-bg-dark)")}
         <div>Dark</div>
       </tt-button>
     </div>`;
+  }
+
+  private _handleThemeSelect(theme: ThemeName) {
+    this._selected = theme;
+    const rootClasses = document.documentElement.classList;
+    switch (theme) {
+      case "system":
+        rootClasses.remove("light", "dark");
+        break;
+      case "light":
+        rootClasses.remove("dark");
+        rootClasses.add("light");
+        break;
+      case "dark":
+        rootClasses.remove("light");
+        rootClasses.add("dark");
+        break;
+    }
   }
 
   private _themeIcon(color1: string, color2?: string) {
@@ -73,7 +97,7 @@ export class ThemeSelector extends LitElement {
       >
         <circle
           fill=${color1}
-          stroke="var(--color-text-secondary)"
+          stroke="var(--color-outline)"
           cx="20"
           cy="20"
           r="16"
@@ -90,7 +114,7 @@ export class ThemeSelector extends LitElement {
           <path fill=${color2} d="M 20 4 V 36 A 16 16 0 0 0 20 4 Z" />
           <circle
             fill="transparent"
-            stroke="var(--color-text-secondary)"
+            stroke="var(--color-outline)"
             cx="20"
             cy="20"
             r="16"

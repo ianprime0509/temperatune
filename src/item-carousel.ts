@@ -9,7 +9,7 @@ export class ItemSelectEvent extends Event {
   readonly item: number;
 
   constructor(item: number) {
-    super("itemselect", { bubbles: true, composed: true });
+    super("item-select", { bubbles: true, composed: true });
     this.item = item;
   }
 }
@@ -62,7 +62,10 @@ export class ItemCarousel extends LitElement {
   }
 
   override shouldUpdate(changedProperties: PropertyValues) {
-    if (changedProperties.size === 1 && changedProperties.has("_note")) {
+    if (
+      changedProperties.size === 0 ||
+      (changedProperties.size === 1 && changedProperties.has("_note"))
+    ) {
       this._render();
       return false;
     }

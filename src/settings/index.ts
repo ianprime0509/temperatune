@@ -1,51 +1,53 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import "../button";
+import "./temperament";
 import "./theme";
+import { commonStyles } from "../style";
 
 @customElement("tt-settings")
 export class Settings extends LitElement {
-  static override styles = css`
-    :host {
-      display: block;
-    }
+  static override styles = [
+    commonStyles,
+    css`
+      :host {
+        display: block;
+      }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin: 0.5rem 0;
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0.5rem 0;
 
-      user-select: none;
-    }
+        user-select: none;
+      }
 
-    svg {
-      height: 4rem;
-      width: auto;
-    }
+      svg {
+        height: 4rem;
+        width: auto;
+      }
 
-    #container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
+      #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
 
-      width: 100%;
-      height: 100%;
+        width: 100%;
+        height: 100%;
 
-      background: var(--color-bg);
-    }
-  `;
+        background: var(--color-bg);
+      }
+    `,
+  ];
 
   override render() {
     return html`<div id="container">
       <h1>Temperament</h1>
-      <tt-button>
-        <h2>Equal temperament</h2>
-        <p>Description</p>
-      </tt-button>
+      <tt-temperament-selector></tt-temperament-selector>
 
       <h1>Theme</h1>
       <tt-theme-selector></tt-theme-selector>

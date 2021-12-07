@@ -2,44 +2,42 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
+import { commonStyles } from "./style";
 
 @customElement("tt-button")
 export class Button extends LitElement {
-  static override styles = css`
-    :host {
-      display: block;
-    }
+  static override styles = [
+    commonStyles,
+    css`
+      :host {
+        display: block;
+      }
 
-    button {
-      width: 100%;
-      height: 100%;
+      button {
+        width: 100%;
+        height: 100%;
 
-      margin: 0;
-      padding: 0.25rem;
+        margin: 0;
+        padding: 0.25rem;
 
-      background: none;
-      border: none;
+        background: none;
+        border: none;
+        color: inherit;
 
-      transition: background 200ms;
+        transition: background 200ms;
 
-      color: var(--color-text);
+        font-weight: bold;
+      }
 
-      font-weight: bold;
-    }
+      button.round {
+        border-radius: 50%;
+      }
 
-    button.round {
-      border-radius: 50%;
-    }
-
-    button:hover {
-      background: var(--color-hover);
-    }
-
-    ::slotted(img) {
-      width: auto;
-      height: 100%;
-    }
-  `;
+      button:hover {
+        background: var(--color-bg-hover);
+      }
+    `,
+  ];
 
   @property({ type: Boolean }) pulse = false;
   @property({ type: Boolean }) round = false;
@@ -60,7 +58,7 @@ export class Button extends LitElement {
       this._button.value!.animate(
         [
           { boxShadow: "none" },
-          { boxShadow: "0 0 20px #1e9be9" },
+          { boxShadow: "0 0 20px var(--color-primary)" },
           { boxShadow: "none" },
         ],
         200

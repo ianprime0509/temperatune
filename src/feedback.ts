@@ -1,33 +1,47 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { commonStyles } from "./style";
 
 const IN_TUNE_OFFSET = 5;
 
 @customElement("tt-feedback")
 export class Feedback extends LitElement {
-  static override styles = css`
-    :host {
-      display: block;
-    }
+  static override styles = [
+    commonStyles,
+    css`
+      :host {
+        display: block;
+      }
 
-    div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
-      width: 100%;
-      height: 100%;
-    }
+        width: 100%;
+        height: 100%;
+      }
 
-    span {
-      font-size: 3rem;
-      text-align: center;
+      #feedback {
+        font-size: 3rem;
+        text-align: center;
 
-      user-select: none;
-    }
-  `;
+        user-select: none;
+      }
 
-  @property({ type: Number }) centOffset = 0;
+      #pitch {
+        color: var(--color-text-secondary);
+        font-size: 1.5rem;
+        text-align: center;
+
+        user-select: none;
+      }
+    `,
+  ];
+
+  @property({ type: Number }) centOffset!: number;
+  @property({ type: Number }) pitch!: number;
 
   override render() {
     const rounded = Math.round(this.centOffset);
@@ -40,6 +54,9 @@ export class Feedback extends LitElement {
         rounded > 0 ? "sharp" : "flat"
       }`;
     }
-    return html`<div><span aria-label="Feedback">${text}</span></div>`;
+    return html`<div id="container">
+      <div id="feedback" aria-label="Feedback">${text}</div>
+      <div id="pitch" aria-label="Pitch">${this.pitch.toFixed(0)} Hz</div>
+    </div>`;
   }
 }

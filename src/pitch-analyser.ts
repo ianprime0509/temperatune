@@ -2,7 +2,7 @@ import { PitchDetector } from "pitchy";
 
 export class PitchUpdateEvent extends Event {
   constructor(public pitch: number, public clarity: number) {
-    super("pitchupdate");
+    super("pitch-update");
   }
 }
 
