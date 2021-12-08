@@ -4,6 +4,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { FlingManager } from "./fling";
+import { themeManager } from "./settings/theme";
 
 export class ItemSelectEvent extends Event {
   readonly item: number;
@@ -42,10 +43,13 @@ export class ItemCarousel extends LitElement {
 
   constructor() {
     super();
+
     this._resizeObserver = new ResizeObserver((entries) => {
       this._handleResize(entries);
     });
     this._resizeObserver.observe(this);
+
+    themeManager.addEventListener("theme-select", () => this.requestUpdate());
   }
 
   override render() {

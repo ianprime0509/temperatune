@@ -111,9 +111,6 @@ export class TemperamentSelector extends LitElement {
     `,
   ];
 
-  @state() private _temperaments = temperamentManager.temperaments;
-  @state() private _selectedTemperament =
-    temperamentManager.selectedTemperament;
   private _referencePitchInput = createRef<HTMLInputElement>();
 
   constructor() {
@@ -127,7 +124,7 @@ export class TemperamentSelector extends LitElement {
   override render() {
     return html`<div id="container">
       ${this._referencePitchSelector()}
-      ${this._temperaments.map((temperament) =>
+      ${temperamentManager.temperaments.map((temperament) =>
         this._temperamentButton(temperament)
       )}
     </div>`;
@@ -145,17 +142,18 @@ export class TemperamentSelector extends LitElement {
   }
 
   private _handleTemperamentUpdate(event: TemperamentSelectEvent) {
-    this._selectedTemperament = event.temperament;
     if (this._referencePitchInput.value) {
       this._referencePitchInput.value.value =
         event.temperament.referencePitch.toString();
     }
+    this.requestUpdate();
   }
 
   private _referencePitchSelector() {
     return html`<div id="reference-pitch-container">
       <span aria-label="Reference note"
-        >${this._selectedTemperament.referenceName}${this._selectedTemperament
+        >${temperamentManager.selectedTemperament
+          .referenceName}${temperamentManager.selectedTemperament
           .referenceOctave}</span
       >
       <span style="margin: 0 0.5rem" aria-hidden="true">=</span>
@@ -164,7 +162,7 @@ export class TemperamentSelector extends LitElement {
         type="number"
         min="1"
         step="1"
-        value=${this._selectedTemperament.referencePitch}
+        value=${temperamentManager.selectedTemperament.referencePitch}
         aria-label="Reference pitch in Hz"
         @input=${this._handleReferencePitchInput}
         ${ref(this._referencePitchInput)}
@@ -176,7 +174,8 @@ export class TemperamentSelector extends LitElement {
   private _temperamentButton(temperament: Temperament) {
     return html`<tt-button
       class="temperament ${classMap({
-        selected: temperament.name === this._selectedTemperament.name,
+        selected:
+          temperament.name === temperamentManager.selectedTemperament.name,
       })}"
       @click=${() => this._handleTemperamentSelect(temperament)}
     >

@@ -61,7 +61,7 @@ export class Button extends LitElement {
           { boxShadow: "0 0 20px var(--color-primary)" },
           { boxShadow: "none" },
         ],
-        200
+        250
       );
     }
   }

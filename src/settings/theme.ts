@@ -6,6 +6,44 @@ import { commonStyles } from "../style";
 
 export type ThemeName = "system" | "light" | "dark";
 
+export class ThemeSelectEvent extends Event {
+  constructor(public theme: ThemeName) {
+    super("theme-select");
+  }
+}
+
+export class ThemeManager extends EventTarget {
+  private _selected: ThemeName = "system";
+
+  get selected(): ThemeName {
+    return this._selected;
+  }
+
+  set selected(theme: ThemeName) {
+    this._selected = theme;
+    this.dispatchEvent(new ThemeSelectEvent(this._selected));
+  }
+}
+
+export const themeManager = new ThemeManager();
+
+themeManager.addEventListener("theme-select", (e) => {
+  const rootClasses = document.documentElement.classList;
+  switch ((e as ThemeSelectEvent).theme) {
+    case "system":
+      rootClasses.remove("light", "dark");
+      break;
+    case "light":
+      rootClasses.remove("dark");
+      rootClasses.add("light");
+      break;
+    case "dark":
+      rootClasses.remove("light");
+      rootClasses.add("dark");
+      break;
+  }
+});
+
 @customElement("tt-theme-selector")
 export class ThemeSelector extends LitElement {
   static override styles = [
@@ -42,26 +80,30 @@ export class ThemeSelector extends LitElement {
     `,
   ];
 
-  @state() private _selected: ThemeName = "system";
+  constructor() {
+    super();
+
+    themeManager.addEventListener("theme-select", () => this.requestUpdate());
+  }
 
   override render() {
     return html`<div id="container">
       <tt-button
-        class=${classMap({ selected: this._selected === "system" })}
+        class=${classMap({ selected: themeManager.selected === "system" })}
         @click=${() => this._handleThemeSelect("system")}
       >
         ${this._themeIcon("var(--color-bg-light)", "var(--color-bg-dark)")}
         <div>System</div>
       </tt-button>
       <tt-button
-        class=${classMap({ selected: this._selected === "light" })}
+        class=${classMap({ selected: themeManager.selected === "light" })}
         @click=${() => this._handleThemeSelect("light")}
       >
         ${this._themeIcon("var(--color-bg-light)")}
         <div>Light</div>
       </tt-button>
       <tt-button
-        class=${classMap({ selected: this._selected === "dark" })}
+        class=${classMap({ selected: themeManager.selected === "dark" })}
         @click=${() => this._handleThemeSelect("dark")}
       >
         ${this._themeIcon("var(--color-bg-dark)")}
@@ -71,21 +113,7 @@ export class ThemeSelector extends LitElement {
   }
 
   private _handleThemeSelect(theme: ThemeName) {
-    this._selected = theme;
-    const rootClasses = document.documentElement.classList;
-    switch (theme) {
-      case "system":
-        rootClasses.remove("light", "dark");
-        break;
-      case "light":
-        rootClasses.remove("dark");
-        rootClasses.add("light");
-        break;
-      case "dark":
-        rootClasses.remove("light");
-        rootClasses.add("dark");
-        break;
-    }
+    themeManager.selected = theme;
   }
 
   private _themeIcon(color1: string, color2?: string) {

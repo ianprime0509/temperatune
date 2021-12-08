@@ -24,4 +24,9 @@ export const commonStyles = css`
   input:focus {
     outline: var(--color-outline) dashed thin;
   }
+
+  input {
+    background: var(--color-bg-input);
+    color: var(--color-text);
+  }
 `;

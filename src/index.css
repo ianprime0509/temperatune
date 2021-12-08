@@ -1,9 +1,10 @@
 :root {
   --color-bg-light: #eee;
   --color-bg-dark: #333;
-
   --color-bg-hover-light: #ccc;
   --color-bg-hover-dark: #777;
+  --color-bg-input-light: #f8f8f8;
+  --color-bg-input-dark: #484848;
 
   --color-outline-light: #666;
   --color-outline-dark: #999;
@@ -29,6 +30,7 @@ html,
 html.light {
   --color-bg: var(--color-bg-light);
   --color-bg-hover: var(--color-bg-hover-light);
+  --color-bg-input: var(--color-bg-input-light);
 
   --color-outline: var(--color-outline-light);
 
@@ -42,6 +44,7 @@ html.light {
   html {
     --color-bg: var(--color-bg-dark);
     --color-bg-hover: var(--color-bg-hover-dark);
+    --color-bg-input: var(--color-bg-input-dark);
 
     --color-outline: var(--color-outline-dark);
 
@@ -55,6 +58,7 @@ html.light {
 html.dark {
   --color-bg: var(--color-bg-dark);
   --color-bg-hover: var(--color-bg-hover-dark);
+  --color-bg-input: var(--color-bg-input-dark);
 
   --color-outline: var(--color-outline-dark);
 
