@@ -52,7 +52,7 @@ export class ItemCarousel extends LitElement {
   @state() private _width = 0;
   @state() private _height = 0;
   private _canvas = createRef<HTMLCanvasElement>();
-  private _textBuffer = document.createElement("canvas");
+  private _textBuffers: HTMLCanvasElement[] = [];
   private _resizeObserver: ResizeObserver;
   private _flingManager = new FlingManager();
 
@@ -98,7 +98,7 @@ export class ItemCarousel extends LitElement {
       changedProperties.has("itemHeight") ||
       changedProperties.has("_height")
     ) {
-      this._updateTextBuffer();
+      this._updateTextBuffers();
     }
     this._render();
   }
@@ -154,11 +154,10 @@ export class ItemCarousel extends LitElement {
 
   private _render() {
     const canvas = this._canvas.value!;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
+    const ctx = canvas.getContext("2d")!;
     const w = canvas.width;
     const h = canvas.height;
+    if (w === 0 || h === 0) return;
     ctx.clearRect(0, 0, w, h);
 
     const idx = Math.round(this._pos);
@@ -178,10 +177,8 @@ export class ItemCarousel extends LitElement {
       const itemIdx =
         (((i + idx) % this.items.length) + this.items.length) %
         this.items.length;
-      const sx = itemIdx * this.itemWidth;
-      const sy = i === 0 ? this._height : 0;
-      const sWidth = this.itemWidth;
-      const sHeight = this._height;
+      const buffer =
+        this._textBuffers[i === 0 ? itemIdx + this.items.length : itemIdx];
 
       const x = centerX + i * this.itemWidth;
       const scale = Math.exp((-(x - w / 2) * (x - w / 2)) / ((w * w) / 4));
@@ -191,57 +188,51 @@ export class ItemCarousel extends LitElement {
       const dy = (this._height - dHeight) / 2;
 
       ctx.globalAlpha = scale;
-      ctx.drawImage(
-        this._textBuffer,
-        sx,
-        sy,
-        sWidth,
-        sHeight,
-        dx,
-        dy,
-        dWidth,
-        dHeight
-      );
+      ctx.drawImage(buffer, dx, dy, dWidth, dHeight);
     }
   }
 
-  private _updateTextBuffer() {
-    console.debug("Updating text buffer");
+  private _updateTextBuffers() {
+    console.debug("Updating text buffers");
 
-    const w = (this._textBuffer.width = this.items.length * this.itemWidth);
-    const h = (this._textBuffer.height = 2 * this._height);
     const computedStyle = getComputedStyle(this);
-
-    const ctx = this._textBuffer.getContext("2d");
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, w, h);
-
-    ctx.fillStyle = computedStyle.getPropertyValue("--color-text").trim();
-    ctx.font = `${this.itemHeight}px Roboto, sans-serif`;
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
-    ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
     const shadowSize = 20;
 
-    const drawRow = (row: 0 | 1) => {
-      this.items.forEach((item, i) => {
-        ctx.fillText(
-          item.toString(),
-          i * this.itemWidth + this.itemWidth / 2,
-          row * this._height + this._height / 2,
-          this.itemWidth - 2 * shadowSize
-        );
-      });
+    const renderBuffer = (
+      buffer: HTMLCanvasElement,
+      item: any,
+      highlight: boolean
+    ) => {
+      const w = (buffer.width = this.itemWidth);
+      const h = (buffer.height = this._height);
+
+      const ctx = buffer.getContext("2d")!;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = computedStyle.getPropertyValue("--color-text");
+      ctx.font = `${this.itemHeight}px Roboto, sans-serif`;
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+
+      if (highlight) {
+        ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
+        ctx.shadowBlur = shadowSize;
+        ctx.shadowColor = computedStyle.getPropertyValue("--color-primary");
+      }
+
+      ctx.fillText(item.toString(), w / 2, h / 2, w - 2 * shadowSize);
+
+      return buffer;
     };
 
-    ctx.shadowBlur = 0;
-    ctx.shadowColor = "transparent";
-    drawRow(0);
+    this._textBuffers.splice(this.items.length * 2);
+    for (let i = this._textBuffers.length; i < this.items.length * 2; i++) {
+      this._textBuffers.push(document.createElement("canvas"));
+    }
 
-    ctx.shadowBlur = shadowSize;
-    ctx.shadowColor = computedStyle.getPropertyValue("--color-primary").trim();
-    drawRow(1);
+    this.items.forEach((item, i) => {
+      renderBuffer(this._textBuffers[i], item, false);
+      renderBuffer(this._textBuffers[i + this.items.length], item, false);
+    });
   }
 
   private _handlePointerMove(event: MouseEvent) {
