@@ -6,6 +6,15 @@ import { createRef, ref } from "lit/directives/ref.js";
 import { FlingManager } from "./fling";
 import { themeManager } from "./settings/theme";
 
+function arraysEqual<T>(a1: T[], a2: T[]): boolean {
+  if (a1.length !== a2.length) return false;
+
+  for (let i = 0; i < a1.length; i++) {
+    if (a1[i] !== a2[i]) return false;
+  }
+  return true;
+}
+
 export class ItemSelectEvent extends Event {
   readonly item: number;
 
@@ -27,7 +36,12 @@ export class ItemCarousel extends LitElement {
     }
   `;
 
-  @property({ attribute: false }) items!: any[];
+  @property({
+    attribute: false,
+    hasChanged: (v1?: any[], v2?: any[]) =>
+      v1 !== v2 && !arraysEqual(v1 ?? [], v2 ?? []),
+  })
+  items!: any[];
   @property({ type: Boolean }) disabled: boolean = false;
   @property({ type: Number }) itemWidth = 300;
   @property({ type: Number }) itemHeight = 150;
@@ -38,6 +52,7 @@ export class ItemCarousel extends LitElement {
   @state() private _width = 0;
   @state() private _height = 0;
   private _canvas = createRef<HTMLCanvasElement>();
+  private _textBuffer = document.createElement("canvas");
   private _resizeObserver: ResizeObserver;
   private _flingManager = new FlingManager();
 
@@ -76,7 +91,15 @@ export class ItemCarousel extends LitElement {
     return true;
   }
 
-  override updated() {
+  override updated(changedProperties: PropertyValues) {
+    if (
+      changedProperties.has("items") ||
+      changedProperties.has("itemWidth") ||
+      changedProperties.has("itemHeight") ||
+      changedProperties.has("_height")
+    ) {
+      this._updateTextBuffer();
+    }
     this._render();
   }
 
@@ -134,23 +157,13 @@ export class ItemCarousel extends LitElement {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const textColor = Color(
-      getComputedStyle(this).getPropertyValue("--color-text").trim()
-    );
-
     const w = canvas.width;
     const h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
-
-    ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
-
     const idx = Math.round(this._pos);
     const offset = this._pos - idx;
 
-    const y = h / 2;
     const centerX = w / 2 - this.itemWidth * offset;
     const startI = Math.max(
       -Math.floor((centerX + this.itemWidth) / this.itemWidth),
@@ -160,20 +173,75 @@ export class ItemCarousel extends LitElement {
       Math.floor((w - centerX + this.itemWidth) / this.itemWidth),
       this.max - idx
     );
+
     for (let i = startI; i <= endI; i++) {
+      const itemIdx =
+        (((i + idx) % this.items.length) + this.items.length) %
+        this.items.length;
+      const sx = itemIdx * this.itemWidth;
+      const sy = i === 0 ? this._height : 0;
+      const sWidth = this.itemWidth;
+      const sHeight = this._height;
+
       const x = centerX + i * this.itemWidth;
       const scale = Math.exp((-(x - w / 2) * (x - w / 2)) / ((w * w) / 4));
-      if (i === 0) {
-        ctx.shadowBlur = 20 * Math.pow(scale, 8);
-        ctx.shadowColor = "#1e9be9";
-      } else {
-        ctx.shadowBlur = 0;
-        ctx.shadowColor = "transparent";
-      }
-      ctx.fillStyle = textColor.alpha(scale).toString();
-      ctx.font = `${this.itemHeight * scale}px sans-serif`;
-      ctx.fillText(this._item(i + idx).toString(), x, y, this.itemWidth);
+      const dWidth = scale * this.itemWidth;
+      const dHeight = scale * this._height;
+      const dx = x - dWidth / 2;
+      const dy = (this._height - dHeight) / 2;
+
+      ctx.globalAlpha = scale;
+      ctx.drawImage(
+        this._textBuffer,
+        sx,
+        sy,
+        sWidth,
+        sHeight,
+        dx,
+        dy,
+        dWidth,
+        dHeight
+      );
     }
+  }
+
+  private _updateTextBuffer() {
+    console.debug("Updating text buffer");
+
+    const w = (this._textBuffer.width = this.items.length * this.itemWidth);
+    const h = (this._textBuffer.height = 2 * this._height);
+    const computedStyle = getComputedStyle(this);
+
+    const ctx = this._textBuffer.getContext("2d");
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = computedStyle.getPropertyValue("--color-text").trim();
+    ctx.font = `${this.itemHeight}px Roboto, sans-serif`;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
+    const shadowSize = 20;
+
+    const drawRow = (row: 0 | 1) => {
+      this.items.forEach((item, i) => {
+        ctx.fillText(
+          item.toString(),
+          i * this.itemWidth + this.itemWidth / 2,
+          row * this._height + this._height / 2,
+          this.itemWidth - 2 * shadowSize
+        );
+      });
+    };
+
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = "transparent";
+    drawRow(0);
+
+    ctx.shadowBlur = shadowSize;
+    ctx.shadowColor = computedStyle.getPropertyValue("--color-primary").trim();
+    drawRow(1);
   }
 
   private _handlePointerMove(event: MouseEvent) {
