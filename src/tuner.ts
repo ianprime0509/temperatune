@@ -2,13 +2,13 @@ import { LitElement, PropertyValues, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { PitchAnalyser, PitchUpdateEvent } from "./pitch-analyser";
-import { PitchGenerator } from "./pitch-generator";
-import { temperamentManager } from "./settings/temperament";
-import "./button";
-import "./feedback";
-import "./item-carousel";
-import { ItemCarousel, ItemSelectEvent } from "./item-carousel";
-import { commonStyles } from "./style";
+import { PitchGenerator } from "./pitch-generator.js";
+import { temperamentManager } from "./settings/temperament.js";
+import "./button.js";
+import "./feedback.js";
+import "./item-carousel.js";
+import { ItemCarousel, ItemSelectEvent } from "./item-carousel.js";
+import { commonStyles } from "./style.js";
 
 const OCTAVE_RADIUS = 2;
 

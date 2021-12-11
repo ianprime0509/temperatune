@@ -1,10 +1,10 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import "./button";
-import "./settings/index";
-import "./tuner";
-import { commonStyles } from "./style";
+import "./button.js";
+import "./settings/index.js";
+import "./tuner.js";
+import { commonStyles } from "./style.js";
 
 @customElement("tt-app")
 export class App extends LitElement {

@@ -2,7 +2,7 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
-import { commonStyles } from "./style";
+import { commonStyles } from "./style.js";
 
 @customElement("tt-button")
 export class Button extends LitElement {

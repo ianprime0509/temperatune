@@ -1,6 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { commonStyles } from "./style";
+import { commonStyles } from "./style.js";
 
 const IN_TUNE_OFFSET = 5;
 

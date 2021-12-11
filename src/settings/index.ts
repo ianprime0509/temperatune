@@ -1,9 +1,9 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
-import "../button";
-import "./temperament";
-import "./theme";
-import { commonStyles } from "../style";
+import "../button.js";
+import "./temperament.js";
+import "./theme.js";
+import { commonStyles } from "../style.js";
 
 @customElement("tt-settings")
 export class Settings extends LitElement {

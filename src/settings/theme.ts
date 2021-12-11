@@ -1,8 +1,8 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import "../button";
-import { commonStyles } from "../style";
+import "../button.js";
+import { commonStyles } from "../style.js";
 
 export type ThemeName = "system" | "light" | "dark";
 
