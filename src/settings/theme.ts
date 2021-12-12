@@ -13,7 +13,24 @@ export class ThemeSelectEvent extends Event {
 }
 
 export class ThemeManager extends EventTarget {
-  private _selected: ThemeName = "system";
+  private static readonly _storageKey = "theme";
+
+  private _selected: ThemeName;
+
+  constructor() {
+    super();
+
+    const fromStorage = localStorage.getItem(ThemeManager._storageKey);
+    if (
+      fromStorage === "system" ||
+      fromStorage === "light" ||
+      fromStorage === "dark"
+    ) {
+      this._selected = fromStorage;
+    } else {
+      this._selected = "system";
+    }
+  }
 
   get selected(): ThemeName {
     return this._selected;
@@ -21,15 +38,14 @@ export class ThemeManager extends EventTarget {
 
   set selected(theme: ThemeName) {
     this._selected = theme;
+    localStorage.setItem(ThemeManager._storageKey, theme);
     this.dispatchEvent(new ThemeSelectEvent(this._selected));
   }
 }
 
-export const themeManager = new ThemeManager();
-
-themeManager.addEventListener("theme-select", (e) => {
+function applyTheme(theme: ThemeName) {
   const rootClasses = document.documentElement.classList;
-  switch ((e as ThemeSelectEvent).theme) {
+  switch (theme) {
     case "system":
       rootClasses.remove("light", "dark");
       break;
@@ -42,7 +58,14 @@ themeManager.addEventListener("theme-select", (e) => {
       rootClasses.add("dark");
       break;
   }
-});
+}
+
+export const themeManager = new ThemeManager();
+
+applyTheme(themeManager.selected);
+themeManager.addEventListener("theme-select", (e) =>
+  applyTheme((e as ThemeSelectEvent).theme)
+);
 
 @customElement("tt-theme-selector")
 export class ThemeSelector extends LitElement {

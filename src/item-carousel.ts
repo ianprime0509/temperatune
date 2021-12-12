@@ -65,7 +65,10 @@ export class ItemCarousel extends LitElement {
     });
     this._resizeObserver.observe(this);
 
-    themeManager.addEventListener("theme-select", () => this.requestUpdate());
+    themeManager.addEventListener("theme-select", () => {
+      this._updateTextBuffers();
+      this._render();
+    });
   }
 
   override render() {
@@ -245,18 +248,6 @@ export class ItemCarousel extends LitElement {
       renderBuffer(this._textBuffers[i], item, false);
       renderBuffer(this._textBuffers[i + this.items.length], item, true);
     });
-  }
-
-  private _handleClick(event: MouseEvent) {
-    if (!this.disabled && event.button === 0) {
-      if (event.clientX >= 0.6 * this._width) {
-        this._onItemSelect(this._pos + 1);
-        this.scrollToItem(this._pos + 1);
-      } else if (event.clientX <= 0.4 * this._width) {
-        this._onItemSelect(this._pos - 1);
-        this.scrollToItem(this._pos - 1);
-      }
-    }
   }
 
   private _handlePointerDown(event: MouseEvent) {

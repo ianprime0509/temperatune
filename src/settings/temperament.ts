@@ -2,7 +2,7 @@ import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
-import { Temperament } from "temperament";
+import { Temperament, TemperamentData } from "temperament";
 import "../button.js";
 import { commonStyles } from "../style.js";
 import equalTemperament from "../temperaments/equal.json";
@@ -16,12 +16,47 @@ export class TemperamentSelectEvent extends Event {
 }
 
 export class TemperamentManager extends EventTarget {
+  private static readonly _storageKeyData = "temperaments";
+  private static readonly _storageKeySelected = "selectedTemperament";
+
   private _temperaments = [
-    new Temperament(equalTemperament),
-    new Temperament(pythagoreanDTemperament),
-    new Temperament(quarterCommaMeantoneTemperament),
+    new Temperament(equalTemperament as unknown as TemperamentData),
+    new Temperament(pythagoreanDTemperament as unknown as TemperamentData),
+    new Temperament(
+      quarterCommaMeantoneTemperament as unknown as TemperamentData
+    ),
   ];
   private _selectedIndex = 0;
+
+  constructor() {
+    super();
+
+    const savedTemperaments = localStorage.getItem(
+      TemperamentManager._storageKeyData
+    );
+    if (savedTemperaments !== null) {
+      this._temperaments = (
+        JSON.parse(savedTemperaments) as TemperamentData[]
+      ).map((data) => new Temperament(data));
+    } else {
+      this._temperaments = [
+        // https://github.com/microsoft/TypeScript/issues/32063
+        new Temperament(equalTemperament as unknown as TemperamentData),
+        new Temperament(pythagoreanDTemperament as unknown as TemperamentData),
+        new Temperament(
+          quarterCommaMeantoneTemperament as unknown as TemperamentData
+        ),
+      ];
+    }
+
+    const selectedIndex = localStorage.getItem(
+      TemperamentManager._storageKeySelected
+    );
+    this._selectedIndex =
+      selectedIndex !== null ? Number.parseInt(selectedIndex, 10) : 0;
+
+    this._save();
+  }
 
   get selectedTemperament(): Temperament {
     return this._temperaments[this._selectedIndex];
@@ -33,6 +68,7 @@ export class TemperamentManager extends EventTarget {
 
   set selectedTemperamentReferencePitch(pitch: number) {
     this.selectedTemperament.referencePitch = pitch;
+    this._save();
     this.dispatchEvent(new TemperamentSelectEvent(this.selectedTemperament));
   }
 
@@ -42,7 +78,19 @@ export class TemperamentManager extends EventTarget {
       throw new Error(`No such temperament: ${name}`);
     }
     this._selectedIndex = index;
+    this._save();
     this.dispatchEvent(new TemperamentSelectEvent(this.selectedTemperament));
+  }
+
+  private _save() {
+    localStorage.setItem(
+      TemperamentManager._storageKeyData,
+      JSON.stringify(this._temperaments)
+    );
+    localStorage.setItem(
+      TemperamentManager._storageKeySelected,
+      this._selectedIndex.toString()
+    );
   }
 }
 

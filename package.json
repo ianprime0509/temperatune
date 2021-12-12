@@ -21,7 +21,7 @@
   "dependencies": {
     "lit": "^2.0.2",
     "pitchy": "2.1.0",
-    "temperament": "^2.1.0"
+    "temperament": "^2.2.0"
   },
   "devDependencies": {
     "prettier": "2.5.1",
