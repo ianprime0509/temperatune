@@ -54,6 +54,8 @@ export class ItemCarousel extends LitElement {
   private _textBuffers: HTMLCanvasElement[] = [];
   private _resizeObserver: ResizeObserver;
   private _flingManager = new FlingManager();
+  private _lastX: number | null = null;
+  private _currentScroll: Promise<void> | null = null;
 
   constructor() {
     super();
@@ -71,6 +73,7 @@ export class ItemCarousel extends LitElement {
       width=${this._width}
       height=${this._height}
       aria-label=${ifDefined(this.label)}
+      @pointerdown=${this._handlePointerDown}
       @pointermove=${this._handlePointerMove}
       @pointerout=${this._handlePointerOut}
       @pointerup=${this._handlePointerUp}
@@ -106,15 +109,24 @@ export class ItemCarousel extends LitElement {
     return Math.round(this._pos);
   }
 
+  cancelScroll() {
+    this._currentScroll = null;
+  }
+
   scrollToItem(target: number, ms = 250): Promise<void> {
     // https://easings.net/#easeInOutQuad
     const ease = (x: number) =>
       x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 
     const initial = this._pos;
-    return new Promise((resolve) => {
+    const scroll = new Promise<void>((resolve) => {
       let startTime: number | null = null;
       const nextFrame = (time: number) => {
+        if (this._currentScroll !== scroll) {
+          resolve();
+          return;
+        }
+
         let elapsed;
         if (startTime === null) {
           startTime = time;
@@ -132,6 +144,9 @@ export class ItemCarousel extends LitElement {
       };
       requestAnimationFrame(nextFrame);
     });
+
+    this._currentScroll = scroll;
+    return scroll;
   }
 
   @state()
@@ -192,8 +207,6 @@ export class ItemCarousel extends LitElement {
   }
 
   private _updateTextBuffers() {
-    console.debug("Updating text buffers");
-
     const computedStyle = getComputedStyle(this);
     const shadowSize = 20;
 
@@ -230,20 +243,43 @@ export class ItemCarousel extends LitElement {
 
     this.items.forEach((item, i) => {
       renderBuffer(this._textBuffers[i], item, false);
-      renderBuffer(this._textBuffers[i + this.items.length], item, false);
+      renderBuffer(this._textBuffers[i + this.items.length], item, true);
     });
+  }
+
+  private _handleClick(event: MouseEvent) {
+    if (!this.disabled && event.button === 0) {
+      if (event.clientX >= 0.6 * this._width) {
+        this._onItemSelect(this._pos + 1);
+        this.scrollToItem(this._pos + 1);
+      } else if (event.clientX <= 0.4 * this._width) {
+        this._onItemSelect(this._pos - 1);
+        this.scrollToItem(this._pos - 1);
+      }
+    }
+  }
+
+  private _handlePointerDown(event: MouseEvent) {
+    if (!this.disabled && event.button === 0) {
+      this._flingManager.cancelFling();
+      this.cancelScroll();
+    }
   }
 
   private _handlePointerMove(event: MouseEvent) {
     if (!this.disabled && event.buttons & 1) {
-      this._pos -= event.movementX / this.itemWidth;
-      this._flingManager.recordPosition(this._pos);
+      if (this._lastX !== null) {
+        this._pos -= (event.clientX - this._lastX) / this.itemWidth;
+        this._flingManager.recordPosition(this._pos);
+      }
+      this._lastX = event.clientX;
     }
   }
 
   private _handlePointerOut(event: MouseEvent) {
     if (!this.disabled && event.buttons & 1) {
-      this._snapItem().then(() => this._onItemSelect(this._pos));
+      this._snapItem().then(() => this._onItemSelect(this.selected));
+      this._lastX = null;
     }
   }
 
@@ -252,7 +288,8 @@ export class ItemCarousel extends LitElement {
       this._flingManager
         .fling((diff) => (this._pos += diff))
         .then(() => this._snapItem())
-        .then(() => this._onItemSelect(this._pos));
+        .then(() => this._onItemSelect(this.selected));
+      this._lastX = null;
     }
   }
 
@@ -269,6 +306,6 @@ export class ItemCarousel extends LitElement {
   }
 
   private _snapItem(): Promise<void> {
-    return this.scrollToItem(Math.round(this._pos));
+    return this.scrollToItem(this.selected);
   }
 }
