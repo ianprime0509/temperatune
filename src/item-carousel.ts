@@ -116,30 +116,28 @@ export class ItemCarousel extends LitElement {
     this._currentScroll = null;
   }
 
-  scrollToItem(target: number, ms = 250): Promise<void> {
+  scrollToItem(
+    target: number,
+    { duration = 250, delay = 0 } = {}
+  ): Promise<void> {
     // https://easings.net/#easeInOutQuad
     const ease = (x: number) =>
       x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 
     const initial = this._pos;
     const scroll = new Promise<void>((resolve) => {
-      let startTime: number | null = null;
+      let startTime = performance.now();
       const nextFrame = (time: number) => {
         if (this._currentScroll !== scroll) {
           resolve();
           return;
         }
 
-        let elapsed;
-        if (startTime === null) {
-          startTime = time;
-          elapsed = 0;
-        } else {
-          elapsed = time - startTime;
-        }
-        const progress = ms > 0 ? ease(Math.min(elapsed / ms, 1)) : 1;
+        const elapsed = Math.max(time - startTime - delay, 0);
+        const progress =
+          duration > 0 ? ease(Math.min(elapsed / duration, 1)) : 1;
         this._pos = initial + (target - initial) * progress;
-        if (elapsed >= ms) {
+        if (elapsed >= duration) {
           resolve();
         } else {
           requestAnimationFrame(nextFrame);

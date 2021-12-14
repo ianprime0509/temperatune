@@ -1,47 +1,58 @@
 export class FlingManager {
-  private _t0: number | null = null;
-  private _t1: number | null = null;
-  private _x0: number | null = null;
-  private _x1: number | null = null;
-  private _currentFling: Promise<void> | null = null;
+  readonly #maxInteractionDelay;
+  readonly #maxMeasurements;
+  readonly #minVelocity;
+  #lastTX: [number, number] | null = null;
+  #measurements: number[] = [];
+  #currentFling: Promise<void> | null = null;
 
-  recordPosition(x: number) {
-    this._t0 = this._t1;
-    this._x0 = this._x1;
-    this._t1 = performance.now();
-    this._x1 = x;
+  constructor({
+    maxInteractionDelay = 250,
+    maxMeasurements = 3,
+    minVelocity = 1e-4,
+  } = {}) {
+    this.#maxInteractionDelay = maxInteractionDelay;
+    this.#maxMeasurements = maxMeasurements;
+    this.#minVelocity = minVelocity;
   }
 
   cancelFling() {
-    this._currentFling = null;
+    this.#currentFling = null;
   }
 
   fling(delta: (diff: number) => void): Promise<void> {
     const fling = new Promise<void>((resolve) => {
-      if (
-        this._t0 === null ||
-        this._t1 === null ||
-        performance.now() - this._t1 > 300 ||
-        this._x0 === null ||
-        this._x1 === null
-      ) {
+      if (this.#measurements.length === 0 || this.#lastTX === null) {
         resolve();
         return;
       }
 
-      let velocity = (this._x1 - this._x0) / (this._t1 - this._t0);
-      let acceleration = -velocity / (this._t1 - this._t0) / 20;
-      this._t1 = this._x1 = null;
-      let previousTime: number | null = null;
-      const update = (time: number) => {
-        if (this._currentFling !== fling) return;
+      const t = performance.now();
+      if (t - this.#lastTX[0] > this.#maxInteractionDelay) {
+        this.#measurements = [];
+        this.#lastTX = null;
+        resolve();
+        return;
+      }
 
-        const timeDiff = previousTime !== null ? time - previousTime : 0;
+      let velocity =
+        this.#measurements.reduce((v1, v2) => v1 + v2) /
+        this.#measurements.length;
+      this.#measurements = [];
+      this.#lastTX = null;
+
+      let previousTime = t;
+      const update = (time: number) => {
+        if (this.#currentFling !== fling) return;
+
+        const timeDiff = time - previousTime;
         previousTime = time;
-        velocity += acceleration * timeDiff;
-        if (Math.sign(velocity) === Math.sign(acceleration)) {
+
+        velocity -= velocity / timeDiff;
+        if (Math.abs(velocity) < this.#minVelocity) {
           velocity = 0;
         }
+
         delta(velocity * timeDiff);
         if (velocity === 0) {
           resolve();
@@ -51,7 +62,23 @@ export class FlingManager {
       };
       requestAnimationFrame(update);
     });
-    this._currentFling = fling;
+    this.#currentFling = fling;
     return fling;
+  }
+
+  recordPosition(x: number) {
+    const t = performance.now();
+    if (this.#lastTX !== null && t > this.#lastTX[0]) {
+      const [lastT, lastX] = this.#lastTX;
+      if (t - lastT <= this.#maxInteractionDelay) {
+        this.#measurements.push((x - lastX) / (t - lastT));
+        if (this.#measurements.length > this.#maxMeasurements) {
+          this.#measurements.splice(0, 1);
+        }
+      } else {
+        this.#measurements = [];
+      }
+    }
+    this.#lastTX = [t, x];
   }
 }

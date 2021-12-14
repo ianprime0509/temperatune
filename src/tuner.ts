@@ -159,7 +159,9 @@ export class Tuner extends LitElement {
       temperamentManager.selectedTemperament.noteNames.indexOf(noteName);
     // TODO: this may need to take the temperament into account
     const noteItemOffset = centOffset / 200;
-    this._notes.value?.scrollToItem(noteItem + noteItemOffset, 100);
+    this._notes.value?.scrollToItem(noteItem + noteItemOffset, {
+      duration: 100,
+    });
     this._centOffset = centOffset;
   }
 
@@ -169,8 +171,8 @@ export class Tuner extends LitElement {
         temperamentManager.selectedTemperament.referenceName
       );
     const refOctaveItem = OCTAVE_RADIUS;
-    this._notes.value?.scrollToItem(refNoteItem, 250);
-    this._octaves.value?.scrollToItem(refOctaveItem, 0);
+    this._notes.value?.scrollToItem(refNoteItem);
+    this._octaves.value?.scrollToItem(refOctaveItem, { duration: 0 });
     this._updateGeneratedPitch(refNoteItem, refOctaveItem);
   }
 
