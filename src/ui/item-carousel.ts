@@ -3,7 +3,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { FlingManager } from "./fling.js";
-import { themeManager } from "./settings/theme.js";
+import { themeManager } from "../settings/theme.js";
 
 function arraysEqual<T>(a1: T[], a2: T[]): boolean {
   if (a1.length !== a2.length) return false;

@@ -3,7 +3,7 @@ import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { Temperament, TemperamentData } from "temperament";
-import "../button.js";
+import "../ui/button.js";
 import { commonStyles } from "../style.js";
 import equalTemperament from "../temperaments/equal.json";
 import pythagoreanDTemperament from "../temperaments/pythagoreanD.json";

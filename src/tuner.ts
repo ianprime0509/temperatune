@@ -4,10 +4,10 @@ import { createRef, ref } from "lit/directives/ref.js";
 import { PitchAnalyser, PitchUpdateEvent } from "./pitch-analyser";
 import { PitchGenerator } from "./pitch-generator.js";
 import { temperamentManager } from "./settings/temperament.js";
-import "./button.js";
+import "./ui/button.js";
 import "./feedback.js";
-import "./item-carousel.js";
-import { ItemCarousel, ItemSelectEvent } from "./item-carousel.js";
+import "./ui/item-carousel.js";
+import { ItemCarousel, ItemSelectEvent } from "./ui/item-carousel.js";
 import { commonStyles } from "./style.js";
 
 const OCTAVE_RADIUS = 2;
