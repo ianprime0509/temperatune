@@ -42,12 +42,15 @@ export class Feedback extends LitElement {
 
   @property({ type: Number }) centOffset!: number;
   @property({ type: Number }) pitch!: number;
+  @property({ type: Boolean }) unavailable = false;
 
   override render() {
     const rounded = Math.round(this.centOffset);
     const abs = Math.abs(rounded);
     let text;
-    if (abs < IN_TUNE_OFFSET) {
+    if (this.unavailable) {
+      text = "Input unavailable";
+    } else if (abs < IN_TUNE_OFFSET) {
       text = "In tune";
     } else {
       text = `${abs} ${abs === 1 ? "cent" : "cents"} ${
@@ -56,7 +59,11 @@ export class Feedback extends LitElement {
     }
     return html`<div id="container">
       <div id="feedback" aria-label="Feedback">${text}</div>
-      <div id="pitch" aria-label="Pitch">${this.pitch.toFixed(0)} Hz</div>
+      ${!this.unavailable
+        ? html`<div id="pitch" aria-label="Pitch">
+            ${this.pitch.toFixed(0)} Hz
+          </div>`
+        : ""}
     </div>`;
   }
 }

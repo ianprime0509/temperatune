@@ -1,6 +1,5 @@
 import { LitElement, PropertyValues, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { ifDefined } from "lit/directives/if-defined.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { FlingManager } from "./fling.js";
 import { themeManager } from "../settings/theme.js";
@@ -44,7 +43,6 @@ export class ItemCarousel extends LitElement {
   @property({ type: Boolean }) disabled: boolean = false;
   @property({ type: Number }) itemWidth = 300;
   @property({ type: Number }) itemHeight = 150;
-  @property() label?: string;
   @property({ type: Number }) min = Number.NEGATIVE_INFINITY;
   @property({ type: Number }) max = Number.POSITIVE_INFINITY;
   private __pos = 0;
@@ -75,7 +73,6 @@ export class ItemCarousel extends LitElement {
     return html`<canvas
       width=${this._width}
       height=${this._height}
-      aria-label=${ifDefined(this.label)}
       @pointerdown=${this._handlePointerDown}
       @pointermove=${this._handlePointerMove}
       @pointerout=${this._handlePointerOut}

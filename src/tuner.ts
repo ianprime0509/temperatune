@@ -1,5 +1,6 @@
 import { LitElement, PropertyValues, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { PitchAnalyser, PitchUpdateEvent } from "./pitch-analyser";
 import { PitchGenerator } from "./pitch-generator.js";
@@ -33,8 +34,16 @@ export class Tuner extends LitElement {
         height: 100%;
       }
 
+      tt-item-carousel {
+        transition: opacity 250ms;
+      }
+
       .material-icons-round {
         color: var(--color-text);
+      }
+
+      .unavailable {
+        opacity: 0;
       }
 
       #notes {
@@ -60,6 +69,7 @@ export class Tuner extends LitElement {
     `,
   ];
 
+  @state() private _microphoneAvailable = true;
   @state() private _playing = false;
   @state() private _pitch =
     temperamentManager.selectedTemperament.referencePitch;
@@ -89,7 +99,11 @@ export class Tuner extends LitElement {
       <main>
         <tt-item-carousel
           id="notes"
-          label="Note"
+          class=${classMap({
+            unavailable: !this._playing && !this._microphoneAvailable,
+          })}
+          aria-hidden=${!this._microphoneAvailable}
+          aria-label="Note"
           ?disabled=${!this._playing}
           .items=${temperamentManager.selectedTemperament.noteNames}
           @item-select=${this._handleNoteItemSelect}
@@ -99,13 +113,13 @@ export class Tuner extends LitElement {
         ${this._playing
           ? html`<tt-item-carousel
               id="octaves"
-              label="Octave"
-              .items=${temperamentManager.selectedTemperament.getOctaveRange(
-                OCTAVE_RADIUS
-              )}
+              aria-label="Octave"
               itemHeight="50"
               min="0"
               max="4"
+              .items=${temperamentManager.selectedTemperament.getOctaveRange(
+                OCTAVE_RADIUS
+              )}
               @item-select=${this._handleOctaveItemSelect}
               ${ref(this._octaves)}
             ></tt-item-carousel>`
@@ -113,6 +127,7 @@ export class Tuner extends LitElement {
               id="feedback"
               centOffset=${this._centOffset}
               pitch=${this._pitch}
+              ?unavailable=${!this._microphoneAvailable}
             ></tt-feedback>`}
 
         <tt-button
@@ -136,7 +151,9 @@ export class Tuner extends LitElement {
         this._pitchGenerator.play();
       } else {
         this._pitchGenerator.pause();
-        this._pitchAnalyser.listen();
+        this._pitchAnalyser
+          .listen()
+          .catch(() => (this._microphoneAvailable = false));
       }
     }
   }
