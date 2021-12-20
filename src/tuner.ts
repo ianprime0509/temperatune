@@ -159,11 +159,17 @@ export class Tuner extends LitElement {
   }
 
   private _handleNoteItemSelect(event: ItemSelectEvent) {
-    this._updateGeneratedPitch(event.item, this._octaves.value!.selected);
+    const octaves = this._octaves.value;
+    if (octaves !== undefined) {
+      this._updateGeneratedPitch(event.item, octaves.selected);
+    }
   }
 
   private _handleOctaveItemSelect(event: ItemSelectEvent) {
-    this._updateGeneratedPitch(this._notes.value!.selected, event.item);
+    const notes = this._notes.value;
+    if (notes !== undefined) {
+      this._updateGeneratedPitch(notes.selected, event.item);
+    }
   }
 
   private _handlePitchUpdate(event: PitchUpdateEvent) {
@@ -176,7 +182,7 @@ export class Tuner extends LitElement {
       temperamentManager.selectedTemperament.noteNames.indexOf(noteName);
     // TODO: this may need to take the temperament into account
     const noteItemOffset = centOffset / 200;
-    this._notes.value?.scrollToItem(noteItem + noteItemOffset, {
+    void this._notes.value?.scrollToItem(noteItem + noteItemOffset, {
       duration: 100,
     });
     this._centOffset = centOffset;
@@ -188,8 +194,8 @@ export class Tuner extends LitElement {
         temperamentManager.selectedTemperament.referenceName
       );
     const refOctaveItem = OCTAVE_RADIUS;
-    this._notes.value?.scrollToItem(refNoteItem);
-    this._octaves.value?.scrollToItem(refOctaveItem, { duration: 0 });
+    void this._notes.value?.scrollToItem(refNoteItem);
+    void this._octaves.value?.scrollToItem(refOctaveItem, { duration: 0 });
     this._updateGeneratedPitch(refNoteItem, refOctaveItem);
   }
 

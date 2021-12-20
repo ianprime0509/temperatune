@@ -3,7 +3,13 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "serve": "vite"
+    "build": "vite build",
+    "fmt": "prettier --write .",
+    "preview": "vite preview",
+    "serve": "vite",
+    "test": "run-p test:fmt test:lint",
+    "test:fmt": "prettier --check .",
+    "test:lint": "eslint --ext .js,.cjs,.mjs,.ts ."
   },
   "repository": {
     "type": "git",
@@ -20,10 +26,14 @@
   "homepage": "https://ianprime0509.github.io/temperatune",
   "dependencies": {
     "lit": "^2.0.2",
-    "pitchy": "2.1.0",
+    "pitchy": "^2.1.0",
     "temperament": "^2.2.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "eslint": "^8.5.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "2.5.1",
     "typescript": "^4.5.3",
     "vite": "^2.7.1"

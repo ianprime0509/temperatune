@@ -179,9 +179,12 @@ export class TemperamentSelector extends LitElement {
   }
 
   private _handleReferencePitchInput() {
-    const pitch = parseInt(this._referencePitchInput.value!.value, 10);
-    if (pitch > 0) {
-      temperamentManager.selectedTemperamentReferencePitch = pitch;
+    const referencePitchInput = this._referencePitchInput.value;
+    if (referencePitchInput !== undefined) {
+      const pitch = parseInt(referencePitchInput.value, 10);
+      if (pitch > 0) {
+        temperamentManager.selectedTemperamentReferencePitch = pitch;
+      }
     }
   }
 

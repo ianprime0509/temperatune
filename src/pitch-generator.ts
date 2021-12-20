@@ -21,12 +21,12 @@ export class PitchGenerator {
       this._oscillator.start();
     }
     this._oscillator.connect(this._audioContext.destination);
-    this._audioContext.resume();
+    void this._audioContext.resume();
   }
 
   pause() {
     if (this._oscillator) {
-      this._audioContext.suspend();
+      void this._audioContext.suspend();
       this._oscillator.disconnect(this._audioContext.destination);
     }
   }

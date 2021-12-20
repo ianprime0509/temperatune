@@ -26,7 +26,7 @@ export class PitchAnalyser extends EventTarget {
     }
 
     this._microphoneSource.connect(this._analyserNode);
-    this._audioContext.resume();
+    void this._audioContext.resume();
     this._interval && clearInterval(this._interval);
     this._interval = setInterval(() => {
       this._analyserNode.getFloatTimeDomainData(this._buffer);

@@ -54,8 +54,9 @@ export class Button extends LitElement {
   }
 
   private _handleClick() {
-    if (this.pulse) {
-      this._button.value!.animate(
+    const button = this._button.value;
+    if (this.pulse && button !== undefined) {
+      button.animate(
         [
           { boxShadow: "none" },
           { boxShadow: "0 0 20px var(--color-primary)" },

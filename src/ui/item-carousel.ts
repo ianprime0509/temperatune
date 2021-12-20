@@ -36,11 +36,11 @@ export class ItemCarousel extends LitElement {
 
   @property({
     attribute: false,
-    hasChanged: (v1?: any[], v2?: any[]) =>
+    hasChanged: (v1?: unknown[], v2?: unknown[]) =>
       v1 !== v2 && !arraysEqual(v1 ?? [], v2 ?? []),
   })
-  items!: any[];
-  @property({ type: Boolean }) disabled: boolean = false;
+  items!: unknown[];
+  @property({ type: Boolean }) disabled = false;
   @property({ type: Number }) itemWidth = 300;
   @property({ type: Number }) itemHeight = 150;
   @property({ type: Number }) min = Number.NEGATIVE_INFINITY;
@@ -123,7 +123,7 @@ export class ItemCarousel extends LitElement {
 
     const initial = this._pos;
     const scroll = new Promise<void>((resolve) => {
-      let startTime = performance.now();
+      const startTime = performance.now();
       const nextFrame = (time: number) => {
         if (this._currentScroll !== scroll) {
           resolve();
@@ -165,8 +165,10 @@ export class ItemCarousel extends LitElement {
   }
 
   private _render() {
-    const canvas = this._canvas.value!;
-    const ctx = canvas.getContext("2d")!;
+    const canvas = this._canvas.value;
+    if (canvas === undefined) return;
+    const ctx = canvas.getContext("2d");
+    if (ctx === null) return;
     const w = canvas.width;
     const h = canvas.height;
     if (w === 0 || h === 0) return;
@@ -210,13 +212,14 @@ export class ItemCarousel extends LitElement {
 
     const renderBuffer = (
       buffer: HTMLCanvasElement,
-      item: any,
+      item: unknown,
       highlight: boolean
     ) => {
       const w = (buffer.width = this.itemWidth);
       const h = (buffer.height = this._height);
 
-      const ctx = buffer.getContext("2d")!;
+      const ctx = buffer.getContext("2d");
+      if (ctx === null) return;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = computedStyle.getPropertyValue("--color-text");
       ctx.font = `${this.itemHeight}px Roboto, sans-serif`;
@@ -229,7 +232,7 @@ export class ItemCarousel extends LitElement {
         ctx.shadowColor = computedStyle.getPropertyValue("--color-primary");
       }
 
-      ctx.fillText(item.toString(), w / 2, h / 2, w - 2 * shadowSize);
+      ctx.fillText(String(item), w / 2, h / 2, w - 2 * shadowSize);
 
       return buffer;
     };
@@ -264,14 +267,14 @@ export class ItemCarousel extends LitElement {
 
   private _handlePointerOut(event: MouseEvent) {
     if (!this.disabled && event.buttons & 1) {
-      this._snapItem().then(() => this._onItemSelect(this.selected));
+      void this._snapItem().then(() => this._onItemSelect(this.selected));
       this._lastX = null;
     }
   }
 
   private _handlePointerUp(event: MouseEvent) {
     if (!this.disabled && event.button === 0) {
-      this._flingManager
+      void this._flingManager
         .fling((diff) => (this._pos += diff))
         .then(() => this._snapItem())
         .then(() => this._onItemSelect(this.selected));
