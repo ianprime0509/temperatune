@@ -13,6 +13,8 @@
   --color-text-dark: #eee;
   --color-text-secondary-light: #444;
   --color-text-secondary-dark: #bbb;
+  --color-text-disabled-light: #888;
+  --color-text-disabled-dark: #888;
   --color-text-link-light: #0000ee;
   --color-text-link-dark: #0000ee;
   --color-text-link-visited-light: #551a8b;
@@ -36,6 +38,7 @@ html.light {
 
   --color-text: var(--color-text-light);
   --color-text-secondary: var(--color-text-secondary-light);
+  --color-text-disabled: var(--color-text-disabled-light);
   --color-text-link: var(--color-text-link-light);
   --color-text-link-visited: var(--color-text-link-visited-light);
 }
@@ -50,6 +53,7 @@ html.light {
 
     --color-text: var(--color-text-dark);
     --color-text-secondary: var(--color-text-secondary-dark);
+    --color-text-disabled: var(--color-text-disabled-dark);
     --color-text-link: var(--color-text-link-dark);
     --color-text-link-visited: var(--color-text-link-visited-dark);
   }
@@ -64,6 +68,7 @@ html.dark {
 
   --color-text: var(--color-text-dark);
   --color-text-secondary: var(--color-text-secondary-dark);
+  --color-text-disabled: var(--color-text-disabled-dark);
   --color-text-link: var(--color-text-link-dark);
   --color-text-link-visited: var(--color-text-link-visited-dark);
 }

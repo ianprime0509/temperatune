@@ -72,6 +72,31 @@ export class TemperamentManager extends EventTarget {
     this.dispatchEvent(new TemperamentSelectEvent(this.selectedTemperament));
   }
 
+  add(temperament: Temperament) {
+    if (
+      this._temperaments.findIndex((t) => t.name === temperament.name) !== -1
+    ) {
+      throw new Error(`A temperament named ${temperament.name} already exists`);
+    }
+
+    this._temperaments.push(temperament);
+    this._selectedIndex = this._temperaments.length - 1;
+    this._save();
+    this.dispatchEvent(new TemperamentSelectEvent(this.selectedTemperament));
+  }
+
+  remove(name: string) {
+    const index = this._temperaments.findIndex((t) => t.name === name);
+    if (index === -1) return;
+
+    this._temperaments.splice(index, 1);
+    if (this._selectedIndex === this._temperaments.length) {
+      this._selectedIndex--;
+    }
+    this._save();
+    this.dispatchEvent(new TemperamentSelectEvent(this.selectedTemperament));
+  }
+
   select(name: string) {
     const index = this._temperaments.findIndex((t) => t.name === name);
     if (index === -1) {
@@ -105,6 +130,15 @@ export class TemperamentSelector extends LitElement {
         display: block;
       }
 
+      .button-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4rem;
+
+        width: 100%;
+      }
+
       .temperament {
         display: flex;
         flex-direction: column;
@@ -134,11 +168,23 @@ export class TemperamentSelector extends LitElement {
         font-weight: normal;
       }
 
+      .action > .material-icons-round {
+        font-size: 2rem;
+      }
+
+      .action[disabled] > .material-icons-round {
+        color: var(--color-text-disabled);
+      }
+
       #container {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: start;
+      }
+
+      #file-select {
+        display: none;
       }
 
       #reference-pitch-container {
@@ -160,6 +206,7 @@ export class TemperamentSelector extends LitElement {
   ];
 
   private _referencePitchInput = createRef<HTMLInputElement>();
+  private _fileSelectInput = createRef<HTMLInputElement>();
 
   constructor() {
     super();
@@ -170,15 +217,47 @@ export class TemperamentSelector extends LitElement {
   }
 
   override render() {
-    return html`<div id="container">
-      ${this._referencePitchSelector()}
-      ${temperamentManager.temperaments.map((temperament) =>
-        this._temperamentButton(temperament)
-      )}
-    </div>`;
+    return html`<link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+        rel="stylesheet"
+      />
+      <div id="container">
+        ${this._referencePitchSelector()}
+        ${temperamentManager.temperaments.map((temperament) =>
+          this._temperamentButton(temperament)
+        )}
+        <div class="button-group">
+          <tt-button
+            id="add"
+            class="action"
+            round
+            aria-label="Add temperament"
+            @click=${this._handleTemperamentAddClick}
+          >
+            <span class="material-icons-round" aria-hidden="true">add</span>
+            <input
+              id="file-select"
+              type="file"
+              accept=".json, application/json"
+              @change=${this._handleTemperamentAddFileSelect}
+              ${ref(this._fileSelectInput)}
+            />
+          </tt-button>
+          <tt-button
+            id="remove"
+            class="action"
+            round
+            aria-label=${`Remove ${temperamentManager.selectedTemperament.name}`}
+            ?disabled=${temperamentManager.temperaments.length <= 1}
+            @click=${this._handleTemperamentRemoveClick}
+          >
+            <span class="material-icons-round" aria-hidden="true">remove</span>
+          </tt-button>
+        </div>
+      </div>`;
   }
 
-  private _handleReferencePitchInput() {
+  private _handleReferencePitchChange() {
     const referencePitchInput = this._referencePitchInput.value;
     if (referencePitchInput !== undefined) {
       const pitch = parseInt(referencePitchInput.value, 10);
@@ -186,6 +265,22 @@ export class TemperamentSelector extends LitElement {
         temperamentManager.selectedTemperamentReferencePitch = pitch;
       }
     }
+  }
+
+  private _handleTemperamentAddClick() {
+    this._fileSelectInput.value?.click();
+  }
+
+  private async _handleTemperamentAddFileSelect() {
+    const blob = this._fileSelectInput.value?.files?.[0];
+    if (blob === undefined) return;
+
+    const data = JSON.parse(await blob.text()) as TemperamentData;
+    temperamentManager.add(new Temperament(data));
+  }
+
+  private _handleTemperamentRemoveClick() {
+    temperamentManager.remove(temperamentManager.selectedTemperament.name);
   }
 
   private _handleTemperamentSelect(temperament: Temperament) {
@@ -215,7 +310,7 @@ export class TemperamentSelector extends LitElement {
         step="1"
         value=${temperamentManager.selectedTemperament.referencePitch}
         aria-label="Reference pitch in Hz"
-        @input=${this._handleReferencePitchInput}
+        @change=${this._handleReferencePitchChange}
         ${ref(this._referencePitchInput)}
       />
       <span aria-hidden="true">Hz</span>

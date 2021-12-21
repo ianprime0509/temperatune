@@ -29,4 +29,8 @@ export const commonStyles = css`
     background: var(--color-bg-input);
     color: var(--color-text);
   }
+
+  .material-icons-round {
+    color: var(--color-text);
+  }
 `;

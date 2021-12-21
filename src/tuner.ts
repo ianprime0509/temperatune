@@ -38,10 +38,6 @@ export class Tuner extends LitElement {
         transition: opacity 250ms;
       }
 
-      .material-icons-round {
-        color: var(--color-text);
-      }
-
       .unavailable {
         opacity: 0;
       }
@@ -131,12 +127,13 @@ export class Tuner extends LitElement {
             ></tt-feedback>`}
 
         <tt-button
+          id="play-button"
           pulse
           round
-          id="play-button"
+          aria-label=${this._playing ? "Listen for pitch" : "Play pitch"}
           @click=${() => (this._playing = !this._playing)}
         >
-          <span class="material-icons-round"
+          <span class="material-icons-round" aria-hidden="true"
             >${this._playing ? "mic" : "play_arrow"}</span
           >
         </tt-button>

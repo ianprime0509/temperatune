@@ -42,10 +42,6 @@ export class App extends LitElement {
         visibility: hidden;
       }
 
-      .material-icons-round {
-        color: var(--color-text);
-      }
-
       tt-settings {
         position: absolute;
 
@@ -83,8 +79,13 @@ export class App extends LitElement {
         rel="stylesheet"
       />
       <div id="container">
-        <tt-button round id="menu-button" @click=${this._toggleSettingsOpen}>
-          <span class="material-icons-round"
+        <tt-button
+          id="menu-button"
+          round
+          aria-label=${this._settingsOpen ? "Close settings" : "Open settings"}
+          @click=${this._toggleSettingsOpen}
+        >
+          <span class="material-icons-round" aria-hidden="true"
             >${this._settingsOpen ? "arrow_back" : "menu"}</span
           >
         </tt-button>
@@ -93,13 +94,13 @@ export class App extends LitElement {
             hidden: this._settingsHidden,
             open: this._settingsOpen,
           })}
-          @animationend=${this._handleSettingsAnimationEnd}
+          @transitionend=${this._handleSettingsTransitionEnd}
         ></tt-settings>
         <tt-tuner class=${classMap({ hidden: this._tunerHidden })}></tt-tuner>
       </div>`;
   }
 
-  private _handleSettingsAnimationEnd() {
+  private _handleSettingsTransitionEnd() {
     this._settingsHidden = !this._settingsOpen;
     this._tunerHidden = this._settingsOpen;
   }
