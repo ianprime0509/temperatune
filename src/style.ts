@@ -1,4 +1,4 @@
-import { css } from "lit";
+import { css, html } from "lit";
 
 export const commonStyles = css`
   *,
@@ -34,3 +34,9 @@ export const commonStyles = css`
     color: var(--color-text);
   }
 `;
+
+export const iconFontLink = html`<link
+  rel="stylesheet"
+  crossorigin="anonymous"
+  href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+/>`;

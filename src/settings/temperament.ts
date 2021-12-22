@@ -4,7 +4,9 @@ import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { Temperament, TemperamentData } from "temperament";
 import "../ui/button.js";
-import { commonStyles } from "../style.js";
+import "../ui/dialog.js";
+import { Dialog } from "../ui/dialog.js";
+import { commonStyles, iconFontLink } from "../style.js";
 import equalTemperament from "../temperaments/equal.json";
 import pythagoreanDTemperament from "../temperaments/pythagoreanD.json";
 import quarterCommaMeantoneTemperament from "../temperaments/quarterCommaMeantone.json";
@@ -168,6 +170,13 @@ export class TemperamentSelector extends LitElement {
         font-weight: normal;
       }
 
+      .action {
+        margin: 0.5rem;
+
+        width: 3rem;
+        height: 3rem;
+      }
+
       .action > .material-icons-round {
         font-size: 2rem;
       }
@@ -207,6 +216,7 @@ export class TemperamentSelector extends LitElement {
 
   private _referencePitchInput = createRef<HTMLInputElement>();
   private _fileSelectInput = createRef<HTMLInputElement>();
+  private _removeConfirmation = createRef<Dialog>();
 
   constructor() {
     super();
@@ -217,10 +227,7 @@ export class TemperamentSelector extends LitElement {
   }
 
   override render() {
-    return html`<link
-        href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
-        rel="stylesheet"
-      />
+    return html`${iconFontLink}
       <div id="container">
         ${this._referencePitchSelector()}
         ${temperamentManager.temperaments.map((temperament) =>
@@ -254,7 +261,18 @@ export class TemperamentSelector extends LitElement {
             <span class="material-icons-round" aria-hidden="true">remove</span>
           </tt-button>
         </div>
-      </div>`;
+      </div>
+      <tt-dialog
+        heading="Confirm"
+        .options=${["Yes", "No"]}
+        @close=${this._handleRemoveConfirmationClose}
+        ${ref(this._removeConfirmation)}
+      >
+        <p>
+          Are you sure you want to delete
+          <strong>${temperamentManager.selectedTemperament.name}</strong>?
+        </p>
+      </tt-dialog>`;
   }
 
   private _handleReferencePitchChange() {
@@ -264,6 +282,13 @@ export class TemperamentSelector extends LitElement {
       if (pitch > 0) {
         temperamentManager.selectedTemperamentReferencePitch = pitch;
       }
+    }
+  }
+
+  private _handleRemoveConfirmationClose() {
+    const confirmation = this._removeConfirmation.value;
+    if (confirmation !== undefined && confirmation.returnValue === "Yes") {
+      temperamentManager.remove(temperamentManager.selectedTemperament.name);
     }
   }
 
@@ -280,7 +305,11 @@ export class TemperamentSelector extends LitElement {
   }
 
   private _handleTemperamentRemoveClick() {
-    temperamentManager.remove(temperamentManager.selectedTemperament.name);
+    const confirmation = this._removeConfirmation.value;
+    if (confirmation !== undefined) {
+      confirmation.returnValue = "";
+      confirmation.showModal();
+    }
   }
 
   private _handleTemperamentSelect(temperament: Temperament) {

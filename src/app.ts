@@ -4,7 +4,7 @@ import { classMap } from "lit/directives/class-map.js";
 import "./ui/button.js";
 import "./settings/index.js";
 import "./tuner.js";
-import { commonStyles } from "./style.js";
+import { commonStyles, iconFontLink } from "./style.js";
 
 @customElement("tt-app")
 export class App extends LitElement {
@@ -74,10 +74,7 @@ export class App extends LitElement {
   @state() private _tunerHidden = false;
 
   override render() {
-    return html`<link
-        href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
-        rel="stylesheet"
-      />
+    return html`${iconFontLink}
       <div id="container">
         <tt-button
           id="menu-button"

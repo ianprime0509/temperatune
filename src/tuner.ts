@@ -9,7 +9,7 @@ import "./ui/button.js";
 import "./feedback.js";
 import "./ui/item-carousel.js";
 import { ItemCarousel, ItemSelectEvent } from "./ui/item-carousel.js";
-import { commonStyles } from "./style.js";
+import { commonStyles, iconFontLink } from "./style.js";
 
 const OCTAVE_RADIUS = 2;
 
@@ -88,10 +88,7 @@ export class Tuner extends LitElement {
   }
 
   override render() {
-    return html`<link
-        href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
-        rel="stylesheet"
-      />
+    return html`${iconFontLink}
       <main>
         <tt-item-carousel
           id="notes"
