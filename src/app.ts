@@ -6,10 +6,6 @@ import "./settings/index.js";
 import "./tuner.js";
 import { commonStyles } from "./style.js";
 
-import { registerSW } from "virtual:pwa-register";
-
-registerSW();
-
 @customElement("tt-app")
 export class App extends LitElement {
   static override styles = [
