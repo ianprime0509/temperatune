@@ -208,6 +208,10 @@ export class ItemCarousel extends LitElement {
 
   private _updateTextBuffers() {
     const computedStyle = getComputedStyle(this);
+    // The off-screen canvas elements look blurry by default when rendered to
+    // the main canvas, especially on devices with higher DPR. The minimum of 2
+    // seems to help decrease blurriness even on displays with lower DPR.
+    const scale = Math.max(window.devicePixelRatio, 2);
     const shadowSize = 20;
 
     const renderBuffer = (
@@ -215,24 +219,24 @@ export class ItemCarousel extends LitElement {
       item: unknown,
       highlight: boolean
     ) => {
-      const w = (buffer.width = this.itemWidth);
-      const h = (buffer.height = this._height);
+      const w = (buffer.width = scale * this.itemWidth);
+      const h = (buffer.height = scale * this._height);
 
       const ctx = buffer.getContext("2d");
       if (ctx === null) return;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = computedStyle.getPropertyValue("--color-text");
-      ctx.font = `${this.itemHeight}px Roboto, sans-serif`;
+      ctx.font = `${scale * this.itemHeight}px Roboto, sans-serif`;
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
 
       if (highlight) {
         ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
-        ctx.shadowBlur = shadowSize;
+        ctx.shadowBlur = scale * shadowSize;
         ctx.shadowColor = computedStyle.getPropertyValue("--color-primary");
       }
 
-      ctx.fillText(String(item), w / 2, h / 2, w - 2 * shadowSize);
+      ctx.fillText(String(item), w / 2, h / 2, w - 2 * scale * shadowSize);
 
       return buffer;
     };
