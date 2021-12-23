@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: "16"
       - run: npm ci
-      - run: npm run build
+      - run: npm run build -- --base /temperatune/
       - name: Deploy application
         uses: crazy-max/ghaction-github-pages@v2
         if: success()
