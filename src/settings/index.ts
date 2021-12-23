@@ -40,6 +40,8 @@ export class Settings extends LitElement {
         height: 100%;
 
         background: var(--color-bg);
+
+        overflow-y: auto;
       }
     `,
   ];
