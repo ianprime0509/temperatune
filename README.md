@@ -1,14 +1,15 @@
 # Temperatune
 
 Temperatune is a simple tuner app that runs in the browser. Its key
-distinguishing feature from the myriad of other online tuners is its support
-for _[temperaments](https://en.wikipedia.org/wiki/Musical_temperament)_, which
-makes it much more useful for people who want to play [early
-music](https://en.wikipedia.org/wiki/Early_music) in period style or music
-which does not originate in the traditional Western style (such as [Arabic
-music](https://en.wikipedia.org/wiki/Arabic_music)). Of course, Temperatune
-doesn't have built-in support for all these types of music; instead, it allows
-the user to define temperaments as JSON files that Temperatune understands.
+distinguishing feature from the myriad of other online tuners is its support for
+_[temperaments](https://en.wikipedia.org/wiki/Musical_temperament)_, which makes
+it much more useful for people who want to play
+[early music](https://en.wikipedia.org/wiki/Early_music) in period style or
+music which does not originate in the traditional Western style (such as
+[Arabic music](https://en.wikipedia.org/wiki/Arabic_music)). Of course,
+Temperatune doesn't have built-in support for all these types of music; instead,
+it allows the user to define temperaments as JSON files that Temperatune
+understands.
 
 ## Browser support
 
@@ -48,5 +49,5 @@ corresponding to the built-in temperaments can be found under the
 
 ## License
 
-This is free software, distributed under the [MIT
-license](https://opensource.org/licenses/MIT).
+This is free software, distributed under the
+[MIT license](https://opensource.org/licenses/MIT).

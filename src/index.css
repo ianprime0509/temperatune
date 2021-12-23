@@ -1,0 +1,85 @@
+:root {
+  --color-bg-light: #eee;
+  --color-bg-dark: #333;
+  --color-bg-hover-light: #ccc;
+  --color-bg-hover-dark: #777;
+  --color-bg-input-light: #f8f8f8;
+  --color-bg-input-dark: #484848;
+
+  --color-outline-light: #666;
+  --color-outline-dark: #999;
+
+  --color-text-light: #111;
+  --color-text-dark: #eee;
+  --color-text-secondary-light: #444;
+  --color-text-secondary-dark: #bbb;
+  --color-text-disabled-light: #888;
+  --color-text-disabled-dark: #888;
+  --color-text-link-light: #0000ee;
+  --color-text-link-dark: #8888ff;
+  --color-text-link-visited-light: #551a8b;
+  --color-text-link-visited-dark: #b47ee6;
+
+  --color-primary: #1e9be9;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+html.light {
+  --color-bg: var(--color-bg-light);
+  --color-bg-hover: var(--color-bg-hover-light);
+  --color-bg-input: var(--color-bg-input-light);
+
+  --color-outline: var(--color-outline-light);
+
+  --color-text: var(--color-text-light);
+  --color-text-secondary: var(--color-text-secondary-light);
+  --color-text-disabled: var(--color-text-disabled-light);
+  --color-text-link: var(--color-text-link-light);
+  --color-text-link-visited: var(--color-text-link-visited-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    --color-bg: var(--color-bg-dark);
+    --color-bg-hover: var(--color-bg-hover-dark);
+    --color-bg-input: var(--color-bg-input-dark);
+
+    --color-outline: var(--color-outline-dark);
+
+    --color-text: var(--color-text-dark);
+    --color-text-secondary: var(--color-text-secondary-dark);
+    --color-text-disabled: var(--color-text-disabled-dark);
+    --color-text-link: var(--color-text-link-dark);
+    --color-text-link-visited: var(--color-text-link-visited-dark);
+  }
+}
+
+html.dark {
+  --color-bg: var(--color-bg-dark);
+  --color-bg-hover: var(--color-bg-hover-dark);
+  --color-bg-input: var(--color-bg-input-dark);
+
+  --color-outline: var(--color-outline-dark);
+
+  --color-text: var(--color-text-dark);
+  --color-text-secondary: var(--color-text-secondary-dark);
+  --color-text-disabled: var(--color-text-disabled-dark);
+  --color-text-link: var(--color-text-link-dark);
+  --color-text-link-visited: var(--color-text-link-visited-dark);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: Roboto, sans-serif;
+}

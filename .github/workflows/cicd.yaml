@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: '16'
+          node-version: "16"
       - run: npm ci
       - run: npm run build
       - run: npm test
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: '16'
+          node-version: "16"
       - run: npm ci
       - run: npm run build
       - name: Deploy application
@@ -36,6 +36,6 @@ jobs:
         if: success()
         with:
           target_branch: gh-pages
-          build_dir: build
+          build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
