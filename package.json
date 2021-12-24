@@ -7,7 +7,8 @@
     "fmt": "prettier --write .",
     "preview": "vite preview",
     "serve": "vite",
-    "test": "run-p test:fmt test:lint",
+    "test": "run-p test:check test:fmt test:lint",
+    "test:check": "tsc --noEmit",
     "test:fmt": "prettier --check .",
     "test:lint": "eslint --ext .js,.cjs,.mjs,.ts ."
   },
