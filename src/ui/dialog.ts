@@ -5,7 +5,7 @@ import dialogPolyfill from "dialog-polyfill";
 import { commonStyles, iconFontLink } from "../style.js";
 import "../ui/button.js";
 
-import dialogStyles from "dialog-polyfill/dialog-polyfill.css";
+import dialogStyles from "dialog-polyfill/dialog-polyfill.css?inline";
 
 /* eslint-disable */
 // https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1029#issuecomment-968299542
