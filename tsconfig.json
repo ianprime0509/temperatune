@@ -16,7 +16,11 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "types": ["vite/client", "vite-plugin-pwa/client"]
+    "types": [
+      "@types/dom-screen-wake-lock",
+      "vite/client",
+      "vite-plugin-pwa/client"
+    ]
   },
   "include": ["src/**/*.ts"]
 }
