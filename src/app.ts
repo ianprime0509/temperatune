@@ -73,6 +73,16 @@ export class App extends LitElement {
   @state() private _settingsHidden = true;
   @state() private _tunerHidden = false;
 
+  constructor() {
+    super();
+
+    if (navigator.wakeLock) {
+      // We don't care if the request actually succeeds; we've made our best
+      // effort to ensure the screen doesn't turn off
+      void navigator.wakeLock.request("screen");
+    }
+  }
+
   override render() {
     return html`${iconFontLink}
       <div id="container">
